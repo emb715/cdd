@@ -19,30 +19,26 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Publish @emb715/cdd
-        run: npm publish --workspace=packages/cdd --access public
+        run: npm publish --workspace=packages/cdd --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @emb715/cdd-rag
-        run: npm publish --workspace=packages/cdd-rag --access public
+        run: npm publish --workspace=packages/cdd-rag --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
           body: |
-            See CHANGELOG.md for details.
+            See [CHANGELOG.md](https://github.com/emb715/cdd/blob/main/CHANGELOG.md) for details.
           draft: false
           prerelease: false

@@ -45,7 +45,7 @@ The `.meta/metrics/` folder provides automated productivity tracking:
 
 1. **Session saves capture metrics** - When you run `/cdd:save-session`, frontmatter in `DECISIONS.md` is automatically updated with session data
 2. **Scripts aggregate data** - Run `node cdd/.meta/metrics/scripts/collect-metrics.js` to generate summaries from all work items
-3. **Dashboards consume summaries** - The `/cdd:list-work` command and CLI tools read from `metrics-summary.json` for accurate, pre-calculated statistics
+3. **Dashboards consume summaries** - The `/cdd:list-work` command.
 
 **Files:**
 - `metrics/README.md` - Full methodology, data templates, and automation guide
@@ -62,35 +62,6 @@ The AI assistant automatically runs metrics collection after each `/cdd:save-ses
 CDD tracks real productivity data so efficiency claims stay grounded in measurement rather than assumptions. See `metrics/README.md` for current findings.
 
 ## Usage
-
-### Option 1: Automated Installation (Recommended)
-
-Use the installer package to automatically copy the template files:
-
-```bash
-npx @cdd/installer
-```
-
-This will:
-- Copy the `cdd/` folder structure to your project
-- Copy the `.claude/` commands (with confirmation if it already exists)
-- Set up the CDD methodology in your current directory
-
-### Option 2: Manual Copy
-
-Copy the template files manually from this repository:
-
-```bash
-# From the context-as-infra repository root
-cp -r packages/cdd/cdd ./cdd
-cp -r packages/cdd/.claude ./
-
-# Or if you've cloned just the template folder
-cp -r cdd/cdd ./cdd
-cp -r cdd/.claude ./
-```
-
-### After Installation
 
 1. **Initialize your first work item**:
    - Use `/cdd:create-work` or manually create folders following the pattern
@@ -167,20 +138,6 @@ npx @emb715/cdd add rag
 **Learn more:** [packages/cdd-rag/README.md](../cdd-rag/README.md)
 
 ---
-
-## Integration
-
-This template is designed to work with:
-- **@cdd/installer** - Automated installation tool
-- **@cdd/cli** - CLI tools for managing CDD work items
-- Claude Code / Claude Desktop
-- Any AI assistant that supports custom commands
-
-## Learn More
-
-- [Main CDD Documentation](../../README.md)
-- [CDD CLI Tools](../cli/README.md)
-- [CDD Installer](../cdd-installer/README.md)
 
 ## License
 

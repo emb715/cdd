@@ -128,35 +128,59 @@ function addRAGExtension() {
   try {
     let ragPackagePath;
 
-    // Try to resolve from node_modules first (published package)
+    // Strategy 1: Try to resolve from node_modules (if user has it installed)
     try {
       const ragPackageJson = require.resolve('@emb715/cdd-rag/package.json');
       ragPackagePath = path.dirname(ragPackageJson);
       console.log('📦 Found @emb715/cdd-rag in node_modules');
     } catch (resolveError) {
-      // Fall back to monorepo structure (development)
-      ragPackagePath = path.join(__dirname, '..', '..', 'cdd-rag');
+      // Strategy 2: Check monorepo structure (development mode)
+      const monorepoPath = path.join(__dirname, '..', '..', 'cdd-rag');
 
-      if (!fs.existsSync(ragPackagePath)) {
-        console.log('📦 @emb715/cdd-rag not found. Installing...');
+      if (fs.existsSync(monorepoPath)) {
+        ragPackagePath = monorepoPath;
+        console.log('📦 Using local @emb715/cdd-rag (development mode)');
+      } else {
+        // Strategy 3: Download package using npm pack to temp directory
+        console.log('📦 Downloading @emb715/cdd-rag from npm...');
         console.log('');
 
-        try {
-          execSync('npm install @emb715/cdd-rag', { stdio: 'inherit', cwd: cwd });
+        const os = require('os');
+        const tempDir = path.join(os.tmpdir(), 'cdd-rag-temp-' + Date.now());
 
-          // Resolve again after installation
-          const ragPackageJson = require.resolve('@emb715/cdd-rag/package.json');
-          ragPackagePath = path.dirname(ragPackageJson);
-        } catch (installError) {
-          console.error('❌ Failed to install @emb715/cdd-rag');
+        try {
+          // Create temp directory
+          fs.mkdirSync(tempDir, { recursive: true });
+
+          // Use npm pack to download the package as tarball
+          const packOutput = execSync('npm pack @emb715/cdd-rag', {
+            cwd: tempDir,
+            encoding: 'utf8'
+          }).trim();
+
+          const tarballPath = path.join(tempDir, packOutput);
+
+          // Extract tarball
+          execSync(`tar -xzf "${tarballPath}"`, { cwd: tempDir });
+
+          // Package contents are in 'package/' subdirectory
+          ragPackagePath = path.join(tempDir, 'package');
+
+          if (!fs.existsSync(ragPackagePath)) {
+            throw new Error('Package extraction failed');
+          }
+
+          console.log('✓ Package downloaded successfully');
           console.log('');
-          console.log('   Manual installation:');
-          console.log('   npm install @emb715/cdd-rag');
+        } catch (downloadError) {
+          console.error('❌ Failed to download @emb715/cdd-rag');
+          console.log('');
+          console.log('   Try manual installation:');
+          console.log('   1. npm install -g @emb715/cdd-rag');
+          console.log('   2. Or clone from GitHub');
           console.log('');
           process.exit(1);
         }
-      } else {
-        console.log('📦 Using local @emb715/cdd-rag (development mode)');
       }
     }
 

@@ -228,25 +228,6 @@ your-project/
         └── cdd:list-work.md                # /cdd:list-work
 ```
 
-## 🖥️ CLI Tool
-
-CDD includes an interactive command-line tool for managing work items and browsing documentation:
-
-```bash
-cd cli
-npm install
-npm start
-```
-
-**Features:**
-- 📋 **Interactive work browser** - View, filter, and manage work items
-- 📊 **Live statistics** - Track progress, sessions, and metrics
-- 📖 **Documentation viewer** - Navigate README with search and sections
-- ✏️ **Quick edits** - Update status, priority, and metadata
-- 🔍 **Advanced filtering** - Find work by status, type, priority
-
-See `cli/README.md` for full documentation.
-
 ## 📋 Available Commands
 
 | Command | Purpose | Example |

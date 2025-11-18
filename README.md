@@ -1,4 +1,4 @@
-# Context-Driven Development (CDD) by EMB
+# Context-Driven Development (CDD)
 
 > Simplified, developer-friendly context infrastructure for AI-assisted development
 
@@ -820,17 +820,6 @@ That's it! You're now doing Context-Driven Development.
 ---
 
 ## 📜 About
-
-**Status:** Pre-release (active development)
-**Maintained by:** EMB (Ezequiel M. Benitez) @emb715
-**License:** MIT
-**Built with:** Claude Code
-
-**Latest Updates (November 2024):**
-- Template mode system (solo-dev, minimal, comprehensive)
-- Simplified workflow (3 states instead of 4)
-- Optional metrics scripts (zero dependencies for basic usage)
-- Command namespace consolidation
 
 ### What This Is
 

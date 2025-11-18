@@ -16,4 +16,7 @@ dist/
 DONT_TRACK.*
 .claude/
 
+# Test workspaces (runtime generated)
+test-cdd/
+
 packages/cli/

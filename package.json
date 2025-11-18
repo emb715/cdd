@@ -1,0 +1,32 @@
+{
+  "name": "cdd-monorepo",
+  "version": "0.1.0",
+  "description": "Context-Driven Development monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "test:local": "./test/integration/test-local.sh",
+    "test:setup": "./test/scripts/setup-test-env.sh",
+    "test:cleanup": "./test/scripts/cleanup.sh",
+    "clean": "npm run clean --workspaces && rm -rf node_modules"
+  },
+  "keywords": [
+    "cdd",
+    "context-driven-development",
+    "cli",
+    "methodology"
+  ],
+  "author": "EMB (Ezequiel M. Benitez)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emb715/cdd"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,270 @@
+# ============================================================================
+# CDD-RAG Configuration
+# ============================================================================
+# Version: 1.0.0
+# This file configures how RAG integrates with your CDD workflow
+
+# ============================================================================
+# OPERATION MODE
+# ============================================================================
+
+# Mode: local, hybrid, or cloud
+# - local: 100% offline, search only, no AI features
+# - hybrid: Local search + optional cloud AI (RECOMMENDED)
+# - cloud: Use cloud for embeddings too (not recommended for privacy)
+mode: hybrid
+
+# Workspace path (relative to this config file)
+# This should point to your cdd/ directory
+workspace_path: "../"
+
+# ============================================================================
+# SMART AUTO-ENHANCEMENT
+# ============================================================================
+# Controls when RAG automatically enhances CDD commands
+
+smart_enhancement:
+  # Master switch for auto-enhancement
+  enabled: true
+
+  # Which CDD commands to enhance
+  enhance_create_work: true      # Show similar work items when creating
+  enhance_plan_work: true        # Inject relevant patterns when planning
+  enhance_complete_work: true    # Auto-index when completing work
+  enhance_save_session: false    # Usually not helpful
+
+  # Enhancement parameters
+  min_score: 0.7                 # Minimum similarity to inject context (0-1)
+  max_chunks: 5                  # Maximum context chunks to inject
+  cite_sources: true             # Show source references in AI responses
+  verbose: false                 # Show what RAG is doing (debug mode)
+
+# ============================================================================
+# AUTO-INDEXING
+# ============================================================================
+# Controls automatic indexing of completed work items
+
+auto_index:
+  on_complete: true              # Index when running /cdd:complete-work
+  async: true                    # Don't block completion (index in background)
+  notify: true                   # Show indexing status
+  summary_only: false            # Index all docs, not just IMPLEMENTATION_SUMMARY.md
+  incremental: true              # Only re-index changed files
+
+# ============================================================================
+# SEARCH & QUERY
+# ============================================================================
+# Default settings for queries
+
+query:
+  default_results: 5             # Number of results to return by default
+  min_similarity: 0.3            # Filter out results below this score (0-1)
+  enable_reranking: true         # Re-rank results for better relevance (+50ms)
+  max_context_tokens: 3000       # Max tokens of context for AI answers
+
+# ============================================================================
+# DOCUMENT CHUNKING
+# ============================================================================
+# How documents are split for indexing
+
+chunking:
+  chunk_size: 800                # Characters per chunk
+  overlap: 100                   # Overlap between chunks (preserves context)
+  respect_sections: true         # Try to chunk on section boundaries
+  min_chunk_size: 100            # Minimum chunk size (discard smaller)
+
+# ============================================================================
+# EMBEDDING
+# ============================================================================
+# Local embedding model configuration
+
+embedding:
+  model: "all-MiniLM-L6-v2"      # Model name (from sentence-transformers)
+  # Alternatives:
+  # - "all-mpnet-base-v2" (better quality, slower, 768 dims)
+  # - "all-MiniLM-L12-v2" (balanced, 384 dims)
+
+  batch_size: 32                 # Batch size for embedding generation
+  cache_dir: "./models"          # Where to cache downloaded models
+
+# ============================================================================
+# VECTOR STORAGE
+# ============================================================================
+# ChromaDB configuration
+
+storage:
+  persist_dir: "./.chroma"       # Vector database location
+  collection_name: "cdd_knowledge"  # Collection name
+  distance_metric: "cosine"      # cosine, l2, or ip (inner product)
+
+# ============================================================================
+# PRIVACY & SECURITY
+# ============================================================================
+# What NOT to index
+
+exclude_patterns:
+  # Secrets and credentials
+  - "**/.env*"
+  - "**/secrets/**"
+  - "**/credentials.json"
+  - "**/*_secret.*"
+  - "**/*.key"
+  - "**/*.pem"
+
+  # System files
+  - "**/node_modules/**"
+  - "**/.git/**"
+  - "**/__pycache__/**"
+  - "**/venv/**"
+  - "**/.venv/**"
+
+  # Build artifacts
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.next/**"
+
+  # Templates (optional - uncomment to exclude)
+  # - "**/cdd/.meta/templates/**"
+  # - "**/cdd/.meta/examples/**"
+
+# Content sanitization (removes potential secrets from content)
+sanitize_content: true
+
+# ============================================================================
+# LLM INTEGRATION
+# ============================================================================
+# Settings for AI-powered answers
+
+llm:
+  # Default model for AI answers (requires OPENAI_API_KEY in .env)
+  default_model: "gpt-4o-mini"
+
+  # Model selection by task type
+  models:
+    code: "gpt-4o"               # Best for code analysis
+    analysis: "claude-3-sonnet"  # Best for deep analysis
+    chat: "gpt-4o-mini"          # Fast, cheap, good enough
+    fast: "claude-3-haiku"       # Fastest responses
+    cost_effective: "llama-3-8b" # Cheapest option
+
+  # Temperature for AI responses
+  temperature: 0.7
+
+  # System prompt template
+  system_prompt: |
+    You are a helpful CDD assistant with deep knowledge of this project.
+    Answer questions based on the provided context from CDD documentation.
+    Always cite sources when referencing specific decisions or implementations.
+    If you're not sure about something, say so clearly.
+
+# ============================================================================
+# COST MANAGEMENT
+# ============================================================================
+# Track and limit API costs
+
+cost:
+  enable_tracking: true          # Track all API costs
+  warning_threshold: 0.01        # Warn if single query > $0.01
+  monthly_budget: 10.00          # Monthly budget limit (USD)
+  auto_switch_cheap: true        # Switch to cheaper model if over budget
+
+# ============================================================================
+# PERFORMANCE
+# ============================================================================
+# Performance optimization settings
+
+performance:
+  enable_cache: true             # Cache frequent queries
+  cache_size: 100                # Number of queries to cache
+  cache_ttl: 3600                # Cache time-to-live (seconds)
+
+  num_workers: 4                 # Parallel processing workers
+  batch_processing: true         # Enable batch processing for faster indexing
+
+# ============================================================================
+# CDD-SPECIFIC SETTINGS
+# ============================================================================
+# Settings specific to CDD integration
+
+cdd:
+  # Prioritize certain document types in search results
+  type_weights:
+    DECISIONS: 1.2               # Boost decisions
+    IMPLEMENTATION_SUMMARY: 1.1  # Boost summaries
+    SESSION_NOTES: 0.9           # Slight de-boost sessions
+    IMPLEMENTATION_PLAN: 1.0     # Normal weight
+
+  # Prioritize by work item status
+  status_weights:
+    completed: 1.1               # Boost completed work
+    in_progress: 1.0             # Normal weight
+    draft: 0.8                   # De-boost drafts
+
+  # Index work item relationships
+  index_relationships: true      # Index dependencies, related work
+
+  # Metadata to extract from frontmatter
+  metadata_fields:
+    - id
+    - title
+    - type
+    - status
+    - priority
+    - tags
+    - context_files
+    - dependencies
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+# Logging configuration
+
+logging:
+  level: "INFO"                  # DEBUG, INFO, WARNING, ERROR
+  file: "./logs/rag.log"         # Log file location
+  max_size_mb: 10                # Max log file size before rotation
+  backup_count: 3                # Number of backup logs to keep
+
+# ============================================================================
+# ADVANCED OPTIONS
+# ============================================================================
+# Advanced configuration (usually don't need to change)
+
+advanced:
+  # Embedding dimension (auto-detected from model, but can override)
+  # embedding_dim: 384
+
+  # HNSW index parameters (ChromaDB)
+  hnsw_space: "cosine"
+  hnsw_ef_construction: 100
+  hnsw_ef_search: 10
+  hnsw_m: 16
+
+  # Timeout settings
+  embedding_timeout: 300         # Seconds
+  llm_timeout: 60                # Seconds
+  index_timeout: 600             # Seconds
+
+# ============================================================================
+# EXPERIMENTAL FEATURES
+# ============================================================================
+# Features still in development (use at your own risk)
+
+experimental:
+  enabled: false
+
+  # Graph-based relationship tracking
+  graph_relationships: false
+
+  # Temporal search (search by date ranges)
+  temporal_search: false
+
+  # Pattern detection across work items
+  pattern_detection: false
+
+  # Auto-tagging based on content
+  auto_tagging: false
+
+# ============================================================================
+# END OF CONFIGURATION
+# ============================================================================

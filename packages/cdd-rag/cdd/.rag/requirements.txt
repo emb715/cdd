@@ -1,0 +1,52 @@
+# CDD-RAG Dependencies
+# Python 3.9+ required
+
+# ============================================================================
+# Core RAG Components
+# ============================================================================
+
+chromadb>=0.4.0                  # Local vector database
+sentence-transformers>=2.2.0     # Local embeddings
+numpy>=1.24.0                    # Numerical operations
+
+# ============================================================================
+# LLM Integration
+# ============================================================================
+
+openai>=1.0.0                    # OpenAI-compatible client (works with OpenAI, Fuelix AI, etc.)
+python-dotenv>=1.0.0             # Environment configuration
+
+# ============================================================================
+# Document Processing
+# ============================================================================
+
+pyyaml>=6.0                      # YAML configuration
+markdown>=3.4.0                  # Markdown parsing
+python-frontmatter>=1.0.0        # Frontmatter extraction
+
+# ============================================================================
+# Utilities
+# ============================================================================
+
+click>=8.1.0                     # CLI framework
+rich>=13.0.0                     # Beautiful terminal output
+tqdm>=4.65.0                     # Progress bars
+gitpython>=3.1.0                 # Git integration (optional)
+
+# ============================================================================
+# Optional: Local LLM Support
+# ============================================================================
+
+# Uncomment if you want to use local models via Ollama
+# langchain>=0.1.0
+# langchain-community>=0.0.10
+
+# ============================================================================
+# Development Dependencies (Optional)
+# ============================================================================
+
+# Uncomment for development
+# pytest>=7.4.0                   # Testing
+# black>=23.0.0                   # Code formatting
+# mypy>=1.5.0                     # Type checking
+# flake8>=6.0.0                   # Linting

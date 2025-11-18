@@ -1,0 +1,10 @@
+*.log
+*.md.backup
+node_modules/
+test/
+.DS_Store
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/

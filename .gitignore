@@ -1,1 +1,19 @@
 .claude/settings.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+*.log
+
+# Local
+DONT_TRACK.*
+.claude/
+
+packages/cli/

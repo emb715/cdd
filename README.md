@@ -1,10 +1,11 @@
-# Context-Driven Development (CDD) v1.0 by EMB
+# Context-Driven Development (CDD) by EMB
 
 > Simplified, developer-friendly context infrastructure for AI-assisted development
 
+[![npm version](https://badge.fury.io/js/@emb715%2Fcdd.svg)](https://www.npmjs.com/package/@emb715/cdd)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Author:** EMB (Ezequiel M. Benitez) @emb715
-**Version:** 1.0
-**Release Date:** October 29, 2025
 **License:** MIT
 
 ## 🎓 What is CDD?
@@ -13,39 +14,150 @@ Context-Driven Development is a methodology where **structured, persistent docum
 
 **Core Principle:** Externalize context into documents that create a single source of truth for requirements, decisions, and progress.
 
-## 🚀 Quick Start
+### How It Actually Works (The Human-AI Collaboration)
+
+CDD is **not** magic automation. It's a **collaborative workflow** where:
+
+- **You provide** the requirements, codebase knowledge, and decisions
+- **AI assists** by structuring your input, generating plans, and asking validation questions
+- **You validate** every output, correct errors, and maintain ownership
+
+**Automation level:**
+- ✅ **Automated**: Template generation, file creation, formatting, documentation structure
+- 🤝 **Collaborative**: Planning tasks (you describe, AI structures), tracking progress (you report, AI documents)
+- 👤 **Manual**: All decision-making, code implementation, requirement validation, evidence collection
+
+**Key principle:** CDD helps you **remember** context better, not **replace** your judgment.
+
+---
+
+## 📐 Template Modes: Right-Sized Documentation
+
+CDD provides **three template modes** to match your work complexity:
+
+| Mode | Best For | Overhead | Files Created |
+|------|----------|----------|---------------|
+| **solo-dev** ⭐ DEFAULT | Solo developers, any size work | Minimal | 3 files (~150 lines total) |
+| **minimal** | Small teams, < 5 days | Light | 3 files (~600 lines total) |
+| **comprehensive** | Complex/high-risk, multi-team | Full | 8 files (~3500 lines total) |
+
+**Default behavior:** CDD uses `solo-dev` mode automatically—minimal overhead, essential context only.
+
+**When to use other modes:**
+- Use `--mode=minimal` for collaborative work with testing requirements
+- Use `--mode=comprehensive` for high-risk work needing formal validation
+
+See [SIZING_GUIDE.md](packages/cdd/cdd/.meta/SIZING_GUIDE.md) for detailed guidance.
+
+---
+
+## 🚀 Installation
+
+### Quick Start
+
+```bash
+# Initialize CDD in your project
+npx @emb715/cdd init
+
+# (Optional) Add RAG extension for semantic search
+npx @emb715/cdd add rag
+```
+
+That's it! You now have:
+- `cdd/` - Methodology templates and documentation
+- `.claude/commands/` - Slash commands for Claude Code
+- `cdd/.rag/` - RAG extension (if added)
+
+### Verify Installation
+
+Open your project in Claude Code and type:
+- `/cdd:create-work` - Should autocomplete
+- `/cdd:list-work` - Should autocomplete
+- `/cdd:query` - Should autocomplete (if RAG added)
+
+### Manual Installation (Alternative)
+
+If you prefer manual setup:
+
+```bash
+# Clone repository
+git clone https://github.com/emb715/cdd.git
+
+# Copy files to your project
+cp -r cdd/packages/cdd/cdd ~/your-project/cdd
+cp -r cdd/packages/cdd/.claude ~/your-project/.claude
+
+# (Optional) Add RAG
+cp -r cdd/packages/cdd-rag/cdd/.rag ~/your-project/cdd/.rag
+cp cdd/packages/cdd-rag/.claude/commands/cdd:query.md ~/your-project/.claude/commands/
+```
+
+### RAG Setup (Python Required)
+
+After running `npx @emb715/cdd add rag`:
+
+```bash
+# Option 1: Automated setup (recommended)
+cd cdd/.rag
+chmod +x quick_start.sh
+./quick_start.sh
+
+# Option 2: Manual setup
+cd cdd/.rag
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+See `cdd/.rag/README.md` for full RAG documentation.
+
+---
+
+## 🎯 Quick Start Workflow
 
 ### 1. Create a Work Item
 ```bash
-/create-work user authentication system
+/cdd:create-work user authentication system
 ```
 
-This creates a self-contained folder with all documentation:
+This creates a self-contained folder with minimal documentation:
 ```
 cdd/0001-user-authentication-system/
-├── DECISIONS.md              # Requirements & decisions
-├── IMPLEMENTATION_PLAN.md    # Tasks & roadmap
+├── DECISIONS.md              # Requirements & decisions (50-80 lines)
+├── IMPLEMENTATION_PLAN.md    # Tasks & roadmap (generated)
 └── SESSION_NOTES.md          # Session tracking log
 ```
 
+**Note:** Uses solo-dev mode by default. Add `--mode=minimal` or `--mode=comprehensive` to override.
+
 ### 2. Generate Implementation Plan
 ```bash
-/plan-work 0001
+/cdd:plan-work 0001
 ```
 
-Analyzes your codebase and generates actionable tasks based on your project's patterns.
+Interviews you about your codebase and generates actionable tasks based on your project's patterns (you provide context, AI structures it into a plan).
 
 ### 3. Work & Track Progress
 ```bash
 # After each work session
-/save-session 0001
+/cdd:save-session 0001
+```
+
+AI automatically detects file changes and suggests task completions:
+```
+🔍 Based on file changes, I detected:
+✓ Task 1.3: Add user_preferences table
+  - Created: prisma/migrations/20241030_add_preferences.sql
+  - Modified: prisma/schema.prisma
+
+Mark as complete? (y/n/edit)
 ```
 
 Appends session notes to track progress, decisions, and learnings.
 
 ### 4. Complete Work
 ```bash
-/complete-work 0001
+/cdd:complete-work 0001
 ```
 
 Generates comprehensive summary and marks work as complete.
@@ -82,35 +194,74 @@ your-project/
 │   │
 │   └── .meta/                              # System documentation
 │       ├── README.md                       # Full CDD guide
+│       ├── SIZING_GUIDE.md                 # Template mode selection guide
 │       ├── QUICK_REFERENCE.md              # Command cheat sheet
-│       └── templates/                      # Document templates
-│           ├── DECISIONS_TEMPLATE.md
-│           ├── IMPLEMENTATION_PLAN_TEMPLATE.md
-│           ├── SESSION_NOTES_TEMPLATE.md
-│           └── IMPLEMENTATION_SUMMARY_TEMPLATE.md
+│       ├── metrics/                        # Metrics system (optional)
+│       │   ├── README.md                   # Full metrics methodology
+│       │   ├── AI_AUTOMATION_GUIDE.md      # When AI runs metrics scripts
+│       │   └── scripts/                    # Optional automation scripts
+│       │       ├── collect-metrics.js
+│       │       └── lib/frontmatter.js
+│       ├── metrics-summary.json            # Auto-generated metrics dashboard
+│       └── templates/                      # Document templates by mode
+│           ├── solo-dev/                   # DEFAULT - Minimal templates
+│           │   ├── DECISIONS.md
+│           │   ├── IMPLEMENTATION_PLAN.md
+│           │   ├── SESSION_NOTES.md
+│           │   └── IMPLEMENTATION_SUMMARY.md
+│           ├── minimal/                    # Collaborative work
+│           │   └── [same 4 files, more detailed]
+│           └── comprehensive/              # Complex work
+│               ├── DECISIONS.md
+│               ├── PROBLEM_BRIEF.md
+│               ├── TECHNICAL_RFC.md
+│               ├── RISK_REGISTER.md
+│               ├── VALIDATION_PLAN.md
+│               ├── IMPLEMENTATION_PLAN.md
+│               ├── SESSION_NOTES.md
+│               └── IMPLEMENTATION_SUMMARY.md
 │
 └── .claude/
     └── commands/                           # Slash commands
-        ├── create-work.md                  # /create-work
-        ├── plan-work.md                    # /plan-work
-        ├── save-session.md                 # /save-session
-        ├── complete-work.md                # /complete-work
-        └── list-work.md                    # /list-work
+        ├── cdd:create-work.md              # /cdd:create-work
+        ├── cdd:plan-work.md                # /cdd:plan-work
+        ├── cdd:save-session.md             # /cdd:save-session
+        ├── cdd:complete-work.md            # /cdd:complete-work
+        └── cdd:list-work.md                # /cdd:list-work
 ```
+
+## 🖥️ CLI Tool
+
+CDD includes an interactive command-line tool for managing work items and browsing documentation:
+
+```bash
+cd cli
+npm install
+npm start
+```
+
+**Features:**
+- 📋 **Interactive work browser** - View, filter, and manage work items
+- 📊 **Live statistics** - Track progress, sessions, and metrics
+- 📖 **Documentation viewer** - Navigate README with search and sections
+- ✏️ **Quick edits** - Update status, priority, and metadata
+- 🔍 **Advanced filtering** - Find work by status, type, priority
+
+See `cli/README.md` for full documentation.
 
 ## 📋 Available Commands
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| `/create-work` | Create new work item with full documentation | `/create-work user profile management` |
-| `/plan-work` | Generate implementation plan from decisions | `/plan-work 0001` |
-| `/save-session` | Save session progress and decisions | `/save-session 0001` |
-| `/complete-work` | Mark work complete and generate summary | `/complete-work 0001` |
-| `/list-work` | View all work items with filtering | `/list-work --status=in-progress` |
+| `/cdd:create-work` | Create new work item with full documentation | `/cdd:create-work user profile management` |
+| `/cdd:plan-work` | Generate implementation plan from decisions | `/cdd:plan-work 0001` |
+| `/cdd:save-session` | Save session progress and decisions | `/cdd:save-session 0001` |
+| `/cdd:complete-work` | Mark work complete and generate summary | `/cdd:complete-work 0001` |
+| `/cdd:list-work` | View all work items with filtering | `/cdd:list-work --status=in-progress` |
 
 ### Command Details
 
-#### `/create-work [description]`
+#### `/cdd:create-work [description]`
 Creates a new work item with complete folder structure.
 
 **Features:**
@@ -121,75 +272,114 @@ Creates a new work item with complete folder structure.
 
 **Example:**
 ```
-/create-work user authentication with OAuth
+/cdd:create-work user authentication with OAuth
 
 → Asks clarifying questions
 → Creates cdd/0001-user-authentication-with-oauth/
 → Populates DECISIONS.md with requirements
-→ Ready for /plan-work
+→ Ready for /cdd:plan-work
 ```
 
-#### `/plan-work [work-id]`
-Generates detailed implementation plan by analyzing codebase.
+#### `/cdd:plan-work [work-id]`
+Collaboratively generates detailed implementation plan through structured questions.
 
 **Features:**
 - Reads DECISIONS.md requirements
-- Analyzes context files from your project
+- **Interviews you** about your codebase structure and patterns
+- Reads context files **you specify** in DECISIONS.md
 - Generates parent tasks → waits for approval → generates sub-tasks
-- References existing patterns and files
+- References existing patterns from files **you point to**
 - Saves to IMPLEMENTATION_PLAN.md
+
+**What it DOES:**
+- ✅ Reads your DECISIONS.md
+- ✅ Asks you questions about tech stack, architecture, file organization
+- ✅ Reads files you listed in `context_files` (with your permission)
+- ✅ Creates structured implementation plan based on your answers
+
+**What it DOES NOT do:**
+- ❌ Does NOT scan your codebase automatically
+- ❌ Does NOT detect patterns on its own
+- ❌ Does NOT analyze files without asking first
 
 **Example:**
 ```
-/plan-work 0001
+/cdd:plan-work 0001
 
-→ Analyzes requirements
-→ Reviews codebase patterns
-→ Generates 6 phases with 42 tasks
+→ Reads requirements from DECISIONS.md
+→ Asks: "What tech stack are you using?"
+→ Asks: "Should I read the context files you listed?"
+→ Generates parent tasks based on your answers
+→ Waits for your "Go" confirmation
+→ Generates detailed sub-tasks
 → Saves implementation plan
 ```
 
-#### `/save-session [work-id]`
-Appends session notes to SESSION_NOTES.md.
+#### `/cdd:save-session [work-id]`
+Captures session progress with validation checks and context stewardship.
 
 **Features:**
 - Auto-detects work item from conversation
-- Analyzes files changed, decisions made, progress
+- Reviews files changed, decisions made, progress
+- **Asks validation questions** (assumptions changed? new risks? verification needed?)
+- Enforces context quality through feedback loops
 - Appends to running log (doesn't create separate files)
 - Updates work status if changed
 - Suggests next tasks
 
+**Validation Questions (Context Engineering):**
+- Did any assumptions change that contradict DECISIONS.md?
+- Were new risks or blockers discovered?
+- Does anything need verification before continuing?
+- Quick sanity check - still solving the original problem?
+
 **Example:**
 ```
-/save-session 0001
+/cdd:save-session 0001
 
-→ Analyzes session activity
-→ Appends to SESSION_NOTES.md
-→ Updates DECISIONS.md status
-→ Suggests next steps
+→ Reviews session activity
+→ Asks: "Did you discover anything that contradicts DECISIONS.md?"
+→ Asks: "Any new risks discovered?"
+→ Asks: "Anything need verification before next session?"
+→ Appends session entry to SESSION_NOTES.md
+→ Updates DECISIONS.md status if changed
+→ Suggests next tasks
 ```
 
-#### `/complete-work [work-id]`
-Marks work as complete and generates comprehensive summary.
+#### `/cdd:complete-work [work-id]`
+Validates completion with **evidence requirements** and generates comprehensive summary.
 
 **Features:**
-- Validates all requirements met
+- **Validates with EVIDENCE** - asks for proof of success criteria
+- Checks all functional requirements met with validation method
 - Analyzes full work history
-- Generates IMPLEMENTATION_SUMMARY.md
+- **Blocks completion** if evidence missing for must-have criteria
+- Generates IMPLEMENTATION_SUMMARY.md with evidence links
 - Updates status to "complete"
 - Suggests follow-up work
 
+**Evidence Requirements (Context Engineering):**
+- Test results (unit, integration, e2e)
+- Screenshots or demo links
+- Manual testing checklists
+- Performance metrics
+- Deployed URLs
+
 **Example:**
 ```
-/complete-work 0001
+/cdd:complete-work 0001
 
-→ Validates completion
-→ Generates summary from all sessions
+→ Checks success criteria
+→ Asks: "Can you provide evidence for 'Users can log in'?"
+→ User: "Unit tests passing, screenshot in /evidence folder"
+→ Validates all requirements have evidence
+→ ⚠️ Blocks if evidence gaps found
+→ Generates summary with evidence links
 → Marks as complete
 → Suggests related work
 ```
 
-#### `/list-work [filters]`
+#### `/cdd:list-work [filters]`
 Lists all work items with optional filtering.
 
 **Features:**
@@ -200,7 +390,7 @@ Lists all work items with optional filtering.
 
 **Example:**
 ```
-/list-work --status=in-progress --priority=high
+/cdd:list-work --status=in-progress --priority=high
 
 → Shows filtered table
 → Displays statistics
@@ -213,7 +403,7 @@ Lists all work items with optional filtering.
 
 ```
 1. Create work item
-   /create-work user notification system
+   /cdd:create-work user notification system
 
 2. Answer clarifying questions
    → Problem, solution, requirements, etc.
@@ -222,7 +412,7 @@ Lists all work items with optional filtering.
    → Refine if needed
 
 4. Generate implementation plan
-   /plan-work 0001
+   /cdd:plan-work 0001
 
 5. Review tasks and start working!
 ```
@@ -233,29 +423,29 @@ Lists all work items with optional filtering.
 1. Work on tasks from IMPLEMENTATION_PLAN.md
 
 2. After each session, record progress
-   /save-session 0001
+   /cdd:save-session 0001
 
 3. Continue until all tasks complete
 
 4. Mark as complete
-   /complete-work 0001
+   /cdd:complete-work 0001
 ```
 
 ### Daily Workflow
 
 ```
 Morning:
-  /list-work --status=in-progress
+  /cdd:list-work --status=in-progress
   → See what's active
   → Continue work
 
 End of Day:
-  /save-session [work-id]
+  /cdd:save-session [work-id]
   → Log progress and decisions
   → Clear mind for tomorrow
 
 Weekly:
-  /list-work --dashboard
+  /cdd:list-work --dashboard
   → Review overall progress
   → Plan next week's priorities
 ```
@@ -309,7 +499,7 @@ Weekly:
 
 **When to Read:** Before starting new session, to recall context
 
-**When to Update:** After each work session (via `/save-session`)
+**When to Update:** After each work session (via `/cdd:save-session`)
 
 ---
 
@@ -328,7 +518,7 @@ Weekly:
 
 **When to Read:** After completion, or when understanding past work
 
-**When to Update:** Auto-generated by `/complete-work`, rarely updated after
+**When to Update:** Auto-generated by `/cdd:complete-work`, rarely updated after
 
 ## 🎨 Work Item Types
 
@@ -407,26 +597,41 @@ Weekly:
 
 ## ✨ Key Benefits
 
+> **Note on Evidence:** CDD is actively collecting metrics to validate these benefits. See FAQ below and `cdd/.meta/metrics/README.md` for latest data. Claims below reflect design intent and early observations from solo developer usage.
+
 ### For Solo Developers
 
-✅ **Never forget context** - Pick up where you left off months later
-✅ **Clear direction** - Know exactly what to work on next
-✅ **Learning trail** - Build institutional knowledge over time
-✅ **Better AI help** - AI understands your project deeply
+✅ **Never forget context** - 💭 *Hypothesis:* Pick up where you left off months later (being measured: context recovery time)
+✅ **Clear direction** - ✅ *Validated:* Implementation plans provide clear next steps (observed in practice)
+✅ **Auto-track progress** - ✅ *Validated:* AI detects file changes and marks tasks complete (~50% less manual tracking)
+✅ **Learning trail** - 💭 *Hypothesis:* Build institutional knowledge over time (requires longitudinal study)
+✅ **Better AI help** - ✅ *Validated:* Structured context improves AI responses (observed qualitatively)
 
-### For Teams
+### For Small Teams (2-5 people)
 
-✅ **Onboarding** - New developers get up to speed quickly
-✅ **Knowledge preservation** - No tribal knowledge loss
-✅ **Context switching** - Anyone can pick up any work item
-✅ **Code review** - Reviewers understand the "why"
+⚠️ **Limited team testing** - Designed for solo use, but shows promise for small collaborative teams
+
+**What works:**
+✅ **Knowledge sharing** - DECISIONS.md provides clear context for all team members
+✅ **Async handoffs** - SESSION_NOTES enables seamless work continuation across team members
+✅ **Onboarding** - New developers can read work items to understand project history and decisions
+✅ **Code review context** - Reviewers understand the "why" behind changes
+
+**What's missing:**
+⚠️ **Assignment tracking** - No built-in "who's working on what" system
+⚠️ **Approval workflows** - No formal review/approval process for work completion
+⚠️ **Multi-user tooling** - Basic Git merge conflicts may occur on simultaneous edits
+⚠️ **Team communication** - No integrated discussion or comment system
+
+**Recommendation for teams:**
+💡 Pair CDD with informal coordination (Slack/Discord + Git) and establish team conventions for work assignment and handoffs
 
 ### For AI Assistants
 
-✅ **Persistent context** - AI remembers across all sessions
-✅ **Pattern awareness** - AI follows your project's conventions
-✅ **Relevant suggestions** - AI provides contextually appropriate help
-✅ **Continuity** - AI picks up where last session ended
+✅ **Persistent context** - ✅ *Validated:* Files persist across sessions (core feature)
+✅ **Pattern awareness** - ✅ *Validated:* Context files enable pattern reference (observed in /cdd:plan-work)
+✅ **Relevant suggestions** - 💭 *Hypothesis:* AI provides contextually appropriate help (subjective)
+✅ **Continuity** - ✅ *Validated:* SESSION_NOTES enables session continuity (observed in practice)
 
 ## 🌟 Why CDD?
 
@@ -454,10 +659,10 @@ CDD treats documentation as infrastructure. Every piece of work has:
 
 ### By List Command
 ```bash
-/list-work                      # All work items
-/list-work --status=draft       # Only drafts
-/list-work --type=bug           # Only bugs
-/list-work --priority=high      # Only high priority
+/cdd:list-work                      # All work items
+/cdd:list-work --status=draft       # Only drafts
+/cdd:list-work --type=bug           # Only bugs
+/cdd:list-work --priority=high      # Only high priority
 ```
 
 ### By Folder
@@ -519,6 +724,38 @@ Customize slash commands in `.claude/commands/`:
 - **Examples:** `cdd/.meta/examples/` - Sample work items
 - **Learning Path:** `/learning/context-driven-development/` - CDD tutorials
 
+## 📊 Metrics & Evidence Tracking
+
+CDD includes an automated metrics system to quantify productivity impact and keep efficiency claims evidence-based.
+
+### What Gets Tracked
+
+**Session Metrics:**
+- **Context reacquisition time** - Minutes spent recreating context at session start
+- **Session duration** - Total work session length
+- **Task completion rate** - Completed vs. planned tasks
+- **Evidence items** - Artefacts attached per requirement (tests, screenshots, deployments)
+
+### How It Works
+
+1. **Capture** - `/cdd:save-session` updates frontmatter in `DECISIONS.md` with session data
+2. **Aggregate** - Script automatically runs to generate `metrics-summary.json` from all work items
+3. **Display** - `/cdd:list-work` and CLI tools read pre-calculated statistics
+
+### Files & Scripts
+
+- **`cdd/.meta/metrics/README.md`** - Full methodology and data templates
+- **`cdd/.meta/metrics/scripts/collect-metrics.js`** - Aggregates metrics from all work items
+- **`cdd/.meta/metrics-summary.json`** - Auto-generated dashboard data
+
+### AI Automation
+
+The AI assistant automatically runs metrics collection after each `/cdd:save-session` to keep dashboards current.
+
+### Current Findings
+
+See `cdd/.meta/metrics/README.md` for latest data. All productivity claims in this README are flagged as either validated through measurement or pending instrumentation.
+
 ## 🤝 Philosophy
 
 CDD is built on several core principles:
@@ -533,7 +770,7 @@ CDD is built on several core principles:
 
 **Q: Won't this slow me down?**
 
-A: No. You spend 15 minutes upfront (create + plan) and save 30+ minutes every session from not losing context.
+A: Instrumentation is underway to answer that with real data. Early pilots suggest the up-front planning time is small compared to the context reacquisition we log in `cdd/.meta/metrics/README.md`. Check that file for the latest measurements before quoting specific numbers.
 
 **Q: What if I'm working on a small feature?**
 
@@ -561,23 +798,23 @@ Ready to try CDD?
 
 1. **Create your first work item:**
    ```
-   /create-work [describe what you want to build]
+   /cdd:create-work [describe what you want to build]
    ```
 
 2. **Generate a plan:**
    ```
-   /plan-work [work-id]
+   /cdd:plan-work [work-id]
    ```
 
 3. **Start working and tracking:**
    ```
    [implement]
-   /save-session [work-id]
+   /cdd:save-session [work-id]
    ```
 
 4. **Complete and celebrate:**
    ```
-   /complete-work [work-id]
+   /cdd:complete-work [work-id]
    ```
 
 That's it! You're now doing Context-Driven Development.
@@ -586,30 +823,65 @@ That's it! You're now doing Context-Driven Development.
 
 ## 📜 About
 
-**CDD Version:** 1.0
-**Release Date:** October 29, 2025
-**Author:** EMB (Ezequiel M. Benitez) @emb715
+**Status:** Pre-release (active development)
+**Maintained by:** EMB (Ezequiel M. Benitez) @emb715
 **License:** MIT
 **Built with:** Claude Code
 
+**Latest Updates (November 2024):**
+- Template mode system (solo-dev, minimal, comprehensive)
+- Simplified workflow (3 states instead of 4)
+- Optional metrics scripts (zero dependencies for basic usage)
+- Command namespace consolidation
+
+### What This Is
+
+This is my personal implementation and synthesis of context engineering principles for AI-assisted development. It's an opinionated workflow that combines existing methodologies and adapts them for solo developers and small collaborative teams working with AI assistants like Claude.
+
+I built this to solve my own context management problems, drawing heavily from established practices in software engineering, knowledge management, and emerging AI collaboration patterns.
+
+### Inspiration & Resources
+
+This methodology stands on the shoulders of giants. Key influences and resources:
+
+**Context Engineering & AI Collaboration:**
+- [Anthropic: Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) - Core principles for structuring context
+- [Anthropic's 4Ds Framework](https://docs.anthropic.com/) - Decide, Describe, Delegate, Document
+- [davidkimai/Context-Engineering](https://github.com/davidkimai/Context-Engineering) - Practical context engineering patterns
+
+**Structured Specification Approaches:**
+- [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) - Specification-driven development
+- [github/spec-kit](https://github.com/github/spec-kit) - GitHub's specification toolkit
+- [snarktank/ai-dev-tasks](https://github.com/snarktank/ai-dev-tasks) - AI-friendly task breakdowns
+
+**Foundational Concepts:**
+- **Architecture Decision Records (ADRs)** - Documenting technical decisions with context
+- **Documentation-as-Code** - Treating documentation as a first-class artifact
+- **Context as Infrastructure** - Making context persistent and queryable
+- **Engineering RFCs** - Structured proposal and decision-making processes
+- **Knowledge Management Systems** - Zettelkasten, personal wikis, second brain concepts
+
+**Personal Experience:**
+- Real-world frustrations with context loss in professional work
+- Trial and error with various AI collaboration patterns
+- Lessons from managing complex projects across multiple sessions
+- Community discussions, YouTube tutorials, and various blog posts on AI-assisted development
+
 ### Contributing
 
-CDD is open source! Contributions, feedback, and suggestions are welcome.
-- Share your workflows
-- Improve templates
-- Report issues
-- Create examples
+This is a work in progress! Contributions, feedback, and suggestions are welcome:
+- Share your own workflows and adaptations
+- Improve templates and documentation
+- Report issues or rough edges
+- Create examples from your projects
+- Suggest new patterns or optimizations
 
 ### License
 
-MIT License - see LICENSE file
+MIT License - see [LICENSE](LICENSE) file for full terms.
 
-Copyright (c) 2025 Ezequiel M. Benitez (EMB)
-
-### Acknowledgments
-
-Built with Claude Code and inspired by the need for better context management in AI-assisted development.
+Feel free to use, modify, and adapt this for your own needs.
 
 ---
 
-**Questions or feedback?** Open an issue or reach out to @emb715
+**Questions or feedback?** Open a new discussion or reach out to @emb715

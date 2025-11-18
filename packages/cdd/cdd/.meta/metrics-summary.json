@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": null,
+  "totals": {
+    "workItems": 0,
+    "sessions": 0,
+    "hours": 0,
+    "reacquisitionMinutes": 0,
+    "completedTasks": 0,
+    "plannedTasks": 0
+  },
+  "averages": {
+    "sessionsPerWorkItem": 0,
+    "hoursPerWorkItem": 0,
+    "reacquisitionPerSession": 0,
+    "sessionDuration": 0,
+    "completionRate": 0
+  },
+  "items": []
+}

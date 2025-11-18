@@ -1,0 +1,5 @@
+*.log
+*.md.backup
+node_modules/
+test/
+.DS_Store

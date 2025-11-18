@@ -1,0 +1,37 @@
+{
+  "name": "@emb715/cdd-rag",
+  "version": "0.1.0",
+  "description": "RAG extension for Context-Driven Development",
+  "keywords": [
+    "cdd",
+    "rag",
+    "search",
+    "semantic",
+    "ai",
+    "knowledge-base",
+    "chroma",
+    "embeddings"
+  ],
+  "author": "EMB (Ezequiel M. Benitez)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emb715/cdd"
+  },
+  "homepage": "https://github.com/emb715/cdd/tree/main/packages/cdd-rag#readme",
+  "peerDependencies": {
+    "@emb715/cdd": "^0.1.0"
+  },
+  "files": [
+    "cdd/",
+    ".claude/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "prepublishOnly": "echo 'Publishing @emb715/cdd-rag to npm...'"
+  }
+}

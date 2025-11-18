@@ -1,0 +1,36 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify package structure
+        run: |
+          test -d packages/cdd/cdd
+          test -d packages/cdd/.claude
+          test -f packages/cdd/bin/cdd.js
+          test -d packages/cdd-rag/cdd/.rag
+          test -f packages/cdd-rag/cdd/.rag/requirements.txt
+          echo "✅ Package structure verified"
+
+      - name: Test CLI help
+        run: |
+          node packages/cdd/bin/cdd.js help
+          node packages/cdd/bin/cdd.js version

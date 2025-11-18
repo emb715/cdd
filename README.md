@@ -5,8 +5,6 @@
 [![npm version](https://badge.fury.io/js/@emb715%2Fcdd.svg)](https://www.npmjs.com/package/@emb715/cdd)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Author:** EMB (Ezequiel M. Benitez) @emb715
-**License:** MIT
 
 ## 🎓 What is CDD?
 

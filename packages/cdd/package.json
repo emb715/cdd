@@ -1,6 +1,6 @@
 {
   "name": "@emb715/cdd",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Context-Driven Development methodology",
   "main": "index.js",
   "bin": {

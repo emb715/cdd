@@ -1,9 +1,0 @@
-# Exclude
-*.log
-*.md.backup
-node_modules/
-test/
-.DS_Store
-
-# Force include (npm ignores dotfiles by default)
-!.claude/

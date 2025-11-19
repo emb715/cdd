@@ -1,5 +1,3 @@
-.claude/settings.json
-
 # Environment variables
 .env
 .env.local
@@ -14,7 +12,9 @@ dist/
 
 # Local
 DONT_TRACK.*
-.claude/
+
+# Root .claude/ only (exclude from tracking your local Claude Code settings)
+/.claude/
 
 # Test workspaces (runtime generated)
 test-cdd/

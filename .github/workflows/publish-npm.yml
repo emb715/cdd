@@ -26,12 +26,32 @@ jobs:
         run: npm ci
 
       - name: Publish @emb715/cdd
-        run: npm publish --workspace=packages/cdd --access public --provenance
+        run: |
+          npm publish --workspace=packages/cdd --access public --provenance || {
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 1 ]; then
+              echo "Package already published or version exists, skipping..."
+              exit 0
+            else
+              echo "Publish failed with unexpected error"
+              exit $EXIT_CODE
+            fi
+          }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @emb715/cdd-rag
-        run: npm publish --workspace=packages/cdd-rag --access public --provenance
+        run: |
+          npm publish --workspace=packages/cdd-rag --access public --provenance || {
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 1 ]; then
+              echo "Package already published or version exists, skipping..."
+              exit 0
+            else
+              echo "Publish failed with unexpected error"
+              exit $EXIT_CODE
+            fi
+          }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

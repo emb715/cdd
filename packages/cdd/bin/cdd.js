@@ -40,27 +40,30 @@ async function initCDD(args) {
 
   const cwd = process.cwd();
   const packageRoot = path.join(__dirname, '..');
+  let skipCddFolder = false;
 
   // Check if already initialized
   if (fs.existsSync(path.join(cwd, 'cdd'))) {
     console.log('⚠️  CDD already initialized in this project.');
     console.log('   cdd/ folder already exists.\n');
 
-    const answer = await prompt('Overwrite existing files? (y/N): ');
+    const answer = await prompt('Overwrite cdd/ folder? (y/N): ');
     if (answer.toLowerCase() !== 'y') {
-      console.log('❌ Initialization cancelled.');
-      process.exit(0);
+      console.log('   → Skipping cdd/ folder (keeping existing files)');
+      skipCddFolder = true;
     }
   }
 
   try {
-    // Copy cdd/ folder
-    console.log('📁 Copying CDD workspace structure...');
-    copyDir(path.join(packageRoot, 'cdd'), path.join(cwd, 'cdd'));
-    console.log('   ✓ cdd/ folder created');
+    // Copy cdd/ folder (unless skipped)
+    if (!skipCddFolder) {
+      console.log('\n📁 Copying CDD workspace structure...');
+      copyDir(path.join(packageRoot, 'cdd'), path.join(cwd, 'cdd'));
+      console.log('   ✓ cdd/ folder created');
+    }
 
-    // Copy .claude/commands/
-    console.log('\n📁 Copying Claude commands...');
+    // Always copy/update .claude/commands/
+    console.log('\n📁 Installing Claude commands...');
     const claudeDir = path.join(cwd, '.claude', 'commands');
     if (!fs.existsSync(claudeDir)) {
       fs.mkdirSync(claudeDir, { recursive: true });

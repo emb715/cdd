@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/emb715/cdd"
+    "url": "git+https://github.com/emb715/cdd.git"
   },
   "homepage": "https://github.com/emb715/cdd/tree/main/packages/cdd-rag#readme",
   "peerDependencies": {

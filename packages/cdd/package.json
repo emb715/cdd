@@ -4,7 +4,7 @@
   "description": "Context-Driven Development methodology",
   "main": "index.js",
   "bin": {
-    "cdd": "./bin/cdd.js"
+    "cdd": "bin/cdd.js"
   },
   "keywords": [
     "cdd",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/emb715/cdd"
+    "url": "git+https://github.com/emb715/cdd.git"
   },
   "homepage": "https://github.com/emb715/cdd#readme",
   "files": [

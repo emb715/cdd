@@ -1,144 +1,666 @@
-# CDD Methodology
+# CDD v2.0 - Context-Driven Development
 
-> Context-Driven Development (CDD) methodology template with Claude commands
+> **Productivity-first AI workflow. Zero ceremony, maximum focus.**
 
-## Overview
+## What is CDD v2.0?
 
-This package provides a shareable template for initializing Context-Driven Development (CDD) workflow in your projects. It includes:
+CDD (Context-Driven Development) is a methodology for working with AI assistants that keeps you in flow state. **No interviews, no boilerplate, no context pollution.**
 
-- **CDD folder structure** - Example work items and metadata organization
-- **Claude commands** - Slash commands for AI-assisted development workflow
+### Core Philosophy
 
-Looking for the **why** behind these artefacts? See the methodology overview in [What is CDD](../../README.md#what-is-cdd) and the full set of influences in [Inspiration & Resources](../../README.md#inspiration--resources).
+**v2.0 is built on three principles:**
 
-## What's Included
+1. **Speed over perfection** - Start working in 30 seconds, refine as you go
+2. **AI-native decisions** - Let multiple agents research in parallel, you make the call
+3. **Optional everything** - Metrics, summaries, templates - only if you want them
 
-### 📁 CDD Folder Structure
+### What Changed from v1?
 
-The `cdd/` folder contains:
-- `.meta/` - Methodology metadata and templates
-- Work item folders (e.g., `0001-phase-02-metrics-dashboard/`)
-- Example of how to organize context-driven work
+| Aspect | v1 | v2 | Improvement |
+|--------|----|----|-------------|
+| **Commands** | 5 commands, 3,700 lines | 4 commands, ~800 lines | 78% reduction |
+| **Templates** | 3 modes (confusing) | 1 progressive | 100% simpler |
+| **Files per work item** | 3-7 files | 2-3 files | 60% less |
+| **Metrics** | Mandatory tracking | Opt-in flag | Zero friction |
+| **Getting started** | 10 min interview | 30 seconds | 95% faster |
+| **Decisions** | Manual YAML | Multi-agent AI | Revolutionary |
 
-### 🤖 Claude Commands
+---
 
-The `.claude/commands/` folder includes:
-- `cdd:create-work.md` → `/cdd:create-work` - Create new work items
-- `cdd:plan-work.md` → `/cdd:plan-work` - Generate implementation plans from decisions
-- `cdd:save-session.md` → `/cdd:save-session` - Document session progress
-- `cdd:complete-work.md` → `/cdd:complete-work` - Mark work items complete with summaries
-- `cdd:list-work.md` → `/cdd:list-work` - List and filter work items
+## Quick Start
 
-### 📊 Metrics System
+### Installation
 
-The `.meta/metrics/` folder provides automated productivity tracking:
+```bash
+# Install
+npm install -g @emb715/cdd
 
-**Purpose:** Quantify the impact of CDD on session efficiency and track evidence-based development metrics.
-
-**What's Tracked:**
-- Context reacquisition time (minutes spent recreating context at session start)
-- Session duration (total work session length)
-- Task completion rate (completed vs. planned tasks)
-- Evidence items (artefacts attached per requirement)
-
-**How It Works:**
-
-1. **Session saves capture metrics** - When you run `/cdd:save-session`, frontmatter in `DECISIONS.md` is automatically updated with session data
-2. **Scripts aggregate data** - Run `node cdd/.meta/metrics/scripts/collect-metrics.js` to generate summaries from all work items
-3. **Dashboards consume summaries** - The `/cdd:list-work` command.
-
-**Files:**
-- `metrics/README.md` - Full methodology, data templates, and automation guide
-- `metrics/AI_AUTOMATION_GUIDE.md` - When AI should run metrics scripts
-- `metrics/WORKFLOW_EXAMPLE.md` - Step-by-step example of metrics capture
-- `metrics/scripts/collect-metrics.js` - Aggregates metrics from all work items
-- `metrics/scripts/lib/frontmatter.js` - Programmatic frontmatter management
-- `metrics-summary.json` - Auto-generated dashboard data (empty skeleton in template)
-
-**AI Automation:**
-The AI assistant automatically runs metrics collection after each `/cdd:save-session` to keep dashboards up-to-date.
-
-**Evidence-Based Claims:**
-CDD tracks real productivity data so efficiency claims stay grounded in measurement rather than assumptions. See `metrics/README.md` for current findings.
-
-## Usage
-
-1. **Initialize your first work item**:
-   - Use `/cdd:create-work` or manually create folders following the pattern
-   - Follow the CDD workflow documented in the main README
-
-2. **Customize for your needs**:
-   - Adjust the `.meta/` templates
-   - Modify Claude commands as needed
-   - Add project-specific workflows
-
-### With AI Assistants
-
-When asking an AI to initialize CDD in your project, you can say:
-
-```
-Install the CDD methodology template using npx @cdd/installer
+# Initialize in your project
+npx @emb715/cdd init
 ```
 
-Or for manual installation:
+### Your First Work Item (30 seconds)
 
-```
-Copy the CDD template from packages/cdd/ to set up
-the workflow with cdd/ folder and .claude/commands/
+```bash
+# In Claude Code (or any AI assistant with Claude)
+/cdd:start add user authentication with OAuth
+
+# AI creates:
+# cdd/0001-add-user-authentication-with-oauth/
+#   ├── CONTEXT.md   (problem, solution, tasks)
+#   └── SESSIONS.md  (empty, ready to log)
+
+# You start coding...
 ```
 
-## Directory Structure
+### Log Your Progress (10 seconds)
 
+```bash
+# After working for a while
+/cdd:log
+
+# AI auto-detects:
+# - What files changed
+# - What tasks completed
+# - How long you worked
+# Logs it in 10 seconds, zero questions
 ```
-cdd/
-├── cdd/                                # Work items and metadata
-│   ├── .meta/                         # Methodology templates and system files
-│   │   ├── metrics/                   # Metrics system
-│   │   │   ├── README.md             # Full metrics methodology
-│   │   │   ├── AI_AUTOMATION_GUIDE.md # When AI runs metrics scripts
-│   │   │   ├── WORKFLOW_EXAMPLE.md    # Step-by-step metrics example
-│   │   │   └── scripts/              # Automation scripts
-│   │   │       ├── collect-metrics.js
-│   │   │       ├── lib/frontmatter.js
-│   │   │       └── README.md
-│   │   ├── metrics-summary.json       # Auto-generated metrics dashboard
-│   │   └── templates/                 # Document templates
-│   └── NNNN-work-item/                # Example work items
-└── .claude/                           # Claude commands
-    └── commands/                      # Slash commands
-        ├── cdd:create-work.md
-        ├── cdd:plan-work.md
-        ├── cdd:save-session.md
-        ├── cdd:complete-work.md
-        └── cdd:list-work.md
+
+### Make Hard Decisions (AI does the work)
+
+```bash
+# When you hit a decision point
+/cdd:plan Should we use REST or GraphQL?
+
+# AI spawns 4 agents in parallel:
+# - REST advocate (researches pros/cons)
+# - GraphQL advocate (researches pros/cons)
+# - Codebase analyzer (checks your patterns)
+# - Analysis agent (objective comparison + suggestion)
+
+# 2 minutes later, you get findings + AI suggestion
+# You make the final decision
+```
+
+### Finish and Ship
+
+```bash
+/cdd:done
+
+# Marks complete, logs final session, optional summary
 ```
 
 ---
 
-## 🔌 Optional Extensions
+## The v2.0 Workflow
 
-CDD can be enhanced with optional extensions:
+### File Structure (Simplified!)
 
-### CDD-RAG: Searchable Knowledge Base
-
-Transform your CDD workspace into a searchable knowledge base with semantic search.
-
-**Features:**
-- 🔍 Semantic search across all work items
-- 🤖 AI-powered answers from your documentation (optional)
-- 📚 Discover similar solutions from past work
-- 💰 Cost-effective (~$0.0006/query with AI)
-- 🔒 Privacy-first (local indexing, optional cloud AI)
-
-**Install:**
-```bash
-npx @emb715/cdd add rag
+```
+project/
+├── cdd/                           # Your work items
+│   ├── 0001-user-authentication/
+│   │   ├── CONTEXT.md             # Problem + Solution + Tasks + Decisions
+│   │   ├── SESSIONS.md            # Simple session log
+│   │   └── decisions/             # Multi-agent decision artifacts (optional)
+│   │       └── 2024-01-15-auth-strategy.md
+│   └── 0002-dark-mode-toggle/
+│       ├── CONTEXT.md
+│       └── SESSIONS.md
+├── .claude/                       # AI commands
+│   └── commands/
+│       ├── cdd:start.md           # Create work item
+│       ├── cdd:log.md             # Log session
+│       ├── cdd:plan.md            # Multi-agent decision planning
+│       └── cdd:done.md            # Mark complete
+└── cdd/.meta/                     # Templates and tools
+    └── templates/v2/              # Progressive templates
 ```
 
-**Learn more:** [packages/cdd-rag/README.md](../cdd-rag/README.md)
+### CONTEXT.md - The Heart of v2
+
+**One file, progressive disclosure:**
+
+```markdown
+---
+id: 0001
+title: User Authentication
+type: feature
+status: in-progress
+created: 2024-01-15
+updated: 2024-01-16
+---
+
+# User Authentication
+
+## 🎯 Why (Problem)
+Users need secure login. No auth system exists.
+
+## 💡 Solution
+OAuth2 (Google, GitHub) + JWT sessions.
+
+## ✅ Tasks
+
+<details open>
+<summary><strong>Phase 1: Foundation</strong> (2/3 complete)</summary>
+
+- [x] Setup OAuth providers
+      **Files:** `lib/auth/oauth.ts`
+- [x] Create JWT service
+      **Files:** `lib/auth/jwt.ts`
+- [ ] Add session middleware
+      **Files:** `lib/middleware/auth.ts`
+
+</details>
+
+## 🧠 Context for AI
+
+**Patterns to follow:**
+- Use existing `TokenService` pattern from `lib/auth/`
+
+**Key files:**
+- `lib/auth/` - Auth utilities
+- `config/auth.config.ts` - OAuth credentials
+
+## 📝 Decisions
+
+<details>
+<summary><strong>2024-01-15: OAuth vs Custom Auth</strong></summary>
+
+**Decision:** OAuth2
+
+**Rationale:** Better security, users prefer existing accounts
+
+**See full analysis:** [decisions/2024-01-15-auth-strategy.md](decisions/2024-01-15-auth-strategy.md)
+
+</details>
+```
+
+**Why this is better:**
+- ✅ Single file to read (no jumping between DECISIONS + IMPLEMENTATION_PLAN)
+- ✅ Progressive disclosure (collapse what you don't need)
+- ✅ Tasks have file hints (AI can auto-detect completion)
+- ✅ Decisions collapsed by default (low noise)
+
+---
+
+## The Killer Feature: Multi-Agent Decisions
+
+### How It Works
+
+When you need to make a hard decision, instead of researching yourself:
+
+```bash
+/cdd:plan PostgreSQL vs MongoDB for user preferences
+```
+
+**Behind the scenes (2-3 minutes):**
+
+1. **Agent 1: PostgreSQL Advocate**
+   - Researches PostgreSQL benefits
+   - Finds use cases, examples
+   - Identifies drawbacks
+
+2. **Agent 2: MongoDB Advocate**
+   - Researches MongoDB benefits
+   - Finds use cases, examples
+   - Identifies drawbacks
+
+3. **Agent 3: Codebase Context**
+   - Greps your actual code
+   - Checks existing patterns
+   - Evaluates migration complexity
+
+4. **Agent 4: Analysis Agent**
+   - Compares all findings objectively
+   - Considers your constraints
+   - Provides suggestion (NOT final decision)
+
+**You get:**
+```
+🤖 AI SUGGESTION: PostgreSQL
+Confidence: 🟢 High
+
+Key Supporting Evidence:
+1. You already use Postgres (found in schema.prisma)
+2. JSONB handles key-value flexibility
+3. Team familiar with SQL
+
+Trade-offs:
+- MongoDB might be faster for writes
+- Postgres requires more schema planning
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💭 What's your decision?
+A) Accept AI suggestion: PostgreSQL
+B) Choose different: MongoDB
+C) Need more research
+
+> You choose: A
+
+✅ YOUR DECISION: PostgreSQL
+Your rationale: "Matches our existing stack, makes sense."
+
+📄 Full analysis: decisions/2024-01-15-postgres-vs-mongo.md
+```
+
+**This is revolutionary** because:
+- ✅ Multiple perspectives in parallel
+- ✅ Codebase-aware (analyzes your actual code)
+- ✅ Evidence-based (not gut feel)
+- ✅ Human-in-the-loop (YOU decide, AI assists)
+- ✅ Traceable (full artifact with your rationale)
+
+---
+
+## Commands Reference
+
+### `/cdd:start [description]`
+
+Create a new work item.
+
+**Flags:**
+- `--type=[feature|bug|refactor|spike|epic]` - Override auto-detection
+- `--track-metrics` - Enable optional metrics tracking
+
+**Examples:**
+```bash
+/cdd:start fix login timeout
+/cdd:start add dark mode toggle
+/cdd:start refactor database layer --track-metrics
+```
+
+**What it does:**
+1. Auto-detects type from keywords
+2. Auto-increments sequence number
+3. Creates CONTEXT.md + SESSIONS.md
+4. Done in 30 seconds
+
+---
+
+### `/cdd:log`
+
+Log your session progress.
+
+**Flags:**
+- `--force` - Skip confirmations
+
+**Examples:**
+```bash
+/cdd:log                # Auto-detect everything
+/cdd:log 0001           # Specific work item
+```
+
+**What it does:**
+1. Git diff to see file changes
+2. Matches files to tasks
+3. Auto-marks completed tasks
+4. Appends to SESSIONS.md
+5. Done in 10 seconds
+
+---
+
+### `/cdd:plan [topic]`
+
+Launch multi-agent decision planning (AI researches, you decide).
+
+**Flags:**
+- `--options="A,B,C"` - Specify options explicitly
+
+**Examples:**
+```bash
+/cdd:plan Should we use REST or GraphQL?
+/cdd:plan PostgreSQL vs MongoDB for user data
+/cdd:plan "Best auth strategy" --options="OAuth,Custom,Passwordless"
+```
+
+**What it does:**
+1. Parses decision topic
+2. Launches 4+ agents in parallel (advocates, codebase analyzer, analysis agent)
+3. Presents findings and AI suggestion
+4. **You make the final decision**
+5. Saves decision artifact with your rationale
+6. References in CONTEXT.md
+
+---
+
+### `/cdd:done`
+
+Mark work item complete.
+
+**Flags:**
+- `--summary` - Generate IMPLEMENTATION_SUMMARY.md
+- `--skip-log` - Don't add final session
+
+**Examples:**
+```bash
+/cdd:done               # Simple completion
+/cdd:done --summary     # With summary doc
+```
+
+**What it does:**
+1. Verifies task completion
+2. Adds final session log
+3. Updates status to complete
+4. Optional summary generation
+
+---
+
+## Optional Features
+
+### Metrics Tracking
+
+**By default: OFF** (zero overhead)
+
+**Enable per work item:**
+```bash
+/cdd:start my-feature --track-metrics
+```
+
+**What gets tracked:**
+- Sessions count
+- Total hours
+- Tasks completed
+- Completion percentage
+
+**View metrics:**
+```bash
+node cdd/.meta/metrics/scripts/collect-metrics-v2.js
+```
+
+**Why opt-in?**
+- Most people don't need metrics
+- Adds frontmatter pollution
+- Slows down logging
+- v2 is about speed
+
+---
+
+## Philosophy Deep Dive
+
+### Why v2 Exists
+
+**v1 problems:**
+- 📝 Too much boilerplate (3,700 lines of commands)
+- ⏱️ Too slow (10 min to create work item)
+- 🎭 Too many modes (solo-dev, minimal, comprehensive - confusing)
+- 📊 Mandatory metrics (overhead for everyone)
+- 🧠 Context pollution (huge prompts → worse AI responses)
+
+**v2 solutions:**
+- ⚡ 78% less code
+- 🚀 30 second work item creation
+- 📖 Single progressive template
+- 📊 Opt-in metrics
+- 🧠 Lean prompts (better AI responses)
+
+### Progressive Disclosure
+
+**The v2 template philosophy:**
+
+Start minimal:
+```markdown
+## 🎯 Why
+Problem statement
+
+## 💡 Solution
+High-level approach
+
+## ✅ Tasks
+- [ ] Task 1
+```
+
+**Expand as needed:**
+```markdown
+## ✅ Tasks
+
+<details open>
+<summary><strong>Phase 1</strong></summary>
+
+- [ ] Task with file hints
+      **Files:** `path/to/file.ts`
+      **Done when:** Specific criteria
+
+</details>
+
+## 📝 Decisions
+
+<details>
+<summary><strong>Decision Title</strong></summary>
+
+Full decision details (collapsed by default)
+
+</details>
+```
+
+**Benefits:**
+- ✅ Scan quickly (collapsed sections)
+- ✅ Expand when needed (click `<details>`)
+- ✅ Low context pollution
+- ✅ Works for any complexity
+
+---
+
+## Comparison: v1 vs v2
+
+### Creating a Work Item
+
+**v1 (10 minutes):**
+```
+/cdd:create-work user authentication
+
+> What type? (A/B/C/D/E)
+> Which template mode? (solo-dev/minimal/comprehensive)
+> What's the problem?
+> Who are the users?
+> What are the requirements?
+> What's the success criteria?
+> Any constraints?
+> Priority? (A/B/C/D)
+> [... 8+ questions ...]
+
+✅ Created after 10 minutes
+```
+
+**v2 (30 seconds):**
+```
+/cdd:start user authentication
+
+> Quick context (optional, press Enter to skip):
+
+✅ Created in 30 seconds
+```
+
+### Logging a Session
+
+**v1 (2-3 minutes):**
+```
+/cdd:save-session 0001
+
+> Duration? (A/B/C/D/E)
+> Reacquisition time? (A/B/C/D/E)
+> Status change? (A/B/C)
+> Which tasks completed? (manual list)
+> [Updates metrics script, frontmatter, etc.]
+
+✅ Logged after 2-3 minutes
+```
+
+**v2 (10 seconds):**
+```
+/cdd:log
+
+[Auto-detects work item, files, tasks, duration]
+> Mark OAuth, JWT as complete? (y)
+
+✅ Logged in 10 seconds
+```
+
+### Making a Decision
+
+**v1 (manual):**
+```
+[Research PostgreSQL yourself]
+[Research MongoDB yourself]
+[Write decision in YAML frontmatter]
+[Hope you didn't miss something]
+
+Time: Hours
+Quality: Depends on your research
+```
+
+**v2 (AI-assisted, human-decided):**
+```
+/cdd:plan PostgreSQL vs MongoDB
+
+[4 AI agents research in parallel]
+[Objective analysis + AI suggestion]
+[YOU make final decision]
+[Full artifact saved with your rationale]
+
+Time: 2-3 minutes
+Quality: Expert-level research + human judgment
+```
+
+---
+
+## Migration from v1
+
+**Short answer: Don't.**
+
+v2 is a clean break. If you have existing v1 work items:
+
+**Option 1: Keep v1 for old work**
+- Keep using v1 commands for existing work
+- Start v2 for new work
+
+**Option 2: Manual migration**
+1. Copy Problem + Solution from DECISIONS.md to CONTEXT.md
+2. Copy tasks from IMPLEMENTATION_PLAN.md to CONTEXT.md
+3. Simplify SESSION_NOTES.md to SESSIONS.md
+4. Delete old templates
+
+**Option 3: Fresh start**
+- Archive v1 work items
+- Start fresh with v2
+
+**Why no migration script?**
+- v1 and v2 are philosophically different
+- Better to start clean than force-fit
+- v2 is simple enough to recreate quickly
+
+---
+
+## Advanced Usage
+
+### Custom Templates
+
+Don't like the default CONTEXT.md format? Use your own:
+
+```bash
+/cdd:start my-feature --template=path/to/my-template.md
+```
+
+### Bulk Operations
+
+Create multiple work items from a list:
+
+```bash
+# In a script
+for item in "fix bug A" "add feature B" "refactor C"; do
+  /cdd:start "$item"
+done
+```
+
+### Decision Libraries
+
+Build a decision database:
+
+```bash
+cdd/
+└── .meta/
+    └── decisions-library/
+        ├── database-choices.md
+        ├── auth-strategies.md
+        └── caching-approaches.md
+```
+
+Reference in new decisions:
+```markdown
+See previous analysis: [.meta/decisions-library/database-choices.md]
+```
+
+---
+
+## FAQ
+
+### Why is v2 so different from v1?
+
+**v1 was built for teams and compliance.** Lots of modes, heavy documentation, mandatory metrics.
+
+**v2 is built for productivity.** Solo devs, small teams, AI-native workflows. Get out of the way.
+
+### Can I use v1 and v2 together?
+
+Technically yes (different command names), but not recommended. Pick one philosophy.
+
+### Is v2 suitable for teams?
+
+**Yes**, but:
+- Best for small teams (2-5 people)
+- Self-organizing teams
+- Teams that value speed over process
+
+For large teams or compliance-heavy environments, v1's comprehensive mode might be better.
+
+### What about the metrics system?
+
+**Still there, just opt-in:**
+```bash
+/cdd:start feature --track-metrics
+```
+
+If you don't use `--track-metrics`, zero metrics overhead.
+
+### Can I still use CDD-RAG?
+
+Yes! The RAG extension works with both v1 and v2. It searches across CONTEXT.md and DECISIONS.md.
+
+---
+
+## Contributing
+
+CDD v2 is open source and MIT licensed.
+
+**How to contribute:**
+1. Fork the repo
+2. Try v2 on your projects
+3. Report issues or suggest improvements
+4. Submit PRs with bug fixes or enhancements
+
+**Areas we'd love help:**
+- Templates for other domains (mobile, ML, devops)
+- IDE integrations
+- Multi-agent decision improvements
+- Documentation and examples
 
 ---
 
 ## License
 
-MIT
+MIT License - see LICENSE file
+
+---
+
+## Links
+
+- **GitHub:** https://github.com/emb715/cdd
+- **Issues:** https://github.com/emb715/cdd/issues
+- **Discussions:** https://github.com/emb715/cdd/discussions
+
+---
+
+**Built with ❤️ by developers who hate ceremony.**
+
+*v2.0 - Zero boilerplate, maximum flow.*

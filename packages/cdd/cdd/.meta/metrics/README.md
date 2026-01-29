@@ -53,7 +53,7 @@
 
 ## 4. Findings & Conclusions
 
-- Pending first data capture. Once sessions exist, summarise insights here and update README/CHANGELOG accordingly.
+- Pending first data capture. Once sessions exist, summarise insights here and update README accordingly.
 
 ## 5. Automation & Scripts
 

@@ -6,49 +6,11 @@ version: 2.0.0
 
 # /cdd:plan - AI-Assisted Decision Planning (v2)
 
-> **Philosophy:** Hard decisions deserve thorough research. AI agents research in parallel, analyze trade-offs objectively, and help YOU make informed decisions.
+Multi-agent parallel research for hard technical decisions.
 
-## Core Principle: Humans Decide, AI Assists
+**Human decides. AI researches, analyzes, suggests.**
 
-This command embodies CDD's core philosophy:
-
-**AI's Role:**
-- Research options thoroughly
-- Analyze codebase patterns
-- Compare trade-offs objectively
-- Suggest an option (as informed opinion, not directive)
-
-**Human's Role:**
-- Make the final decision
-- Provide reasoning and context
-- Override AI if human knowledge differs
-- Own the decision
-
-**Documentation's Role:**
-- Capture the decision process
-- Preserve human rationale
-- Enable future review
-
-This aligns with the three-phase workflow:
-- **PRDs:** Human defines WHAT and WHY
-- **Tasks:** Human approves HOW
-- **Sessions:** Human documents what happened
-- **Planning:** Human decides, AI researches
-
-## What This Does
-
-✅ Launches 4+ AI agents in parallel to analyze a decision
-✅ Each agent has a specific role (advocates, analyzer, synthesizer)
-✅ Generates comprehensive decision document
-✅ Saves artifact in `decisions/` folder
-✅ References decision in CONTEXT.md automatically
-✅ Provides evidence-based recommendation
-
-## What This Does NOT Do
-
-❌ No manual research (agents do the work)
-❌ No shallow analysis (deep dive by design)
-❌ No single perspective (multiple angles)
+Launches 4+ specialized agents to research options, analyze codebase context, compare trade-offs, and provide evidence-based recommendation. Final decision is always human-made with documented rationale.
 
 ## Usage
 
@@ -63,107 +25,43 @@ This aligns with the three-phase workflow:
 
 ### Step 1: Parse Decision Topic
 
-**Extract decision from user input:**
+Extract options from user input.
 
-**Patterns recognized:**
-- "Should we use X or Y?" → Binary choice (X vs Y)
-- "X vs Y for Z" → Binary choice with context
-- "Best approach for X" → Open-ended research
-- "Choose between X, Y, Z" → Multi-option
+Recognized patterns:
+- "Should we use X or Y?" - Binary choice
+- "X vs Y for Z" - Binary choice with context
+- "Best approach for X" - Open-ended (ask for options)
+- "Choose between X, Y, Z" - Multi-option
 
-**Examples:**
-- "REST or GraphQL?" → Options: [REST, GraphQL]
-- "PostgreSQL vs MongoDB" → Options: [PostgreSQL, MongoDB]
-- "Auth strategy" → Open-ended (will ask for options)
-
-**If options unclear:**
-```
-🤔 I need to understand the options.
-
-What are you deciding between?
-Example: "OAuth vs Custom Auth vs Passwordless"
-
-Your options:
-```
+If unclear, ask user to specify options.
 
 ### Step 2: Identify Decision Context
 
-**Auto-detect work item (if logged):**
-- Check conversation for active work item
-- Look for recent CONTEXT.md references
-- Ask if unclear
+Auto-detect active work item from conversation or CONTEXT.md.
 
-**Quick context gathering:**
-```
-📋 Decision: [Topic]
-
-Quick context (helps agents give better advice):
+Ask user for brief context (optional, 1-2 sentences each):
 1. Why is this decision needed now?
 2. Any constraints (time, budget, team)?
 3. What's the impact if we choose wrong?
 
-(1-2 sentences each, or skip with Enter)
-```
-
 ### Step 3: Launch Parallel Agents
 
-**Use Task tool to spawn agents simultaneously:**
+Use Task tool to spawn agents simultaneously.
 
-#### Agent Roles:
+Agent roles:
 
-**1. Advocate Agent A** (for Option A)
-```
-Role: Research and advocate for [Option A]
-Task: Find all the reasons why [Option A] is the best choice
-Output: Pros, cons, use cases, examples, recommendations
-```
+1. **Advocate Agent A** - Research and advocate for Option A (pros, cons, use cases, examples)
+2. **Advocate Agent B** - Research and advocate for Option B (pros, cons, use cases, examples)
+3. **Codebase Context Agent** - Analyze current patterns, dependencies, migration complexity, team familiarity
+4. **Analysis Agent** - Wait for 1-3, compare objectively, provide AI suggestion (not final decision)
 
-**2. Advocate Agent B** (for Option B)
-```
-Role: Research and advocate for [Option B]
-Task: Find all the reasons why [Option B] is the best choice
-Output: Pros, cons, use cases, examples, recommendations
-```
-
-**3. Codebase Context Agent**
-```
-Role: Analyze current codebase patterns and constraints
-Task:
-- Search for existing patterns related to decision
-- Check dependencies and libraries
-- Evaluate migration complexity
-- Assess team familiarity
-Output: Current state, patterns, dependencies, constraints
-```
-
-**4. Analysis Agent**
-```
-Role: Compare all findings objectively (does NOT make final decision)
-Task:
-- Wait for Agents 1-3 to complete
-- Analyze trade-offs objectively
-- Consider context and constraints
-- Present comparison with AI suggestion
-Output: Objective comparison + AI suggestion (NOT final decision)
-```
-
-**If 3+ options:** Spawn additional advocate agents
+For 3+ options, spawn additional advocate agents.
 
 ### Step 4: Agent Execution
 
-**Parallel execution:**
-```
-🤖 Launching multi-agent decision analysis...
+Agents execute in parallel. Estimated time: 2-3 minutes (longer for 3+ options).
 
-[Agent 1: REST Advocate] 🔄 Researching REST benefits...
-[Agent 2: GraphQL Advocate] 🔄 Researching GraphQL benefits...
-[Agent 3: Codebase Context] 🔄 Analyzing current API patterns...
-[Agent 4: Analysis] ⏸️  Waiting for input agents...
-
-⏱️  Estimated time: 2-3 minutes
-```
-
-**Agent prompts:**
+Agent prompts:
 
 #### Advocate Agent Template:
 ```markdown
@@ -262,469 +160,92 @@ DO provide objective comparison to help human decide.
 
 ### Step 5: Collect Agent Results
 
-**Wait for all agents to complete:**
-```
-✅ [Agent 1: REST Advocate] Complete
-✅ [Agent 2: GraphQL Advocate] Complete
-✅ [Agent 3: Codebase Context] Complete
-✅ [Agent 4: Analysis] Complete
-
-📊 Analyzing results...
-```
-
-**Parse agent outputs:**
-- Extract key findings from each advocate
-- Extract codebase analysis
-- Extract AI analysis and suggestion
+Wait for all agents to complete. Parse outputs:
+- Key findings from each advocate
+- Codebase analysis
+- AI analysis and suggestion
 
 ### Step 6: Human Decision Capture
 
-**Present findings to human:**
+Present findings summary:
+- Option A: Strengths, drawbacks
+- Option B: Strengths, drawbacks
+- Codebase context: Key findings
+- AI suggestion: Option, confidence (High/Medium/Low), rationale, trade-offs
+- Reminder: "This is my suggestion based on analysis. You make the final decision."
 
-```
-📊 Multi-agent analysis complete!
+Prompt for decision:
+- A) Accept AI suggestion
+- B) Choose different option
+- C) Need more research
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔍 **FINDINGS SUMMARY:**
-
-**Option A: [OPTION_A_NAME]**
-✅ Strengths: [Key strengths from Agent 1]
-⚠️  Drawbacks: [Key drawbacks from Agent 1]
-
-**Option B: [OPTION_B_NAME]**
-✅ Strengths: [Key strengths from Agent 2]
-⚠️  Drawbacks: [Key drawbacks from Agent 2]
-
-**Codebase Context:**
-📁 [Key findings from Agent 3]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🤖 **AI SUGGESTION:** [SUGGESTED_OPTION]
-
-**Confidence:** 🟢/🟡/🔴 [High/Medium/Low]
-
-**Rationale:**
-1. [Reason 1]
-2. [Reason 2]
-3. [Reason 3]
-
-**Trade-offs accepted:**
-- [Trade-off 1]
-- [Trade-off 2]
-
-⚠️  This is my suggestion based on analysis. You make the final decision.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-**Prompt human for decision:**
-
-```
-💭 What's your decision?
-
-Options:
-A) Accept AI suggestion: [SUGGESTED_OPTION]
-B) Choose different option: [OTHER_OPTIONS]
-C) Need more research (specify what)
-
-Your choice (A/B/C):
-```
-
-**If user chooses A (Accept):**
-```
-✅ Decision: [SUGGESTED_OPTION] (AI suggestion accepted)
-
-Why did you choose this? (optional context):
-> [User provides reasoning or presses Enter]
-```
-
-**If user chooses B (Different option):**
-```
-✅ Decision: [USER_CHOSEN_OPTION]
-
-Why did you choose this instead? (helps document your reasoning):
-> [User explains their rationale]
-```
-
-**If user chooses C (More research):**
-```
-🔄 What additional research is needed?
-> [User specifies]
-
-[Spawn additional agents or provide more context]
-```
-
-**Capture final decision:**
-- **Decision:** [User's chosen option]
-- **AI Suggestion Was:** [What AI suggested]
-- **Human Rationale:** [Why human chose this]
-- **Decision Maker:** Human (AI-assisted)
+Capture:
+- User's chosen option
+- AI suggestion (for comparison)
+- Human rationale
+- Decision maker: Human (AI-assisted)
 
 ### Step 7: Generate Decision Document
 
-**Create decision artifact:**
+Create: `decisions/YYYY-MM-DD-[topic-kebab-case].md`
 
-Filename: `decisions/YYYY-MM-DD-[topic-kebab-case].md`
+Use template: `cdd/.meta/templates/v2/decisions/DECISION_TEMPLATE.md`
 
-Example: `decisions/2024-01-15-rest-vs-graphql.md`
-
-**Use template from:**
-`cdd/.meta/templates/v2/decisions/DECISION_TEMPLATE.md`
-
-**Populate sections:**
-- Context → User-provided context
-- Option A → Agent 1 findings
-- Option B → Agent 2 findings
-- Codebase Context → Agent 3 findings
-- AI Analysis → Agent 4 analysis and suggestion
-- Final Decision → Human's decision with rationale
+Populate:
+- Context (user-provided)
+- Option A (Agent 1 findings)
+- Option B (Agent 2 findings)
+- Codebase Context (Agent 3 findings)
+- AI Analysis (Agent 4 analysis and suggestion)
+- Final Decision (human's decision with rationale)
 
 ### Step 8: Update CONTEXT.md
 
-**Add reference in Decisions section:**
-
-```markdown
-## 📝 Decisions
-
-<details>
-<summary><strong>2024-01-15: REST vs GraphQL for API</strong></summary>
-
-**Decision:** REST
-
-**Rationale:** Better fit for team expertise, simpler caching, existing tooling
-
-**Trade-offs:** More endpoints to maintain, potential over/under-fetching
-
-**See full analysis:** [decisions/2024-01-15-rest-vs-graphql.md](decisions/2024-01-15-rest-vs-graphql.md)
-
-</details>
-```
+Add reference in Decisions section with summary and link to full analysis.
 
 ### Step 9: Present Results
 
-**Show summary to user:**
+Show summary:
+- Agents consulted (count)
+- Decision maker: Human
+- File saved location
+- Human decision with rationale
+- AI suggestion (accepted/overridden)
+- Key supporting evidence
+- Trade-offs accepted
+- Implementation next steps
+- Link to full analysis
 
-```
-✅ Decision documented!
-
-🤖 Consulted: 4 specialist agents
-👤 Decision made by: You
-📄 Saved to: decisions/2024-01-15-rest-vs-graphql.md
-📝 Referenced in: CONTEXT.md
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-👤 **YOUR DECISION: REST**
-
-**Your Rationale:**
-"Better fit for our team's expertise and existing tooling. While GraphQL has appeal, the learning curve and migration complexity outweigh the benefits for our current use case."
-
-**AI Suggested:** REST (you accepted the suggestion)
-
-**Key Supporting Evidence:**
-1. Team has strong REST experience (evidence in existing APIs)
-2. Simpler caching strategy with existing tools
-3. Lower learning curve for new developers
-4. Swagger docs already in place
-
-**Trade-offs You Accepted:**
-- More endpoints to maintain vs. single GraphQL endpoint
-- Potential over/under-fetching vs. precise queries
-- Less flexible for evolving client needs
-
-**Implementation Next Steps:**
-- Build RESTful API with standard patterns
-- Use existing Express.js setup
-- Document with Swagger (already configured)
-- Plan for versioning (e.g., /v1/, /v2/)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📖 Read full analysis with all agent findings:
-   decisions/2024-01-15-rest-vs-graphql.md
-
-💬 Want to revisit this decision? Just ask.
-```
-
-## Examples
-
-### Example 1: Binary Choice
+## Example
 
 **Input:**
 ```
 /cdd:plan Should we use PostgreSQL or MongoDB for user preferences?
 ```
 
-**AI:**
-```
-🤖 Launching multi-agent decision analysis...
+**Process:**
+1. Detect options: PostgreSQL, MongoDB
+2. Ask for brief context
+3. Launch 4 agents in parallel (~2 min)
+4. Present findings summary with AI suggestion (e.g., PostgreSQL - High confidence)
+5. User chooses A (accept), B (different), or C (more research)
+6. Capture human rationale
+7. Save to `decisions/2024-01-15-postgres-vs-mongo.md`
+8. Update CONTEXT.md with reference
 
-Decision: PostgreSQL vs MongoDB
-Work Item: 0001-user-preferences
+## Confidence Levels
 
-Quick context (optional):
-1. Why is this decision needed now?
-```
+- High: Clear winner, strong evidence, low risk
+- Medium: Close call, depends on priorities, some risk
+- Low: Unclear, need more research, high uncertainty
 
-**User:** `Need to choose before implementing data layer. Preferences are mostly key-value but might get complex.`
+## Tools & Files
 
-**AI:**
-```
-🤖 Launching 4 agents in parallel...
+Tools used: Task (spawn agents), Grep (codebase analysis), Read, Write, Edit
 
-[Agent 1: PostgreSQL Advocate] 🔄 Researching...
-[Agent 2: MongoDB Advocate] 🔄 Researching...
-[Agent 3: Codebase Context] 🔄 Analyzing current db setup...
-[Agent 4: Analysis] ⏸️  Waiting...
+Files created: `cdd/XXXX-work-name/decisions/YYYY-MM-DD-topic.md`
+Files updated: `cdd/XXXX-work-name/CONTEXT.md`
 
-⏱️  ~2 minutes...
+Timing: Binary (2 min), Multi-option 3+ (3-4 min), Open research (5 min)
 
-[2 minutes later]
-
-✅ Analysis complete!
-
-🤖 AI SUGGESTION: PostgreSQL
-Confidence: 🟢 High
-
-Key Reasons:
-1. You already use Postgres for users table (Agent 3 found schema.prisma)
-2. JSONB handles key-value flexibility
-3. Strong typing prevents data quality issues
-4. Team familiar with SQL (migrations in repo)
-
-Trade-offs:
-- Slightly more complex for pure key-value
-- MongoDB might be faster for document writes
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💭 What's your decision?
-A) Accept AI suggestion: PostgreSQL
-B) Choose different: MongoDB
-C) Need more research
-
-Your choice: A
-
-✅ Decision: PostgreSQL (AI suggestion accepted)
-
-Why did you choose this? (optional):
-> "Makes sense to stick with what we already use. JSONB solves flexibility."
-
-📄 Decision saved: decisions/2024-01-15-postgres-vs-mongo.md
-```
-
-### Example 2: Multi-Option
-
-**Input:**
-```
-/cdd:plan Choose auth strategy --options="OAuth,Custom,Passwordless"
-```
-
-**AI:**
-```
-🤖 Launching 5 agents (3 advocates + codebase + analysis)...
-
-[Agent 1: OAuth Advocate] 🔄
-[Agent 2: Custom Auth Advocate] 🔄
-[Agent 3: Passwordless Advocate] 🔄
-[Agent 4: Codebase Context] 🔄
-[Agent 5: Analysis] ⏸️
-
-⏱️  ~3 minutes (more options = more research)...
-
-[3 minutes later]
-
-✅ Analysis complete!
-
-🤖 AI SUGGESTION: OAuth (Google + GitHub)
-Confidence: 🟡 Medium
-
-Key Reasons:
-1. Reduces security liability (no password storage)
-2. Users prefer existing accounts (UX win)
-3. Industry standard, well-supported libraries
-
-Trade-offs:
-- Dependency on external providers
-- More complex initial setup
-- Requires internet connection
-
-⚠️  Medium confidence because:
-- Passwordless is compelling for UX
-- Custom auth gives full control
-- Decision depends on user base (revisit if internal tool)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💭 What's your decision?
-A) Accept: OAuth
-B) Choose: Custom or Passwordless
-C) More research
-
-Your choice: B (Passwordless)
-
-Why Passwordless instead?
-> "Our user base is tech-savvy. Passwordless provides better UX without third-party dependencies. We can always add OAuth later."
-
-✅ Decision: Passwordless (overrode AI suggestion)
-
-📄 Decision saved: decisions/2024-01-15-auth-strategy.md
-```
-
-### Example 3: Open-Ended Research
-
-**Input:**
-```
-/cdd:plan Best caching strategy for our API
-```
-
-**AI:**
-```
-🤔 I need to understand the options.
-
-What caching approaches are you considering?
-(Or type "research" for me to suggest options)
-```
-
-**User:** `research`
-
-**AI:**
-```
-🔄 Researching caching strategies...
-
-[Agent: Caching Research] Analyzing...
-
-Found common strategies:
-1. Redis (in-memory cache)
-2. CDN caching (edge caching)
-3. Application-level (in-process)
-4. Database query cache
-
-Should I analyze all 4? (y) or specify subset? (e.g., "Redis,CDN")
-```
-
-**User:** `y`
-
-**AI:**
-```
-🤖 Launching 6 agents (4 advocates + codebase + analysis)...
-
-[Parallel analysis of all 4 options]
-
-✅ Analysis complete!
-
-🤖 AI SUGGESTION: Redis + CDN (hybrid approach)
-
-[Analysis summary with human decision dialogue...]
-
-✅ Your Decision: Redis + CDN (hybrid approach)
-```
-
-## Advanced Features
-
-### Codebase-Aware Recommendations
-
-**Agent 3 uses actual code analysis:**
-
-```bash
-# Searches codebase
-grep -r "database" src/
-grep -r "import.*postgres" src/
-cat package.json  # Check deps
-
-# Findings inform recommendation
-```
-
-**Example output:**
-```
-Codebase Context Agent found:
-- Existing Postgres connection in src/db/
-- Prisma ORM already configured
-- No MongoDB dependencies
-- Team has 12 Postgres migrations
-
-→ Strong preference for Postgres due to existing investment
-```
-
-### Confidence Levels
-
-**High (🟢):** Clear winner, strong evidence, low risk
-**Medium (🟡):** Close call, depends on priorities, some risk
-**Low (🔴):** Unclear, need more research, high uncertainty
-
-### Review Triggers
-
-**Decision document includes:**
-```markdown
-## 🔄 Review Triggers
-
-Revisit this decision if:
-- [ ] User base grows 10x (scale considerations)
-- [ ] Team adds GraphQL experience
-- [ ] Performance becomes critical (< 100ms requirement)
-
-Last reviewed: 2024-01-15
-```
-
-## Error Handling
-
-**If no options provided:**
-```
-❌ Please specify what you're deciding between.
-
-Examples:
-- /cdd:plan "REST or GraphQL?"
-- /cdd:plan "PostgreSQL vs MongoDB"
-- /cdd:plan --options="A,B,C" [topic]
-```
-
-**If agents fail:**
-```
-⚠️  Agent 2 (GraphQL Advocate) failed to complete.
-
-Proceeding with remaining agents...
-Recommendation will note reduced confidence.
-```
-
-**If no work item active:**
-```
-💡 No active work item detected.
-
-Decision will be saved to:
-  decisions/2024-01-15-[topic].md
-
-Want to associate with a work item? (y/n)
-```
-
-## Implementation Notes
-
-**Total length target:** ~300 lines
-
-**Key innovation:**
-- Multi-agent parallel execution (new capability)
-- Codebase-aware analysis (searches actual code)
-- Synthesized recommendation (not just data dump)
-
-**Tools used:**
-- Task tool (spawn parallel agents)
-- Grep tool (codebase analysis by Agent 3)
-- Read tool (read existing files for context)
-- Write tool (save decision document)
-- Edit tool (update CONTEXT.md)
-
-**Timing:**
-- Binary choice: ~2 minutes
-- Multi-option (3+): ~3-4 minutes
-- Open research: ~5 minutes
-
-**Files created:**
-- `cdd/XXXX-work-name/decisions/YYYY-MM-DD-topic.md`
-
-**Files updated:**
-- `cdd/XXXX-work-name/CONTEXT.md` (adds reference)
-
----
-
-**Remember:** Use this for hard decisions. The multi-agent analysis is powerful but takes time. For simple choices, just decide and document in CONTEXT.md directly.
+Use for hard decisions. For simple choices, just decide and document in CONTEXT.md directly.

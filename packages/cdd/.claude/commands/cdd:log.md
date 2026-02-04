@@ -6,25 +6,6 @@ version: 2.0.0
 
 # /cdd:log - Save Session (v2)
 
-> **Philosophy:** Log your progress in 10 seconds. Auto-detect everything, minimal questions.
-
-## What This Does
-
-✅ Auto-detects work item from git changes
-✅ Infers completed tasks from file changes
-✅ Estimates session duration from conversation
-✅ Updates CONTEXT.md task checkboxes automatically
-✅ Appends minimal entry to SESSIONS.md
-✅ Optional metrics tracking (if enabled)
-
-## What This Does NOT Do
-
-❌ No duration questions (A/B/C/D/E - removed)
-❌ No reacquisition time tracking (removed)
-❌ No manual task selection (auto-inferred)
-❌ No metrics scripts unless --track-metrics
-❌ No extensive frontmatter updates
-
 ## Usage
 
 ```bash
@@ -37,7 +18,7 @@ version: 2.0.0
 
 ### Step 1: Auto-Detect Work Item
 
-**Strategy 1: From git changes**
+Strategy 1 - From git changes:
 ```bash
 git diff --name-only HEAD
 ```
@@ -46,15 +27,14 @@ Match changed files to work item folders:
 - If files in `cdd/0001-*/` → Work item 0001
 - If multiple work items touched → Ask user to pick
 
-**Strategy 2: From conversation history**
+Strategy 2 - From conversation history:
 - Check recent file reads/writes
 - Look for CONTEXT.md references
 - Find work item mentions
 
-**Strategy 3: Ask user**
-If unclear:
+Strategy 3 - Ask user if unclear:
 ```
-🔍 Which work item are you logging?
+Which work item are you logging?
 - 0001 - User Authentication (in-progress)
 - 0002 - Dark Mode Toggle (draft)
 - Other (specify ID or name)
@@ -62,13 +42,13 @@ If unclear:
 
 ### Step 2: Detect File Changes
 
-**Run git commands:**
+Run git commands:
 ```bash
 git diff --name-only HEAD  # Modified
 git ls-files --others --exclude-standard  # New files
 ```
 
-**Categorize changes:**
+Categorize changes:
 ```
 Created:
 - src/auth/oauth.ts
@@ -84,7 +64,7 @@ Deleted:
 
 ### Step 3: Match Files to Tasks
 
-**Read CONTEXT.md tasks section:**
+Read CONTEXT.md tasks section.
 
 Parse tasks with `**Files:**` hints:
 ```markdown
@@ -92,42 +72,42 @@ Parse tasks with `**Files:**` hints:
       **Files:** `src/auth/oauth.ts`, `src/auth/providers/*.ts`
 ```
 
-**Match detected files to task files:**
+Match detected files to task files:
 - `src/auth/oauth.ts` created → Matches "Setup OAuth provider"
 - Exact match or glob pattern match
 
-**Build completion suggestions:**
+Build completion suggestions:
 ```
 Detected completions:
-✅ Setup OAuth provider (src/auth/oauth.ts created)
-✅ Create JWT service (src/auth/jwt.ts created)
+- Setup OAuth provider (src/auth/oauth.ts created)
+- Create JWT service (src/auth/jwt.ts created)
 ```
 
 ### Step 4: Confirm with User
 
-**Show detection results:**
+Show detection results:
 ```
-📝 Logging session for: 0001-user-authentication
+Logging session for: 0001-user-authentication
 
-🔍 Auto-detected changes:
+Auto-detected changes:
 
-✅ Completed (auto-detected):
+Completed (auto-detected):
   - Setup OAuth provider
   - Create JWT service
 
-🔄 Modified:
+Modified:
   - Auth config updated
   - Dependencies added
 
 Mark these as complete? (y/n/edit)
 ```
 
-**Options:**
+Options:
 - `y` - Accept all suggestions
 - `n` - I'll tell you what's done
 - `edit` - Let me adjust
 
-**If user chooses 'edit':**
+If user chooses 'edit':
 ```
 Which tasks completed? (comma-separated or checkboxes)
 
@@ -141,11 +121,11 @@ Or type task names: "OAuth, JWT"
 
 ### Step 5: Estimate Session Duration
 
-**Use conversation timestamps:**
+Use conversation timestamps:
 - First message in session → Last message
 - Calculate hours elapsed
 
-**If unclear, quick ask:**
+If unclear, quick ask:
 ```
 Session duration? (quick estimate)
 - 1h
@@ -156,38 +136,38 @@ Session duration? (quick estimate)
 
 ### Step 6: Generate Session Entry
 
-**Create minimal session log:**
+Create minimal session log:
 ```markdown
 ---
 
 ## 2024-01-15 14:30 (1.5h)
 
-✅ **Completed:**
+Completed:
 - Setup OAuth provider
 - Create JWT service
 
-🔄 **In Progress:**
+In Progress:
 - Add login UI (started, 20% done)
 
-📝 **Next:**
+Next:
 - Finish login UI component
 - Write tests for OAuth flow
 
 ---
 ```
 
-**Optional sections (only if present):**
+Optional sections (only if present):
 ```markdown
-🐛 **Issues:**
+Issues:
 - CORS error with Google OAuth (fixed by adding origin to config)
 
-💡 **Notes:**
+Notes:
 - JWT expiry set to 7 days (consider making configurable)
 ```
 
 ### Step 7: Update CONTEXT.md
 
-**Mark completed tasks:**
+Mark completed tasks:
 ```markdown
 # Before
 - [ ] Setup OAuth provider
@@ -196,7 +176,7 @@ Session duration? (quick estimate)
 - [x] Setup OAuth provider
 ```
 
-**Update phase completion counts:**
+Update phase completion counts:
 ```markdown
 # Before
 <summary><strong>Phase 1: Foundation</strong> (0/3 complete)</summary>
@@ -205,8 +185,7 @@ Session duration? (quick estimate)
 <summary><strong>Phase 1: Foundation</strong> (2/3 complete)</summary>
 ```
 
-**If metrics enabled:**
-Update frontmatter:
+If metrics enabled, update frontmatter:
 ```yaml
 metrics:
   sessions: 1  # Increment
@@ -217,203 +196,120 @@ metrics:
 
 ### Step 8: Append to SESSIONS.md
 
-**Read current SESSIONS.md**
+Read current SESSIONS.md.
 
-**Find insertion point:**
+Find insertion point:
 - After front matter
 - Before "Template" section
 - At top of session history
 
-**Append new entry** with `---` separator
+Append new entry with `---` separator.
 
 ### Step 9: Confirm
 
-**Show concise summary:**
+Show concise summary:
 ```
-✅ Session logged!
+Session logged!
 
-📁 Work: 0001-user-authentication
-⏱️  Duration: 1.5h
-✅ Completed: 2 tasks
-📊 Progress: 25% → 50% (+25%)
+Work: 0001-user-authentication
+Duration: 1.5h
+Completed: 2 tasks
+Progress: 25% → 50% (+25%)
 
 Updated:
-  ✓ CONTEXT.md (2 tasks marked complete)
-  ✓ SESSIONS.md (new entry appended)
+  CONTEXT.md (2 tasks marked complete)
+  SESSIONS.md (new entry appended)
 
-📝 Next priorities:
+Next priorities:
   1. Finish login UI component
   2. Write tests for OAuth flow
 
 Use /cdd:log again after your next work session.
 ```
 
-## Examples
+## Example
 
-### Example 1: Auto-Detection Success
-
-**Input:**
+Input:
 ```
 /cdd:log
 ```
 
-**AI:**
+AI:
 ```
-🔍 Auto-detected: 0001-user-authentication
+Auto-detected: 0001-user-authentication
 
-📝 Files changed:
+Files changed:
   Created: src/auth/oauth.ts, src/auth/jwt.ts
   Modified: src/config/auth.config.ts
 
-✅ Completed (inferred):
+Completed (inferred):
   - Setup OAuth provider
   - Create JWT service
 
 Mark these as complete? (y/n/edit)
 ```
 
-**User:** `y`
+User: `y`
 
-**AI:**
+AI:
 ```
-✅ Session logged!
+Session logged!
 
-📁 Work: 0001-user-authentication
-⏱️  Duration: 1.5h (estimated from conversation)
-✅ Completed: 2 tasks
-📊 Progress: 0% → 25%
+Work: 0001-user-authentication
+Duration: 1.5h (estimated from conversation)
+Completed: 2 tasks
+Progress: 0% → 25%
 
 Updated files:
-  ✓ CONTEXT.md
-  ✓ SESSIONS.md
+  CONTEXT.md
+  SESSIONS.md
 ```
 
-### Example 2: Manual Specification
+## File-to-Task Matching
 
-**Input:**
-```
-/cdd:log 0002
-```
-
-**AI:**
-```
-📝 Logging for: 0002-dark-mode-toggle
-
-No file changes detected. What did you work on?
-
-(Describe briefly, or list task names)
-```
-
-**User:** `Research dark mode patterns, decided on CSS variables approach`
-
-**AI:**
-```
-✅ Session logged!
-
-📝 Logged research session (30min estimated)
-
-Next: Start implementation with CSS variables
-```
-
-### Example 3: Multiple Work Items
-
-**Input:**
-```
-/cdd:log
-```
-
-**AI:**
-```
-🔍 Detected changes in multiple work items:
-
-1. 0001-user-authentication (3 files)
-2. 0003-database-refactor (2 files)
-
-Which are you logging? (1, 2, or both)
-```
-
-**User:** `1`
-
-**AI:**
-```
-📝 Logging for 0001-user-authentication only...
-[continues with normal flow]
-```
-
-## Smart Features
-
-### File-to-Task Matching
-
-**Exact match:**
+Exact match:
 ```markdown
 Task files: src/auth/oauth.ts
 Changed: src/auth/oauth.ts
 → 100% match
 ```
 
-**Glob pattern:**
+Glob pattern:
 ```markdown
 Task files: src/auth/providers/*.ts
 Changed: src/auth/providers/google.ts
 → Glob match
 ```
 
-**Partial match:**
+Partial match:
 ```markdown
 Task files: src/components/Login.tsx
 Changed: src/components/Login.tsx, src/components/Login.test.tsx
 → Partial match (suggest both task + tests done)
 ```
 
-### Session Duration Estimation
-
-**From conversation timestamps:**
-- If clear session start/end → Calculate
-- If unclear → Quick ask
-
-**Defaults:**
-- Single message exchange → 15min
-- Extended conversation → 1h
-- If git commits → Use commit timestamps
-
-### Progress Calculation
-
-**Count tasks:**
-```
-Total tasks: 8
-Completed: 4
-Progress: 50%
-```
-
-**Phase-level:**
-```
-Phase 1: 3/3 (100%)
-Phase 2: 1/5 (20%)
-Overall: 4/8 (50%)
-```
-
 ## Error Handling
 
-**No git repository:**
+No git repository:
 ```
-⚠️  Not a git repository. Cannot auto-detect changes.
+Not a git repository. Cannot auto-detect changes.
 
 Which work item are you logging?
 [fallback to manual selection]
 ```
 
-**No changes detected:**
+No changes detected:
 ```
-ℹ️  No file changes detected.
+No file changes detected.
 
 Did you work on research/planning? (y/n)
 
 [If yes, allow manual session log]
 ```
 
-**Work item not found:**
+Work item not found:
 ```
-❌ Work item 0099 not found.
+Work item 0099 not found.
 
 Available work items:
 - 0001 - User Authentication
@@ -424,9 +320,7 @@ Try: /cdd:log 0001
 
 ## Metrics (Optional)
 
-**If --track-metrics was enabled in /cdd:start:**
-
-Update frontmatter automatically:
+If --track-metrics was enabled in /cdd:start, update frontmatter automatically:
 ```yaml
 metrics:
   sessions: 3  # +1
@@ -434,35 +328,11 @@ metrics:
   tasks_completed: 6  # +2
 ```
 
-**If metrics NOT enabled:**
-Skip all metrics updates (zero overhead)
+If metrics NOT enabled: Skip all metrics updates (zero overhead).
 
-## Implementation Notes
-
-**Total length target:** ~200 lines (vs v1's 973 lines)
-
-**Key simplifications:**
-- No duration questions (removed ~50 lines)
-- No reacquisition tracking (removed ~80 lines)
-- No manual task selection loop (removed ~150 lines)
-- No metrics script execution (removed ~100 lines)
-- No extensive validation (removed ~200 lines)
-
-**Git commands used:**
+Git commands used:
 ```bash
 git diff --name-only HEAD
 git ls-files --others --exclude-standard
 git log -1 --format=%ct  # For timestamp
 ```
-
-**Files to read:**
-- `cdd/XXXX-work-name/CONTEXT.md` - Task list
-- `cdd/XXXX-work-name/SESSIONS.md` - Append target
-
-**Files to write:**
-- `cdd/XXXX-work-name/CONTEXT.md` - Update checkboxes
-- `cdd/XXXX-work-name/SESSIONS.md` - Append entry
-
----
-
-**Remember:** Log fast, log often. Every session counts, no matter how small.

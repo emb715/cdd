@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/emb715/cdd/tree/main/packages/cdd-rag#readme",
   "peerDependencies": {
-    "@emb715/cdd": "^0.1.0"
+    "@emb715/cdd": "*"
   },
   "files": [
     "cdd/",

@@ -83,7 +83,7 @@ async function initCDD(args) {
     const v2Commands = [
       'cdd:start.md',
       'cdd:log.md',
-      'cdd:decide.md',
+      'cdd:plan.md',
       'cdd:done.md'
     ];
 
@@ -134,7 +134,7 @@ async function initCDD(args) {
     console.log('📚 What\'s New in v2.0:');
     console.log('   • Single progressive template (no more modes!)');
     console.log('   • Unified CONTEXT.md (DECISIONS + IMPLEMENTATION_PLAN)');
-    console.log('   • Multi-agent decision making (/cdd:decide)');
+    console.log('   • Multi-agent decision making (/cdd:plan)');
     console.log('   • Zero-ceremony logging (/cdd:log)');
     console.log('   • Optional metrics (--track-metrics flag)');
     console.log('');
@@ -143,7 +143,7 @@ async function initCDD(args) {
     console.log('   2. Create work:   /cdd:start [description]');
     console.log('   3. Make progress: (code, code, code...)');
     console.log('   4. Log session:   /cdd:log');
-    console.log('   5. Hard decision: /cdd:decide [topic]');
+    console.log('   5. Hard decision: /cdd:plan [topic]');
     console.log('   6. Finish:        /cdd:done');
     console.log('');
     console.log('📖 Documentation:');
@@ -188,7 +188,7 @@ Quick Start:
   npx @emb715/cdd init          # Set up CDD v2
   /cdd:start my-feature         # Create work item (in Claude)
   /cdd:log                      # Log session (in Claude)
-  /cdd:decide "topic"           # Multi-agent decision (in Claude)
+  /cdd:plan "topic"             # Multi-agent decision (in Claude)
   /cdd:done                     # Mark complete (in Claude)
 
 What's New in v2.0:

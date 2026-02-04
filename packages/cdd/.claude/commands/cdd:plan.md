@@ -53,10 +53,10 @@ This aligns with the three-phase workflow:
 ## Usage
 
 ```bash
-/cdd:decide [topic/question]
-/cdd:decide "Should we use REST or GraphQL?"
-/cdd:decide "PostgreSQL vs MongoDB for user data"
-/cdd:decide --options="A,B,C" [topic]
+/cdd:plan [topic/question]
+/cdd:plan "Should we use REST or GraphQL?"
+/cdd:plan "PostgreSQL vs MongoDB for user data"
+/cdd:plan --options="A,B,C" [topic]
 ```
 
 ## Process
@@ -675,9 +675,9 @@ Last reviewed: 2024-01-15
 ❌ Please specify what you're deciding between.
 
 Examples:
-- /cdd:decide "REST or GraphQL?"
-- /cdd:decide "PostgreSQL vs MongoDB"
-- /cdd:decide --options="A,B,C" [topic]
+- /cdd:plan "REST or GraphQL?"
+- /cdd:plan "PostgreSQL vs MongoDB"
+- /cdd:plan --options="A,B,C" [topic]
 ```
 
 **If agents fail:**

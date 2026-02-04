@@ -154,7 +154,7 @@ Copy template from `cdd/.meta/templates/v2/SESSIONS.md`
 
 💡 Commands:
   /cdd:log          - Save session
-  /cdd:decide [topic] - Multi-agent decision
+  /cdd:plan [topic] - Multi-agent decision
   /cdd:done         - Mark complete
 ```
 

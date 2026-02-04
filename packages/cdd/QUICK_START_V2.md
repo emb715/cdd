@@ -216,6 +216,133 @@ updated: 2024-01-16
 
 ---
 
+## Real Examples (Copy These!)
+
+### Example 1: Bug Fix Flow
+
+**Problem:** Login times out after 5 minutes
+
+```bash
+# Start
+/cdd:start fix login timeout after 5 minutes
+
+# Work...
+# (You investigate, find session expiry bug, fix it)
+
+# Log
+/cdd:log
+# AI: "Detected: auth.config.ts modified. Mark 'Fix session timeout' complete? (y)"
+# You: y
+
+# Done
+/cdd:done
+```
+
+**SESSIONS.md entry created:**
+```markdown
+## 2024-01-15 10:30 (1h)
+
+Completed:
+- Fix session timeout configuration
+
+Issue:
+- Session expiry set to 5min (should be 30min)
+
+Fix:
+- Updated auth.config.ts SESSION_TIMEOUT to 1800
+
+Next:
+- Monitor production logs
+```
+
+---
+
+### Example 2: Feature with Hard Decision
+
+**Problem:** Need caching layer, unsure which technology
+
+```bash
+# Start
+/cdd:start implement caching layer
+
+# Hit decision point
+/cdd:plan Redis vs Memcached vs in-memory cache
+
+# AI launches agents (2 min)...
+# 🤖 AI SUGGESTION: Redis (Confidence: 🟢 High)
+#    Evidence: You already use Redis for sessions, team knows it
+# 💭 Your decision? (A/B/C)
+
+# You: A (accept)
+
+# AI: "✅ YOUR DECISION: Redis. Saved to decisions/2024-01-15-caching.md"
+
+# Code based on decision...
+# (Implement Redis cache)
+
+# Log
+/cdd:log
+
+# Done
+/cdd:done --summary
+```
+
+**Decision artifact saved:**
+```
+cdd/0003-caching-layer/
+├── CONTEXT.md
+├── SESSIONS.md
+└── decisions/
+    └── 2024-01-15-caching-strategy.md
+```
+
+---
+
+### Task Auto-Detection Example
+
+**CONTEXT.md:**
+```markdown
+## ✅ Tasks
+
+- [ ] Setup OAuth provider
+      **Files:** `lib/auth/oauth.ts`
+- [ ] Add login UI
+      **Files:** `components/Login.tsx`, `components/Login.test.tsx`
+```
+
+**You work and create:**
+```
+lib/auth/oauth.ts (new)
+lib/auth/providers/google.ts (new)
+components/Login.tsx (new)
+components/Login.test.tsx (new)
+```
+
+**You run:**
+```bash
+/cdd:log
+```
+
+**AI detects:**
+```
+Auto-detected completions:
+✅ Setup OAuth provider
+   → lib/auth/oauth.ts created
+
+✅ Add login UI
+   → components/Login.tsx created
+   → components/Login.test.tsx created
+
+Mark both complete? (y/n)
+```
+
+**Smart matching:**
+- Exact: `lib/auth/oauth.ts` = `lib/auth/oauth.ts`
+- Related: Test file created alongside source = both complete
+- Glob: `lib/auth/providers/*.ts` matches any file in that folder
+
+---
+
 ## Common Workflows
 
 ### Workflow 1: Simple Feature
@@ -382,6 +509,23 @@ Reference past decisions:
 
 ---
 
+## ⏱️ Time Budget Reference
+
+| Task | Time | When |
+|------|------|------|
+| Create work item | 30 sec | Once per feature/bug |
+| Log session | 10 sec | After each work session |
+| Make simple decision | 0 sec | Just decide and document |
+| Multi-agent decision | 2-5 min | Hard technical choices |
+| Mark complete | 30 sec | When all tasks done |
+| Generate summary | 1 min | Optional at completion |
+
+**Rule of thumb:**
+- Use `/cdd:plan` when: "I'm not sure which is better, need research"
+- Just decide when: "I know what to do, just documenting it"
+
+---
+
 ## Troubleshooting
 
 ### "Work item not found"
@@ -418,6 +562,71 @@ git status
 **Solution:**
 - Retry: `/cdd:plan [topic]` again
 - Or simplify: Research manually, document in CONTEXT.md
+
+---
+
+## Anti-Patterns: What NOT to Do
+
+### ❌ Don't: Log every 5 minutes
+**Problem:** Noisy sessions log, overhead
+**Instead:** Log every 30-60 minutes or at natural breakpoints
+
+### ❌ Don't: Use /cdd:plan for simple choices
+**Problem:** Wastes 2-5 minutes on obvious decisions
+**Instead:** Just decide and add to CONTEXT.md Decisions section manually
+
+### ❌ Don't: Skip file hints in tasks
+**Problem:** Auto-detection can't match tasks
+**Instead:** Add `**Files:**` hints for auto-completion
+
+### ❌ Don't: Create work items for 5-minute changes
+**Problem:** Overhead > work
+**Instead:** Use CDD for features/bugs taking >30 minutes
+
+### ❌ Don't: Enable metrics for every work item
+**Problem:** Frontmatter pollution, slows logging
+**Instead:** Only use `--track-metrics` when you need data
+
+### ✅ Do: Keep CONTEXT.md focused
+**Why:** Long context = slower AI comprehension
+**How:** Use `<details>` for optional sections, keep Problem/Solution concise
+
+---
+
+## Cheat Sheet
+
+### Starting work
+```bash
+/cdd:start add dark mode toggle
+/cdd:start fix login bug --type=bug
+/cdd:start refactor API layer --track-metrics
+```
+
+### Logging progress
+```bash
+/cdd:log                    # Auto-detect everything
+/cdd:log 0001               # Specific work item
+/cdd:log --force            # Skip confirmations
+```
+
+### Making decisions
+```bash
+/cdd:plan Should we use REST or GraphQL?
+/cdd:plan "Best auth strategy" --options="OAuth,Custom,Magic Link"
+```
+
+### Finishing
+```bash
+/cdd:done                   # Simple
+/cdd:done --summary         # With documentation
+```
+
+### File hints for auto-detection
+```markdown
+- [ ] Task name
+      **Files:** `path/to/file.ts`
+      **Done when:** Tests passing
+```
 
 ---
 

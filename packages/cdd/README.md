@@ -254,6 +254,123 @@ Your rationale: "Matches our existing stack, makes sense."
 
 ---
 
+## How It Works Under the Hood
+
+### Auto-Detection Intelligence
+
+**Type Detection (from /cdd:start):**
+
+When you run `/cdd:start add user authentication`, CDD scans for keywords:
+
+| You Say | CDD Detects | Reason |
+|---------|-------------|--------|
+| "fix login timeout" | bug | Keyword: "fix" |
+| "add dark mode" | feature | Keyword: "add" |
+| "refactor auth layer" | refactor | Keyword: "refactor" |
+| "research caching options" | spike | Keyword: "research" |
+| "initiative X" | epic | Keyword: "initiative" |
+
+If ambiguous, it asks. If still unclear, defaults to "feature".
+
+**Work Item Detection (from /cdd:log):**
+
+CDD uses 3 strategies in order:
+
+1. **Git diff analysis** - Matches changed files to `cdd/XXXX-*/` folders
+2. **Conversation history** - Looks for CONTEXT.md reads, work item IDs mentioned
+3. **Ask user** - Shows list if uncertain
+
+**File-to-Task Matching:**
+
+```markdown
+Task in CONTEXT.md:
+- [ ] Setup OAuth
+      **Files:** `lib/auth/oauth.ts`
+
+You create: lib/auth/oauth.ts
+
+CDD auto-marks task complete ✅
+```
+
+Supports:
+- **Exact match:** `lib/auth/oauth.ts` = `lib/auth/oauth.ts`
+- **Glob patterns:** `lib/auth/providers/*.ts` matches `lib/auth/providers/google.ts`
+- **Partial match:** Creating test files alongside source files suggests both are done
+
+### Multi-Agent Architecture
+
+**Agent Flow:**
+
+```
+┌─────────────────────────────────────────────┐
+│         Human asks decision question         │
+└───────────────┬─────────────────────────────┘
+                │
+        ┌───────┴────────┐
+        │  Parse Options  │
+        └───────┬────────┘
+                │
+    ┌───────────┼───────────┬──────────────┐
+    │           │           │              │
+┌───▼──┐    ┌──▼───┐   ┌───▼───┐    ┌────▼────┐
+│Agent │    │Agent │   │Agent  │    │ Analysis│
+│  A   │    │  B   │   │Codebase│    │ Agent  │
+│Advo- │    │Advo- │   │Context│    │ (waits) │
+│cate  │    │cate  │   │       │    │         │
+└───┬──┘    └──┬───┘   └───┬───┘    └────┬────┘
+    │          │           │              │
+    └──────────┴───────────┴──────────────┘
+                   │
+            ┌──────▼──────┐
+            │  Objective  │
+            │  Analysis + │
+            │  Suggestion │
+            └──────┬──────┘
+                   │
+            ┌──────▼──────┐
+            │   Human     │
+            │  Decides    │
+            └─────────────┘
+```
+
+**Timing:**
+- Binary decision (2 options): ~2 minutes
+- Multi-option (3-5 options): ~3-4 minutes
+- Open research: ~5 minutes
+
+**When agents disagree:**
+- Analysis Agent presents both perspectives
+- Lowers confidence rating
+- Highlights key trade-offs
+- You decide based on your context
+
+### Smart Features Explained
+
+**Duration Estimation:**
+
+CDD estimates session length from conversation timestamps:
+- First tool use → Last tool use
+- Fallback: Ask for quick estimate if unclear
+- Granularity: 0.5h increments
+
+**Progressive Task Tracking:**
+
+Phases auto-update completion counts:
+```markdown
+<summary><strong>Phase 1</strong> (2/5 complete)</summary>
+```
+- Counts checked tasks within `<details>` block
+- Updates on each `/cdd:log`
+
+**Codebase-Aware Decisions:**
+
+Agent 3 uses actual grep/glob on your code to find:
+- Existing patterns (searches imports, similar implementations)
+- Dependencies (checks package.json)
+- Migration complexity (counts affected files)
+
+---
+
 ## Commands Reference
 
 ### `/cdd:start [description]`
@@ -344,6 +461,90 @@ Mark work item complete.
 2. Adds final session log
 3. Updates status to complete
 4. Optional summary generation
+
+---
+
+## Command Boundaries: What They Do and Don't Do
+
+### /cdd:start
+
+**Does:**
+- ✅ Create folder structure (CONTEXT.md + SESSIONS.md)
+- ✅ Auto-detect work item type from keywords
+- ✅ Generate unique sequence number
+- ✅ Initialize templates
+- ✅ Optionally enable metrics tracking
+
+**Does NOT:**
+- ❌ Create any application code
+- ❌ Modify git repository
+- ❌ Ask 10+ questions (v1 style)
+- ❌ Require metrics tracking
+- ❌ Force a specific template structure
+
+**Takes:** 30 seconds | **When to use:** Starting any new work item
+
+---
+
+### /cdd:log
+
+**Does:**
+- ✅ Detect changed files via git diff
+- ✅ Match files to tasks in CONTEXT.md
+- ✅ Auto-mark completed tasks
+- ✅ Estimate session duration from conversation
+- ✅ Append entry to SESSIONS.md
+- ✅ Update metrics (if enabled)
+
+**Does NOT:**
+- ❌ Create git commits
+- ❌ Push changes to remote
+- ❌ Modify application code
+- ❌ Delete or archive files
+- ❌ Change task definitions
+
+**Takes:** 10 seconds | **When to use:** After each coding session (30min+)
+
+---
+
+### /cdd:plan
+
+**Does:**
+- ✅ Launch 4+ AI agents in parallel
+- ✅ Research options objectively
+- ✅ Analyze your codebase patterns
+- ✅ Present evidence-based suggestion
+- ✅ Capture YOUR decision + rationale
+- ✅ Save full decision artifact
+
+**Does NOT:**
+- ❌ Make the final decision (you do)
+- ❌ Execute code changes
+- ❌ Modify CONTEXT.md tasks
+- ❌ Guarantee perfect recommendations
+- ❌ Replace human judgment
+
+**Takes:** 2-5 minutes | **When to use:** Hard technical choices with 2+ valid options
+
+---
+
+### /cdd:done
+
+**Does:**
+- ✅ Verify task completion
+- ✅ Add final session log
+- ✅ Mark status as complete
+- ✅ Optionally generate summary document
+- ✅ Update metrics (if enabled)
+
+**Does NOT:**
+- ❌ Create git commits or PRs
+- ❌ Delete work item files
+- ❌ Validate that code works
+- ❌ Run tests
+- ❌ Deploy anything
+
+**Takes:** 30 seconds | **When to use:** All tasks complete, ready to ship
 
 ---
 

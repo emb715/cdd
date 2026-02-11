@@ -1,29 +1,31 @@
-# CDD v2.0 - Context-Driven Development
+# CDD v2.1 - Context-Driven Development
 
 > **Productivity-first AI workflow. Zero ceremony, maximum focus.**
 
-## What is CDD v2.0?
+## What is CDD v2.1?
 
 CDD (Context-Driven Development) is a methodology for working with AI assistants that keeps you in flow state. **No interviews, no boilerplate, no context pollution.**
 
+**v2.1 adds:** Honest Agent orchestration for autonomous execution, cross-command intelligence, and pattern learning.
+
 ### Core Philosophy
 
-**v2.0 is built on three principles:**
+**v2.1 is built on three principles:**
 
 1. **Speed over perfection** - Start working in 30 seconds, refine as you go
 2. **AI-native decisions** - Let multiple agents research in parallel, you make the call
-3. **Optional everything** - Metrics, summaries, templates - only if you want them
+3. **Zero ceremony** - No mandatory tracking, no overhead, just work
 
-### What Changed from v1?
+### What Changed?
 
-| Aspect | v1 | v2 | Improvement |
-|--------|----|----|-------------|
-| **Commands** | 5 commands, 3,700 lines | 4 commands, ~800 lines | 78% reduction |
-| **Templates** | 3 modes (confusing) | 1 progressive | 100% simpler |
-| **Files per work item** | 3-7 files | 2-3 files | 60% less |
-| **Metrics** | Mandatory tracking | Opt-in flag | Zero friction |
-| **Getting started** | 10 min interview | 30 seconds | 95% faster |
-| **Decisions** | Manual YAML | Multi-agent AI | Revolutionary |
+| Aspect | v1 | v2.0 | v2.1 | Improvement |
+|--------|----|----|------|-------------|
+| **Commands** | 5 commands, 3,700 lines | 4 commands, ~800 lines | 4 commands, 441 lines (wrappers) | 88% reduction |
+| **Execution** | Direct in main LLM | Direct in main LLM | Honest Agent orchestration | Clean conversations |
+| **Intelligence** | Static | Static | Cross-command + pattern learning | Adaptive |
+| **Templates** | 3 modes | 1 progressive | 1 progressive | 100% simpler |
+| **Getting started** | 10 min | 30 seconds | 30 seconds | 95% faster |
+| **Decisions** | Manual YAML | Multi-agent | Multi-agent | Revolutionary |
 
 ---
 
@@ -92,7 +94,7 @@ npx @emb715/cdd init
 
 ---
 
-## The v2.0 Workflow
+## The v2.1 Workflow
 
 ### File Structure (Simplified!)
 
@@ -297,9 +299,32 @@ Supports:
 - **Glob patterns:** `lib/auth/providers/*.ts` matches `lib/auth/providers/google.ts`
 - **Partial match:** Creating test files alongside source files suggests both are done
 
-### Multi-Agent Architecture
+### Multi-Agent Architecture (v2.1)
 
-**Agent Flow:**
+**What's New in v2.1:**
+
+CDD v2.1 uses the **Honest Agent** for autonomous workflow execution. Every command (`/cdd:start`, `/cdd:log`, `/cdd:done`) spawns a specialized agent with optimized instructions.
+
+**Architecture:**
+```
+User → /cdd:start → Wrapper (56 lines) → Honest Agent → Autonomous Execution → Clean Output
+                                            ↓
+                                  Instruction Template (97 lines)
+                                  - Direct, imperative
+                                  - No ceremony
+                                  - Efficiency hints
+                                  - Pattern learning
+```
+
+**Benefits:**
+- **Main conversation stays clean** - Wrappers are 60-80% smaller
+- **Consistent execution** - All commands use agent-based architecture
+- **Autonomous behavior** - No user prompts, full auto-detection
+- **Cross-command intelligence** - Agents read SESSIONS.md for context, learn patterns
+- **Smart defaults** - Type detection from project history, duration estimation from prior sessions
+- **Pre-configured permissions** - cdd-honest agent includes git read permissions, no prompts for status/diff/log operations
+
+**Agent Flow (Decision Planning):**
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -379,13 +404,12 @@ Create a new work item.
 
 **Flags:**
 - `--type=[feature|bug|refactor|spike|epic]` - Override auto-detection
-- `--track-metrics` - Enable optional metrics tracking
 
 **Examples:**
 ```bash
 /cdd:start fix login timeout
 /cdd:start add dark mode toggle
-/cdd:start refactor database layer --track-metrics
+/cdd:start refactor database layer
 ```
 
 **What it does:**
@@ -473,13 +497,11 @@ Mark work item complete.
 - ✅ Auto-detect work item type from keywords
 - ✅ Generate unique sequence number
 - ✅ Initialize templates
-- ✅ Optionally enable metrics tracking
 
 **Does NOT:**
 - ❌ Create any application code
 - ❌ Modify git repository
 - ❌ Ask 10+ questions (v1 style)
-- ❌ Require metrics tracking
 - ❌ Force a specific template structure
 
 **Takes:** 30 seconds | **When to use:** Starting any new work item
@@ -494,7 +516,6 @@ Mark work item complete.
 - ✅ Auto-mark completed tasks
 - ✅ Estimate session duration from conversation
 - ✅ Append entry to SESSIONS.md
-- ✅ Update metrics (if enabled)
 
 **Does NOT:**
 - ❌ Create git commits
@@ -535,7 +556,6 @@ Mark work item complete.
 - ✅ Add final session log
 - ✅ Mark status as complete
 - ✅ Optionally generate summary document
-- ✅ Update metrics (if enabled)
 
 **Does NOT:**
 - ❌ Create git commits or PRs
@@ -548,34 +568,6 @@ Mark work item complete.
 
 ---
 
-## Optional Features
-
-### Metrics Tracking
-
-**By default: OFF** (zero overhead)
-
-**Enable per work item:**
-```bash
-/cdd:start my-feature --track-metrics
-```
-
-**What gets tracked:**
-- Sessions count
-- Total hours
-- Tasks completed
-- Completion percentage
-
-**View metrics:**
-```bash
-node cdd/.meta/metrics/scripts/collect-metrics-v2.js
-```
-
-**Why opt-in?**
-- Most people don't need metrics
-- Adds frontmatter pollution
-- Slows down logging
-- v2 is about speed
-
 ---
 
 ## Philosophy Deep Dive
@@ -586,14 +578,12 @@ node cdd/.meta/metrics/scripts/collect-metrics-v2.js
 - 📝 Too much boilerplate (3,700 lines of commands)
 - ⏱️ Too slow (10 min to create work item)
 - 🎭 Too many modes (solo-dev, minimal, comprehensive - confusing)
-- 📊 Mandatory metrics (overhead for everyone)
 - 🧠 Context pollution (huge prompts → worse AI responses)
 
 **v2 solutions:**
 - ⚡ 78% less code
 - 🚀 30 second work item creation
 - 📖 Single progressive template
-- 📊 Opt-in metrics
 - 🧠 Lean prompts (better AI responses)
 
 ### Progressive Disclosure
@@ -683,7 +673,7 @@ Full decision details (collapsed by default)
 > Reacquisition time? (A/B/C/D/E)
 > Status change? (A/B/C)
 > Which tasks completed? (manual list)
-> [Updates metrics script, frontmatter, etc.]
+> [Updates CONTEXT.md with completed tasks, generates session log]
 
 ✅ Logged after 2-3 minutes
 ```
@@ -798,7 +788,7 @@ See previous analysis: [.meta/decisions-library/database-choices.md]
 
 ### Why is v2 so different from v1?
 
-**v1 was built for teams and compliance.** Lots of modes, heavy documentation, mandatory metrics.
+**v1 was built for teams and compliance.** Lots of modes, heavy documentation, complex workflows.
 
 **v2 is built for productivity.** Solo devs, small teams, AI-native workflows. Get out of the way.
 
@@ -814,15 +804,6 @@ Technically yes (different command names), but not recommended. Pick one philoso
 - Teams that value speed over process
 
 For large teams or compliance-heavy environments, v1's comprehensive mode might be better.
-
-### What about the metrics system?
-
-**Still there, just opt-in:**
-```bash
-/cdd:start feature --track-metrics
-```
-
-If you don't use `--track-metrics`, zero metrics overhead.
 
 ### Can I still use CDD-RAG?
 

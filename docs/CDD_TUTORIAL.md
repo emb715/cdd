@@ -41,45 +41,19 @@ npx @emb715/cdd init
 This creates:
 ```
 cdd/
-├── .meta/
-│   ├── SIZING_GUIDE.md
-│   └── templates/
-├── decisions/
-├── planning/
-├── sessions/
-└── summaries/
+├── CONTEXT.md       # Unified context (decisions + plan + progress)
+├── SESSIONS.md      # Minimal session log
+└── decisions/       # Optional separate decision docs
 ```
 
 ### Verify Slash Commands
 
 In Claude Code, type `/cdd:` and you should see autocomplete for:
-- `/cdd:create-work` - Start new work item
-- `/cdd:plan-work` - Create implementation plan
-- `/cdd:save-session` - Save session notes
-- `/cdd:complete-work` - Mark work item complete with evidence
-- `/cdd:list-work` - View all work items and status
-
-### Choose Your Template Mode
-
-Three modes based on project size. See `cdd/.meta/SIZING_GUIDE.md` for full guide.
-
-**solo-dev** (default): 3 files per work item
-- For: 1-2 developers, <20 work items
-- Files: DECISIONS.md, IMPLEMENTATION_PLAN.md, SESSION_NOTES.md
-
-**minimal**: 2 files per work item
-- For: Single developer, <10 work items
-- Files: DECISIONS.md, IMPLEMENTATION_PLAN.md
-- Skips: SESSION_NOTES.md
-
-**comprehensive**: 5 files per work item
-- For: Teams of 3+, >50 work items
-- Files: All solo-dev files + IMPLEMENTATION_SUMMARY.md + ARCHITECTURE.md
-
-**Set mode:**
-```bash
-npx @emb715/cdd config --template-mode minimal
-```
+- `/cdd:start` - Start new work session
+- `/cdd:log` - Auto-detect and log session activity
+- `/cdd:plan` - Multi-agent collaborative planning
+- `/cdd:done` - Mark work complete with evidence
+- `/cdd:list` - View all work items and status
 
 ---
 
@@ -155,51 +129,134 @@ Monthly budget limit:        $10 (configurable)
 
 ## Core Concepts
 
-### The 4 Core Documents
+### v2.1 Architecture: Honest Agent Orchestration
 
-Every work item gets these files (in solo-dev mode):
+**What changed in v2.1:**
 
-1. **DECISIONS.md** - Why we're building this
-   - Business requirements
-   - Technical constraints
-   - Architectural choices
-   - Non-functional requirements
+Every CDD command now uses the **Honest Agent** for autonomous execution. This means cleaner conversations, faster execution, and smarter workflows.
 
-2. **IMPLEMENTATION_PLAN.md** - How we'll build it
-   - File structure
-   - Component breakdown
-   - Testing strategy
-   - Deployment steps
-
-3. **SESSION_NOTES.md** - What happened during work
-   - Timestamp-based entries
-   - Problems encountered
-   - Solutions applied
-   - Deviations from plan
-
-4. **IMPLEMENTATION_SUMMARY.md** - What we actually built (comprehensive mode only)
-   - Generated at completion
-   - Evidence of completion
-   - Differences from plan
-   - Lessons learned
-
-### Work Item Lifecycle
+**How it works:**
 
 ```
-draft → in-progress → review → complete → archived
-  ↓         ↓           ↓          ↓         ↓
-DECISIONS  PLAN      SESSION   SUMMARY   /archive/
+User runs: /cdd:start add user auth
+
+Flow:
+1. Wrapper command (56 lines) parses input
+2. Spawns Honest Agent with instruction template (97 lines)
+3. Agent executes autonomously (no user prompts)
+4. Returns clean output to user
+5. Main conversation stays unpolluted
 ```
 
-**draft:** DECISIONS.md exists, no plan yet
-**in-progress:** PLAN exists, actively working
-**review:** Implementation done, awaiting validation
-**complete:** Evidence provided, summary generated
-**archived:** Moved to `/archive/<work-item-id>/`
+**Intelligence features in v2.1:**
+
+1. **Cross-command context:** Agents read SESSIONS.md to learn from prior sessions
+   - `/cdd:log` prioritizes tasks mentioned in previous "Next" sections
+   - `/cdd:done` analyzes session patterns to generate better summaries
+
+2. **Pattern learning:** Agents adapt to your project
+   - `/cdd:start` suggests work types based on recent work (if >70% are bugs, suggest "bug")
+   - `/cdd:log` estimates duration from SESSIONS.md average (if >2 prior sessions)
+   - `/cdd:log` marks related tasks in-progress when same file touched multiple times
+
+3. **Efficiency optimization:** Agents minimize tool calls
+   - Single git diff instead of multiple queries
+   - Read files once, reuse in memory
+   - Batch file writes
+
+**Why this matters:**
+
+- Your main LLM conversation stays clean (60-80% less noise)
+- Consistent behavior across all commands (all use same agent pattern)
+- Agents get smarter as you work (learn from your SESSIONS.md history)
+- Fully autonomous (no "Should I do X?" prompts)
+
+**Agent permissions:**
+
+The cdd-honest agent comes pre-configured with permissions for git read operations:
+- `git diff --name-only HEAD` (detect changed files)
+- `git ls-files --others --exclude-standard` (detect new files)
+- `git log` (read commit history)
+
+This means CDD commands run autonomously without prompting you for git operations. File write operations still respect your global permission mode (prompt/auto-approve).
+
+### Unified Context File
+
+V2 uses a single progressive `CONTEXT.md` file that grows with your project:
+
+**CONTEXT.md structure:**
+```markdown
+# Project: Fernet Inflation Tracker
+
+## Overview
+Track Fernet Branca prices over time to visualize inflation in Argentina.
+
+## Stack Decisions
+- Backend: Convex (serverless, real-time)
+- Frontend: React + Recharts
+- Database: Convex tables (products, price_snapshots)
+
+## Current Implementation Plan
+### Database Schema
+[Schema details...]
+
+### Components
+- PriceEntryForm
+- PriceChart
+- HistoricalTable
+
+## Progress
+- [x] Convex schema defined
+- [x] Backend mutations created
+- [ ] Frontend components (in progress)
+- [ ] Mobile responsive testing
+- [ ] Deployment
+
+## Open Questions
+- Should we add user authentication?
+- Historical data: scrape or manual entry?
+
+## Recent Decisions
+### 2024-01-15: Use Unix timestamps
+Convex doesn't support Date objects. Use numbers for observed_date field.
+
+### 2024-01-16: Add currency formatting
+Display prices with `.toFixed(2)` for readability.
+```
+
+### Minimal Session Log
+
+`SESSIONS.md` captures only what matters:
+
+```markdown
+# Sessions
+
+## 2024-01-16 10:05 - Frontend components
+- Built PriceChart, PriceEntryForm, HistoricalTable
+- Problem: ResponsiveContainer needed explicit parent height
+- Added Recharts dependency
+
+## 2024-01-15 14:23 - Backend setup
+- Convex schema + CRUD operations
+- Problem: Schema migration required clean dev environment
+- Solution: Delete .convex/ folder, run `npx convex dev`
+```
+
+### Optional Decision Docs
+
+For complex decisions, create separate files in `decisions/`:
+
+```
+decisions/
+└── 001-database-choice.md
+└── 002-authentication-strategy.md
+```
+
+These get linked from CONTEXT.md but live separately for deep dives.
 
 ### Evidence-Based Completion
 
-When you run `/cdd:complete-work`, you provide evidence. Valid evidence:
+When you run `/cdd:done`, you provide evidence. Valid evidence:
 
 ✅ **Good evidence:**
 - Screenshots of working UI
@@ -222,7 +279,7 @@ When you run `/cdd:complete-work`, you provide evidence. Valid evidence:
 - Whether work is complete
 - What evidence is sufficient
 - When to deviate from plan
-- Which template mode to use
+- Which features to prioritize
 
 **AI assists:**
 - Generates initial drafts
@@ -245,41 +302,31 @@ When you run `/cdd:complete-work`, you provide evidence. Valid evidence:
 - Frontend: React with Recharts for visualization
 - Data: Products and price snapshots over time
 
-### Step 1: Create Work Item
+### Step 1: Start Work
 
 ```bash
-/cdd:create-work
+/cdd:start
 ```
 
-**AI Interview:**
+**Prompt:**
 ```
-AI: What are you building?
-You: Price tracking app for Fernet Branca in Argentina
+Building a price tracking app for Fernet Branca in Argentina.
 
-AI: What's the business goal?
-You: Visualize inflation by tracking one product over time
+Goal: Visualize inflation by tracking one product over time.
+Stack: Convex backend, React frontend.
+Need historical price data support, mobile-responsive UI.
 
-AI: What's your tech stack?
-You: Convex backend, React frontend
-
-AI: Any constraints?
-You: Need to support historical price data, mobile-responsive UI
-
-AI: Data model requirements?
-You: Products table, price snapshots with timestamp and location
+Data model:
+- Products table: name, category, brand, standard_size
+- Price snapshots: product_id, price_ars, observed_date, location
 ```
 
-**Generated:** `cdd/decisions/001-fernet-inflation-tracker.md`
+**Generated:** `cdd/CONTEXT.md`
 
 ```markdown
-# Work Item: Fernet Branca Inflation Tracker
+# Project: Fernet Branca Inflation Tracker
 
-**Status:** draft
-**Created:** 2024-01-15
-**ID:** 001
-
-## Business Requirements
-
+## Overview
 Track and visualize Fernet Branca prices in Argentina over time to demonstrate inflation impact on consumer goods.
 
 **User stories:**
@@ -287,16 +334,15 @@ Track and visualize Fernet Branca prices in Argentina over time to demonstrate i
 - As a user, I want to add new price observations with date and location
 - As a user, I want to see a chart showing price trends over time
 
-## Technical Constraints
+## Stack Decisions
 
-- Backend: Convex (serverless, real-time)
-- Frontend: React
-- Must work on mobile browsers
-- Historical data goes back 12 months minimum
+**Backend:** Convex (serverless, real-time)
+**Frontend:** React + Recharts
+**Mobile:** Responsive down to 360px width
+**Data retention:** Indefinite (no auth required, public data)
 
-## Architectural Decisions
+## Database Schema
 
-**Database schema (Convex):**
 ```typescript
 // products table
 {
@@ -310,493 +356,314 @@ Track and visualize Fernet Branca prices in Argentina over time to demonstrate i
 {
   product_id: Id<"products">,
   price_ars: number,
-  observed_date: number,  // timestamp
+  observed_date: number,  // Unix timestamp
   location_city: string,
   location_store: string,
   observer_notes?: string
 }
 ```
 
-**Frontend components:**
-- PriceEntryForm: Add new observations
-- PriceChart: Recharts line chart
-- HistoricalTable: Recent price data
-
-**Data flow:**
-1. User submits price observation
-2. Convex mutation validates and stores
-3. Convex query subscribes component to updates
-4. Chart re-renders with new data
-
-## Non-Functional Requirements
-
-- Response time: <2s for chart render
-- Mobile: Responsive down to 360px width
-- Data retention: Indefinite
-- No authentication required (public data)
-```
-
-### Step 2: Plan Implementation
-
-```bash
-/cdd:plan-work 001
-```
-
-**Generated:** `cdd/planning/001-fernet-inflation-tracker.md`
-
-```markdown
-# Implementation Plan: Fernet Branca Inflation Tracker
-
-**Work Item:** 001
-**Created:** 2024-01-15
-
-## File Structure
-
-```
-convex/
-├── schema.ts          # Define tables
-├── products.ts        # Product CRUD
-└── priceSnapshots.ts  # Price snapshot CRUD
-
-src/
-├── components/
-│   ├── PriceEntryForm.tsx
-│   ├── PriceChart.tsx
-│   └── HistoricalTable.tsx
-├── App.tsx
-└── main.tsx
-
-package.json           # Add recharts dependency
-```
-
-## Implementation Steps
+## Implementation Plan
 
 ### Phase 1: Backend Setup
-
-1. Define Convex schema
-```typescript
-// convex/schema.ts
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
-
-export default defineSchema({
-  products: defineTable({
-    name: v.string(),
-    category: v.string(),
-    brand: v.string(),
-    standard_size: v.string(),
-  }),
-
-  price_snapshots: defineTable({
-    product_id: v.id("products"),
-    price_ars: v.number(),
-    observed_date: v.number(),
-    location_city: v.string(),
-    location_store: v.string(),
-    observer_notes: v.optional(v.string()),
-  }).index("by_product", ["product_id"]),
-});
-```
-
-2. Create product mutations/queries
-3. Create price snapshot mutations/queries
+1. Define Convex schema (products, price_snapshots)
+2. Create product CRUD operations
+3. Create price snapshot mutations with validation
 
 ### Phase 2: Frontend Components
-
-1. **PriceEntryForm.tsx**
-   - Form fields: price, date, city, store, notes
+1. **PriceEntryForm**
+   - Fields: price, date, city, store, notes
    - Validation: price > 0, date not future
-   - Submit via Convex mutation
 
-2. **PriceChart.tsx**
-   - Use Recharts LineChart
-   - X-axis: Date
-   - Y-axis: Price in ARS
-   - Subscribe to price snapshots via Convex query
+2. **PriceChart**
+   - Recharts LineChart
+   - X-axis: Date, Y-axis: Price (ARS)
 
-3. **HistoricalTable.tsx**
-   - Show last 10 observations
-   - Columns: Date, Price, Location
+3. **HistoricalTable**
+   - Last 10 observations
    - Sort by date descending
 
 ### Phase 3: Integration
-
 1. Wire components in App.tsx
-2. Add seed data for testing
-3. Test responsive layout
+2. Test responsive layout
+3. Deploy to Convex
 
-## Testing Strategy
+## Progress
+- [ ] Convex schema
+- [ ] Backend mutations
+- [ ] PriceEntryForm component
+- [ ] PriceChart component
+- [ ] HistoricalTable component
+- [ ] Mobile testing
+- [ ] Deployment
 
-**Manual testing:**
-- Add price observation → verify appears in chart
-- Add multiple observations → verify chronological sorting
-- Resize browser → verify mobile layout
-
-**Data validation:**
-- Submit negative price → should reject
-- Submit future date → should reject
-- Submit incomplete form → should show errors
-
-## Deployment Steps
-
-1. Push to Convex: `npx convex deploy`
-2. Deploy frontend: `npm run build && npx convex deploy --preview-url`
-3. Verify deployed app loads and connects to Convex
-
-## Success Criteria
-
-- [ ] Can add price observations via form
-- [ ] Chart displays price trend over time
-- [ ] Historical table shows recent entries
-- [ ] Works on mobile (iPhone SE viewport)
-- [ ] Convex backend deployed and accessible
+## Open Questions
+- Should we add CSV import for bulk historical data?
+- Multi-product support or single-product MVP?
 ```
 
-### Step 3: Implementation Session 1
+### Step 2: Implementation Session 1
+
+Work proceeds. After completing backend:
 
 ```bash
-/cdd:save-session 001
+/cdd:log
 ```
 
-**Session 1 entry in** `cdd/sessions/001-fernet-inflation-tracker.md`:
+**AI auto-detects changes and prompts:**
+```
+AI: Detected new files:
+- convex/schema.ts
+- convex/products.ts
+- convex/priceSnapshots.ts
+
+What did you work on this session?
+```
+
+**You respond:**
+```
+Set up Convex backend. Schema + CRUD operations.
+Had to delete .convex/ folder to fix migration error.
+Switched from Date objects to Unix timestamps.
+```
+
+**Appended to** `cdd/SESSIONS.md`:
 
 ```markdown
-# Session Notes: Fernet Branca Inflation Tracker
+## 2024-01-15 14:23 - Backend setup (2h 15m)
 
-**Work Item:** 001
+**Completed:**
+- Convex schema (products, price_snapshots)
+- Product CRUD operations
+- Price snapshot mutations with validation
 
----
-
-## Session 2024-01-15 14:23
-
-**Duration:** 2h 15m
-**Focus:** Backend schema and queries
-
-### Work Completed
-
-Set up Convex schema and basic CRUD operations.
+**Problems:**
+- Schema migration error → deleted .convex/, ran `npx convex dev` fresh
+- Date handling → switched from Date objects to Unix timestamps
 
 **Files created:**
-- `convex/schema.ts` - Defined products and price_snapshots tables
-- `convex/products.ts` - CRUD for products
-- `convex/priceSnapshots.ts` - Add/query price snapshots
-
-**Key code:**
-
-```typescript
-// convex/priceSnapshots.ts
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
-
-export const add = mutation({
-  args: {
-    product_id: v.id("products"),
-    price_ars: v.number(),
-    observed_date: v.number(),
-    location_city: v.string(),
-    location_store: v.string(),
-    observer_notes: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    // Validation
-    if (args.price_ars <= 0) {
-      throw new Error("Price must be positive");
-    }
-    if (args.observed_date > Date.now()) {
-      throw new Error("Cannot add future observations");
-    }
-
-    return await ctx.db.insert("price_snapshots", args);
-  },
-});
-
-export const getByProduct = query({
-  args: { product_id: v.id("products") },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("price_snapshots")
-      .withIndex("by_product", (q) => q.eq("product_id", args.product_id))
-      .collect();
-  },
-});
+- convex/schema.ts
+- convex/products.ts
+- convex/priceSnapshots.ts
 ```
 
-### Problems Encountered
+**Updated** `cdd/CONTEXT.md` (Progress section):
 
-**Problem 1:** Convex schema migration error
-```
-Error: Cannot add index to existing table
-```
-
-**Solution:** Deleted local Convex dev deployment, ran `npx convex dev` fresh. Schema applied cleanly.
-
-**Problem 2:** Date handling confusion
-Initially used string dates, realized Convex doesn't support Date objects. Switched to Unix timestamps (numbers).
-
-### Deviations from Plan
-
-None yet. Backend matches plan exactly.
-
-### Next Session
-
-- Build PriceEntryForm component
-- Add Recharts dependency
-- Create seed data for testing
+```markdown
+## Progress
+- [x] Convex schema
+- [x] Backend mutations
+- [ ] PriceEntryForm component
+- [ ] PriceChart component
+- [ ] HistoricalTable component
+- [ ] Mobile testing
+- [ ] Deployment
 ```
 
-### Step 4: Query RAG During Implementation
+### Step 3: Multi-Agent Planning
+
+Before building the chart, you want expert input:
 
 ```bash
-/cdd:query "recharts time series best practices"
+/cdd:plan
 ```
 
-**Output:**
+**Prompt:**
 ```
-🔍 Local Search Results:
-
-No direct CDD documentation found on Recharts.
-
-💡 Tip: Use --ai flag for external knowledge:
-/cdd:query "recharts time series best practices" --ai
+Need to build PriceChart component using Recharts.
+Want best practices for time-series visualization.
 ```
 
-```bash
-/cdd:query "recharts time series best practices" --ai
+**AI spawns specialist agents:**
+
+**Agent 1 (Frontend Expert):**
 ```
+For Recharts time-series:
+- Use ResponsiveContainer for mobile
+- Convert Unix timestamps to Date objects for XAxis
+- Add custom Tooltip formatter for ARS currency
+- For >1000 points, disable animations
 
-**AI Answer (cost: $0.0004):**
-```
-Based on React time-series visualization patterns:
-
-1. **Data formatting:** Convert timestamps to Date objects for XAxis
-2. **Responsive sizing:** Use ResponsiveContainer wrapper
-3. **Tooltips:** Include custom formatter for ARS currency
-4. **Performance:** For >1000 points, enable `isAnimationActive={false}`
-
-Example structure:
+Example:
 ```typescript
 <ResponsiveContainer width="100%" height={300}>
   <LineChart data={priceData}>
     <XAxis
       dataKey="observed_date"
-      tickFormatter={(ts) => new Date(ts).toLocaleDateString()}
+      tickFormatter={(ts) => new Date(ts).toLocaleDateString('es-AR')}
     />
-    <YAxis
-      label={{ value: 'Price (ARS)', angle: -90 }}
-    />
+    <YAxis label={{ value: 'Precio (ARS)', angle: -90 }} />
     <Tooltip
-      labelFormatter={(ts) => new Date(ts).toLocaleString()}
-      formatter={(value) => `$${value} ARS`}
+      labelFormatter={(ts) => new Date(ts).toLocaleString('es-AR')}
+      formatter={(value) => `$${value.toFixed(2)}`}
     />
-    <Line type="monotone" dataKey="price_ars" stroke="#8884d8" />
+    <Line type="monotone" dataKey="price_ars" stroke="#2563eb" />
   </LineChart>
 </ResponsiveContainer>
 ```
 ```
 
-### Step 5: Implementation Session 2
-
-```bash
-/cdd:save-session 001
+**Agent 2 (Performance Expert):**
+```
+For Argentina inflation tracking:
+- Expect exponential growth curves
+- Use logarithmic Y-axis if price ranges exceed 10x
+- Add `connectNulls={true}` for missing data points
+- Consider adding trend line for inflation rate visualization
 ```
 
-**Session 2 entry:**
+**Agent 3 (UX Expert):**
+```
+Argentina-specific considerations:
+- Use 'es-AR' locale for date formatting
+- Display prices with thousands separator (e.g., $1.234,56)
+- Add reference line for "official" inflation rate
+- Mobile: ensure touch targets for tooltips are ≥44px
+```
+
+**Result written to** `cdd/decisions/002-chart-implementation.md`:
 
 ```markdown
-## Session 2024-01-16 10:05
+# Decision: Price Chart Implementation
 
-**Duration:** 1h 45m
-**Focus:** Frontend components
+**Date:** 2024-01-16
+**Context:** Building time-series chart for Fernet price data
 
-### Work Completed
+## Chosen Approach
 
-Built all three React components.
+Use Recharts with:
+- ResponsiveContainer for mobile
+- Argentina locale ('es-AR') for dates
+- Currency formatting with thousands separator
+- Custom Tooltip with price formatting
+- Future: Add logarithmic scale if price ranges exceed 10x
 
-**Files created:**
-- `src/components/PriceEntryForm.tsx`
-- `src/components/PriceChart.tsx`
-- `src/components/HistoricalTable.tsx`
+## Implementation Notes
 
-**Dependencies added:**
-```json
-{
-  "recharts": "^2.10.3",
-  "convex": "^1.8.0"
-}
+Parent container needs explicit height for ResponsiveContainer.
+Use `toFixed(2)` for price display.
 ```
 
-**PriceChart implementation:**
+**Updated** `cdd/CONTEXT.md` (links to decision):
 
-```typescript
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-
-export default function PriceChart({ productId }: { productId: Id<"products"> }) {
-  const snapshots = useQuery(api.priceSnapshots.getByProduct, { product_id: productId });
-
-  if (!snapshots) return <div>Loading...</div>;
-
-  const chartData = snapshots
-    .map(s => ({
-      date: s.observed_date,
-      price: s.price_ars,
-    }))
-    .sort((a, b) => a.date - b.date);
-
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={chartData}>
-        <XAxis
-          dataKey="date"
-          tickFormatter={(ts) => new Date(ts).toLocaleDateString('es-AR')}
-        />
-        <YAxis label={{ value: 'Precio (ARS)', angle: -90, position: 'insideLeft' }} />
-        <Tooltip
-          labelFormatter={(ts) => new Date(ts).toLocaleString('es-AR')}
-          formatter={(value: number) => [`$${value.toFixed(2)}`, 'Precio']}
-        />
-        <Line type="monotone" dataKey="price" stroke="#2563eb" strokeWidth={2} />
-      </LineChart>
-    </ResponsiveContainer>
-  );
-}
+```markdown
+## Recent Decisions
+- [Chart implementation strategy](decisions/002-chart-implementation.md) - Recharts with Argentina locale
 ```
 
-### Problems Encountered
+### Step 4: Implementation Session 2
 
-**Problem 1:** TypeScript error on Id type
-```
-Type 'string' is not assignable to type 'Id<"products">'
-```
-
-**Solution:** Import Id type from Convex:
-```typescript
-import { Id } from "convex/_generated/dataModel";
-```
-
-**Problem 2:** Chart not rendering
-
-Console showed: `Uncaught Error: <ResponsiveContainer /> requires width or height`
-
-**Solution:** Parent div needed explicit height:
-```css
-.chart-container {
-  height: 400px;
-}
-```
-
-### Deviations from Plan
-
-Added currency formatting with `toFixed(2)` for peso display. Plan didn't specify, but UX benefit is clear.
-
-### Next Session
-
-- Test on mobile viewports
-- Add seed data
-- Deploy to Convex production
-```
-
-### Step 6: Complete Work Item
+After building frontend:
 
 ```bash
-/cdd:complete-work 001
+/cdd:log
+```
+
+**Auto-detected changes, session logged:**
+
+```markdown
+## 2024-01-16 10:05 - Frontend components (1h 45m)
+
+**Completed:**
+- PriceEntryForm, PriceChart, HistoricalTable components
+- Added Recharts dependency
+
+**Problems:**
+- TypeScript error on Id type → imported from convex/_generated/dataModel
+- Chart not rendering → parent div needed explicit height
+
+**Files created:**
+- src/components/PriceEntryForm.tsx
+- src/components/PriceChart.tsx
+- src/components/HistoricalTable.tsx
+
+**Deviations:**
+- Added currency formatting (toFixed(2)) - UX improvement
+- Used 'es-AR' locale for date formatting
+```
+
+### Step 5: Complete Work
+
+```bash
+/cdd:done
 ```
 
 **AI prompts:**
 ```
 AI: Provide evidence that work is complete.
-
-You: [Paste screenshot of working app]
-Screenshot shows:
-- Form with all fields
-- Chart displaying 5 price points trending upward
-- Table showing recent entries
-- Mobile view at 375px width
-
-AI: Any differences from the original plan?
-
-You: Added currency formatting (toFixed(2)) not in original plan.
-Added seed data script not originally planned.
-
-AI: What did you learn?
-
-You: Convex schema migrations require clean dev environment.
-Recharts ResponsiveContainer needs explicit parent height.
-Date formatting for Argentina locale requires 'es-AR'.
 ```
 
-**Generated:** `cdd/summaries/001-fernet-inflation-tracker.md`
+**You provide:**
+```
+[Screenshot attached: working app]
+
+Manual testing:
+✅ Add price observation → appears in chart
+✅ Multiple observations → chronological sorting
+✅ Negative price → error shown
+✅ Future date → error shown
+✅ Mobile viewport (375px) → layout responsive
+✅ Chart loads <2s with 20 data points
+
+Deployed: https://fernet-tracker.convex.site
+```
+
+**AI asks:**
+```
+AI: Any differences from original plan?
+```
+
+**You respond:**
+```
+Added:
+- Currency formatting (toFixed(2))
+- Seed data script (convex/seedData.ts)
+- Argentina locale formatting
+
+No major deviations. All additions were UX improvements.
+```
+
+**AI asks:**
+```
+AI: Key learnings?
+```
+
+**You respond:**
+```
+- Convex schema changes need clean dev environment
+- ResponsiveContainer parent must have explicit height
+- Date handling: use Unix timestamps, convert at display layer
+- Locale formatting matters for target audience
+```
+
+**Appended to** `cdd/CONTEXT.md`:
 
 ```markdown
-# Implementation Summary: Fernet Branca Inflation Tracker
+## Completion Evidence (2024-01-16)
 
-**Work Item:** 001
-**Status:** complete
-**Completed:** 2024-01-16
-**Total Time:** 4h 0m
-
-## What Was Built
-
-Full-stack price tracking application for Fernet Branca in Argentina.
-
-**Backend:**
-- Convex schema with products and price_snapshots tables
-- CRUD operations for products
-- Add/query operations for price snapshots
-- Validation: positive prices, no future dates
-
-**Frontend:**
-- PriceEntryForm: Add new price observations
-- PriceChart: Recharts line chart with time series
-- HistoricalTable: Recent 10 observations
-- Responsive layout (mobile-tested)
-
-**Deployment:**
-- Convex backend deployed to production
-- Frontend deployed via Convex hosting
-- Live URL: https://fernet-tracker.convex.site
-
-## Evidence of Completion
-
-![Working application screenshot](./evidence/001-screenshot.png)
+**Deployed URL:** https://fernet-tracker.convex.site
 
 **Manual testing results:**
 ```
 ✅ Add price observation → appears in chart
-✅ Add multiple observations → chronological sorting correct
-✅ Negative price submission → error shown
-✅ Future date submission → error shown
-✅ Mobile viewport (375px) → layout responsive
-✅ Chart loads in <2s with 20 data points
+✅ Multiple observations → chronological sorting
+✅ Negative price → error shown
+✅ Future date → error shown
+✅ Mobile viewport (375px) → responsive
+✅ Chart loads <2s with 20 points
 ```
 
-## Differences from Plan
+**Lessons Learned:**
+- Convex schema migrations require clean dev environment
+- ResponsiveContainer needs explicit parent height
+- Unix timestamps better than Date objects in Convex
+- Locale formatting ('es-AR') improves UX for target audience
 
-**Additions:**
-1. Currency formatting with `toFixed(2)` for ARS display
-2. Seed data script: `convex/seedData.ts`
-3. Argentina locale for date formatting ('es-AR')
-
-**Rationale:** UX improvements. Currency formatting makes prices readable. Seed data speeds up testing. Locale formatting matches target audience.
-
-**No removals or major deviations.**
-
-## Lessons Learned
-
-**Technical:**
-- Convex schema changes require clean dev environment (delete `.convex/` folder)
-- Recharts ResponsiveContainer parent must have explicit height
-- Convex doesn't support Date objects, use Unix timestamps
-- Index definitions must be included in initial schema, hard to add later
-
-**Process:**
-- RAG query for Recharts patterns saved 30min of documentation reading
-- Session notes helped resume work next day without context loss
-- Evidence requirement caught missing mobile testing
+**Additions beyond plan:**
+- Currency formatting (toFixed(2))
+- Seed data script
+- Argentina locale for dates
 ```
-
-**Work item archived to:** `cdd/archive/001-fernet-inflation-tracker/`
 
 ---
 
@@ -837,10 +704,10 @@ Returns: Synthesized answer using local context + external knowledge.
 
 ### RAG-Enhanced Planning
 
-When running `/cdd:plan-work`, RAG auto-injects relevant context:
+When running `/cdd:plan`, RAG auto-injects relevant context:
 
 ```bash
-/cdd:plan-work 015
+/cdd:plan
 ```
 
 RAG searches for:
@@ -904,33 +771,18 @@ Evidence: Login flow test results
 
 **Why good?** Future you can verify claims. Screenshots prove UI works. Test output shows edge cases covered. Deployment URL enables manual verification.
 
-### Choosing Template Modes
+### When to Use decisions/ Folder
 
-**Use minimal when:**
-- Solo developer
-- <10 work items total
-- Short project lifespan (<3 months)
-- Simple architecture (single service)
+**Keep in CONTEXT.md:**
+- Simple decisions (< 1 paragraph)
+- Tactical choices (formatting, library versions)
+- Temporary constraints
 
-**Use solo-dev (default) when:**
-- 1-2 developers
-- 10-50 work items
-- Need session continuity across days
-- Moderate complexity (multiple services)
-
-**Use comprehensive when:**
-- Team of 3+
-- >50 work items
-- Long-term maintenance (>6 months)
-- Complex architecture (microservices, multiple databases)
-- Regulatory compliance requires audit trails
-
-**Switching modes:**
-```bash
-npx @emb715/cdd config --template-mode comprehensive
-```
-
-Applies to new work items only. Existing items unchanged.
+**Move to decisions/:**
+- Complex architectural decisions (> 2 paragraphs)
+- Long-term strategic choices (database, framework)
+- Decisions requiring stakeholder buy-in
+- Regulatory/compliance decisions
 
 ### Team Collaboration Patterns
 
@@ -938,82 +790,55 @@ Applies to new work items only. Existing items unchanged.
 
 Developer A ends session:
 ```bash
-/cdd:save-session 042
+/cdd:log
 ```
 
 Session notes include:
 ```markdown
-### Blocking Issues
-- Payment gateway integration waiting for API keys from DevOps
-- Stuck on CORS error, see logs in session_notes.md line 145
+## 2024-01-16 - Payment integration (blocked)
 
-### Next Steps for Next Developer
-- Once API keys arrive, add to .env.production
-- Investigate CORS: might be Nginx config issue
+**Completed:**
+- Payment form UI
+- Stripe webhook setup
+
+**Blocking issues:**
+- Waiting for production API keys from DevOps
+- CORS error on webhook endpoint (see logs below)
+
+**Next developer:**
+- Add API keys to .env.production when they arrive
+- Check Nginx config for CORS headers
 ```
 
 Developer B starts next day:
 ```bash
-/cdd:query "CORS issues in recent sessions" --ai
+/cdd:query "CORS webhook issues" --ai
 ```
 
 Gets context immediately, continues work.
 
 **Parallel work:**
 
-Use work item IDs to prevent conflicts:
-- Developer A: `/cdd:create-work` → ID 043 (Auth refactor)
-- Developer B: `/cdd:create-work` → ID 044 (New dashboard widget)
+Multiple developers work simultaneously:
+- Developer A: Works on auth refactor (updates CONTEXT.md section "Authentication")
+- Developer B: Works on dashboard widget (updates CONTEXT.md section "Dashboard")
 
-Separate DECISIONS, PLAN, SESSION files. No merge conflicts.
+Minimal merge conflicts because CONTEXT.md is organized by feature area.
 
 **Code review integration:**
 
 Reviewer runs:
 ```bash
-/cdd:query "work item 043 implementation summary"
+/cdd:query "recent authentication changes"
 ```
 
 Gets complete context:
-- Original requirements (DECISIONS.md)
-- Planned approach (IMPLEMENTATION_PLAN.md)
-- Deviations during implementation (SESSION_NOTES.md)
-- Final evidence (IMPLEMENTATION_SUMMARY.md)
+- Original requirements (CONTEXT.md)
+- Implementation approach (decisions/ if complex)
+- Problems encountered (SESSIONS.md)
+- Final evidence (CONTEXT.md completion section)
 
 Reviews code with full context, catches divergence from requirements.
-
-### When to Archive vs Delete
-
-**Archive when:**
-- Work completed successfully
-- Might reference implementation later
-- Decisions inform future work
-- Regulatory/compliance retention
-
-**Delete when:**
-- Work item was mistake (wrong requirements)
-- Superseded by different approach before completion
-- Prototype/spike that won't inform future work
-
-**Archive:**
-```bash
-/cdd:complete-work 025
-# Automatically moves to cdd/archive/025-work-item-name/
-```
-
-**Delete:**
-```bash
-rm -rf cdd/decisions/025-*.md
-rm -rf cdd/planning/025-*.md
-rm -rf cdd/sessions/025-*.md
-```
-
-Then re-index RAG:
-```bash
-python scripts/index_docs.py
-```
-
-Archived work remains searchable via RAG. Deleted work is gone permanently.
 
 ---
 
@@ -1021,11 +846,11 @@ Archived work remains searchable via RAG. Deleted work is gone permanently.
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| `/cdd:create-work` | Start new work item | `/cdd:create-work` |
-| `/cdd:plan-work` | Generate implementation plan | `/cdd:plan-work 042` |
-| `/cdd:save-session` | Save session notes | `/cdd:save-session 042` |
-| `/cdd:complete-work` | Mark complete with evidence | `/cdd:complete-work 042` |
-| `/cdd:list-work` | Show all work items | `/cdd:list-work` |
+| `/cdd:start` | Start new work session | `/cdd:start` |
+| `/cdd:log` | Auto-detect and log session | `/cdd:log` |
+| `/cdd:plan` | Multi-agent collaborative planning | `/cdd:plan` |
+| `/cdd:done` | Mark complete with evidence | `/cdd:done` |
+| `/cdd:list` | Show all work items | `/cdd:list` |
 | `/cdd:query` | Search documentation | `/cdd:query "auth patterns"` |
 | `/cdd:query --ai` | AI-powered answer | `/cdd:query "CORS fix" --ai` |
 
@@ -1033,18 +858,15 @@ Archived work remains searchable via RAG. Deleted work is gone permanently.
 ```bash
 npx @emb715/cdd init                    # Install CDD core
 npx @emb715/cdd add rag                 # Add RAG capability
-npx @emb715/cdd config --template-mode  # Change template mode
 python scripts/index_docs.py            # Reindex RAG
 ```
 
-**File locations:**
+**File structure:**
 ```
 cdd/
-├── decisions/        # DECISIONS.md files (requirement docs)
-├── planning/         # IMPLEMENTATION_PLAN.md files
-├── sessions/         # SESSION_NOTES.md files
-├── summaries/        # IMPLEMENTATION_SUMMARY.md files (comprehensive mode)
-└── archive/          # Completed work items
+├── CONTEXT.md        # Unified context (decisions + plan + progress)
+├── SESSIONS.md       # Minimal session log
+└── decisions/        # Optional complex decision docs
 ```
 
 **RAG files:**
@@ -1061,9 +883,9 @@ requirements.txt      # Python dependencies
 
 ## Next Steps
 
-1. **Start your first work item:** Run `/cdd:create-work` in Claude Code
-2. **Install RAG when you hit 10 work items:** `npx @emb715/cdd add rag`
-3. **Adjust template mode as team grows:** `npx @emb715/cdd config --template-mode comprehensive`
-4. **Read sizing guide for detailed mode comparison:** `cdd/.meta/SIZING_GUIDE.md`
+1. **Start your first session:** Run `/cdd:start` in Claude Code
+2. **Install RAG when you hit 10+ files:** `npx @emb715/cdd add rag`
+3. **Use /cdd:plan for complex decisions:** Get multi-agent expert input
+4. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
 
 **Feedback and discussions:** https://github.com/emb715/cdd/discussions

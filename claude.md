@@ -10,16 +10,20 @@ CDD is an npm package that provides AI workflow commands for solo developers. Ve
 
 ```
 packages/cdd/
-├── .claude/commands/          # 4 AI commands (optimized for LLMs)
-│   ├── cdd:start.md          # Create work item (185 lines)
-│   ├── cdd:log.md            # Save session (338 lines)
-│   ├── cdd:plan.md           # Multi-agent decision (251 lines)
-│   └── cdd:done.md           # Complete work (314 lines)
-├── bin/cdd-v2.js             # CLI installer
-├── cdd/.meta/                # Templates and metadata
-│   └── templates/v2/         # v2 templates (CONTEXT.md, SESSIONS.md)
-├── package.json              # NPM package config
-└── README.md                 # User documentation
+├── .claude/
+│   ├── commands/             # 4 AI command wrappers (optimized for LLMs)
+│   │   ├── cdd:start.md     # Create work item (56 lines)
+│   │   ├── cdd:log.md       # Save session (66 lines)
+│   │   ├── cdd:plan.md      # Multi-agent decision (253 lines)
+│   │   └── cdd:done.md      # Complete work (66 lines)
+│   └── agents/              # Bundled CDD agent
+│       └── cdd-honest.md    # Pre-configured with git read permissions
+├── bin/cdd-v2.js            # CLI installer
+├── cdd/.meta/               # Templates and metadata
+│   ├── templates/v2/        # v2 templates (CONTEXT.md, SESSIONS.md)
+│   └── instructions/        # Agent instruction files (start.md, log.md, done.md)
+├── package.json             # NPM package config
+└── README.md                # User documentation
 ```
 
 ## Key Files
@@ -43,12 +47,12 @@ packages/cdd/
 **Removed:**
 - 5 v1 commands (3,763 lines) → 4 v2 commands (1,843 lines)
 - 3 template modes → 1 progressive template
-- Mandatory metrics → Opt-in with `--track-metrics`
+- Mandatory metrics system (v1 complexity)
 - CHANGELOG.md → Auto-generated release notes
 
 **Philosophy:**
 - Speed over perfection (30 sec to start vs 10 min)
-- Optional everything (metrics, summaries, detail)
+- Zero ceremony (no mandatory tracking or metrics)
 - Progressive disclosure (start minimal, expand as needed)
 - Human-in-the-loop (YOU decide, AI researches)
 
@@ -81,7 +85,7 @@ npx @emb715/cdd init
 1. **Command files = LLM instructions** - Optimize for machine parsing, not human reading
 2. **No CHANGELOG.md** - Use git commit history and GitHub auto-generated release notes
 3. **Template modes removed** - Single progressive template serves all use cases
-4. **Metrics are opt-in** - Zero overhead by default (`--track-metrics` to enable)
+4. **No metrics system** - Zero overhead, no ceremony (archived in v2.1)
 5. **Reduce context window usage** - Keep files lean, remove redundancy
 
 ## Release Process

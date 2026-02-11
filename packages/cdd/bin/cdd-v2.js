@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * CDD CLI v2.0
+ * CDD CLI v2.1
  *
  * Command-line interface for Context-Driven Development v2
  *
- * Changes in v2:
+ * Changes in v2.1:
+ * - Honest agent integration for autonomous execution
+ * - Command wrappers spawn specialized agents
+ * - Instruction templates for agent-based workflows
+ * - 70% cleaner main conversation context
+ *
+ * Changes in v2.0:
  * - Simplified templates (single progressive template)
- * - Optional metrics (--track-metrics flag)
  * - Clean break from v1 (no migration support)
  *
  * Usage:
@@ -39,7 +44,7 @@ async function main() {
 }
 
 async function initCDD(args) {
-  console.log('🚀 Initializing CDD v2.0 in your project...\n');
+  console.log('🚀 Initializing CDD v2.1 in your project...\n');
 
   const cwd = process.cwd();
   const packageRoot = path.join(__dirname, '..');
@@ -66,7 +71,7 @@ async function initCDD(args) {
       fs.mkdirSync(cddDir, { recursive: true });
     }
 
-    // Copy .meta/ folder (templates, metrics, etc.)
+    // Copy .meta/ folder (templates, instructions, etc.)
     console.log('📋 Installing v2 templates...');
     const sourceMetaDir = path.join(packageRoot, 'cdd', '.meta');
     copyDir(sourceMetaDir, metaDir);
@@ -95,6 +100,19 @@ async function initCDD(args) {
         fs.copyFileSync(sourcePath, destPath);
         console.log(`   ✓ ${cmdFile}`);
       }
+    }
+
+    // Install CDD agents
+    console.log('\n🤖 Installing CDD agents...');
+    const claudeAgentsDir = path.join(cwd, '.claude', 'agents');
+    if (!fs.existsSync(claudeAgentsDir)) {
+      fs.mkdirSync(claudeAgentsDir, { recursive: true });
+    }
+
+    const agentsSource = path.join(packageRoot, '.claude', 'agents');
+    if (fs.existsSync(agentsSource)) {
+      copyDir(agentsSource, claudeAgentsDir);
+      console.log('   ✓ cdd-honest agent installed');
     }
 
     // Create example structure (optional)
@@ -128,15 +146,20 @@ async function initCDD(args) {
       console.log('   ✓ 0000-example/ created (you can delete this)');
     }
 
-    console.log('\n✅ CDD v2.0 initialized successfully!\n');
+    console.log('\n✅ CDD v2.1 initialized successfully!\n');
     console.log('━'.repeat(50));
+    console.log('');
+    console.log('📚 What\'s New in v2.1:');
+    console.log('   • Honest agent integration (autonomous execution)');
+    console.log('   • 70% cleaner main conversation');
+    console.log('   • All commands agent-based (start/log/plan/done)');
+    console.log('   • Instruction templates for specialized workflows');
     console.log('');
     console.log('📚 What\'s New in v2.0:');
     console.log('   • Single progressive template (no more modes!)');
     console.log('   • Unified CONTEXT.md (DECISIONS + IMPLEMENTATION_PLAN)');
     console.log('   • Multi-agent decision making (/cdd:plan)');
     console.log('   • Zero-ceremony logging (/cdd:log)');
-    console.log('   • Optional metrics (--track-metrics flag)');
     console.log('');
     console.log('🚀 Quick Start:');
     console.log('   1. Check example: cdd/0000-example/CONTEXT.md');
@@ -148,11 +171,8 @@ async function initCDD(args) {
     console.log('');
     console.log('📖 Documentation:');
     console.log('   • Templates:      cdd/.meta/templates/v2/');
+    console.log('   • Instructions:   cdd/.meta/instructions/');
     console.log('   • Commands:       .claude/commands/cdd:*');
-    console.log('');
-    console.log('💡 Pro tip: Metrics are opt-in now!');
-    console.log('   Use --track-metrics only if you want data:');
-    console.log('   /cdd:start my-feature --track-metrics');
     console.log('');
     console.log('━'.repeat(50));
     console.log('');
@@ -174,29 +194,34 @@ function showVersion() {
 
 function showHelp() {
   console.log(`
-CDD v2.0 - Context-Driven Development CLI
+CDD v2.1 - Context-Driven Development CLI
 
 Usage:
   npx @emb715/cdd <command>
 
 Commands:
-  init              Initialize CDD v2.0 in your project
+  init              Initialize CDD v2.1 in your project
   version           Show version information
   help              Show this help message
 
 Quick Start:
-  npx @emb715/cdd init          # Set up CDD v2
+  npx @emb715/cdd init          # Set up CDD v2.1
   /cdd:start my-feature         # Create work item (in Claude)
   /cdd:log                      # Log session (in Claude)
   /cdd:plan "topic"             # Multi-agent decision (in Claude)
   /cdd:done                     # Mark complete (in Claude)
+
+What's New in v2.1:
+  • Honest agent integration (autonomous execution)
+  • 70% cleaner main conversation
+  • All commands agent-based (start/log/plan/done)
+  • Instruction templates for specialized workflows
 
 What's New in v2.0:
   • 70% less boilerplate
   • Single progressive template (no modes)
   • Multi-agent decision making
   • Zero-ceremony logging
-  • Optional metrics (opt-in)
   • Unified CONTEXT.md file
 
 Documentation:

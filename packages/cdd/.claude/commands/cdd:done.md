@@ -1,10 +1,10 @@
 ---
 description: Mark work item complete with optional summary
 author: EMB (Ezequiel M. Benitez) @emb715
-version: 2.0.0
+version: 2.1.0
 ---
 
-# /cdd:done - Complete Work Item (v2)
+# /cdd:done - Complete Work Item (v2.1 - Honest Agent)
 
 ## Usage
 
@@ -17,85 +17,50 @@ version: 2.0.0
 
 ## Process
 
-### Step 1: Identify Work Item
+### Step 1: Parse User Input
 
-Same auto-detection as /cdd:log:
-- From git changes
-- From conversation history
-- Ask if unclear
+Extract work ID and flags if provided.
 
-```
-Completing work item...
+### Step 2: Launch Honest Agent
 
-Which work item are you finishing?
-- 0001 - User Authentication (in-progress)
-- 0002 - Dark Mode (in-progress)
-```
+Use Task tool to spawn Honest agent:
 
-### Step 2: Verify Completion
+**Agent prompt:**
+```markdown
+Execute CDD completion workflow autonomously.
 
-Read CONTEXT.md and check:
-- Are all tasks marked complete?
-- Any open tasks remaining?
+User Input: [WORK_ID_AND_FLAGS]
+Instructions: Read and follow cdd/.meta/instructions/done.md
 
-If incomplete tasks found:
-```
-Some tasks are not complete:
+The instruction file contains:
+- Work item auto-detection strategies
+- Completion verification (task counting)
+- Final session log generation
+- CONTEXT.md status update (completed date)
+- Optional IMPLEMENTATION_SUMMARY.md generation
+- Output format
 
-Open tasks:
-- [ ] Write integration tests
-- [ ] Update documentation
-
-Mark as done anyway? (y/n/edit)
-
-Options:
-- y: Mark complete (tasks will stay unchecked)
-- n: Cancel, finish tasks first
-- edit: Let me mark tasks now
+Execute the full workflow autonomously. Do NOT ask user questions.
+Trust user's decision to mark as done (even if tasks incomplete).
+Generate summary if --summary flag present.
+Return clean completion confirmation.
 ```
 
-### Step 3: Final Session Log
+**Task configuration:**
+- Subagent type: `cdd-honest`
+- Description: "Execute CDD completion workflow"
+- Model: `haiku` (fast task)
 
-Add completion entry to SESSIONS.md with work completed, final stats, key learnings.
+### Step 3: Return Agent Output
 
-If --skip-log flag, skip this step.
+The Honest agent will:
+- Auto-detect work item
+- Verify completion state (note incomplete tasks)
+- Add final session entry (unless --skip-log)
+- Update CONTEXT.md status to completed
+- Generate IMPLEMENTATION_SUMMARY.md (if --summary)
+- Return completion confirmation with stats
 
-### Step 4: Update Status
+Present agent's output to user without modification.
 
-Update CONTEXT.md frontmatter: status to complete, add completed date, update metrics if enabled.
-
-### Step 5: Optional Summary Generation
-
-If --summary flag, ask user to generate IMPLEMENTATION_SUMMARY.md.
-
-Template sections: What Was Built, Key Decisions, How It Works, Testing, Future Considerations, Quick Reference.
-
-Source data from CONTEXT.md, SESSIONS.md, decisions/, git log.
-
-### Step 6: Archive (Optional)
-
-Ask: Keep in cdd/ (recommended), move to .archive/, or delete. Most keep for reference.
-
-### Step 7: Confirm Completion
-
-Show: Work ID, status transition, duration, task completion, files updated, next steps.
-
-## Example
-
-Input: `/cdd:done`
-
-Process:
-1. Identify work item (0001-user-authentication)
-2. Check tasks (8/8 complete)
-3. Ask for final session log
-4. Update CONTEXT.md status
-5. Optionally generate summary
-6. Confirm completion with stats
-
-## Error Handling
-
-- Work item not found: Show available items
-- Already complete: Offer to reopen, update summary, or cancel
-- No sessions logged: Warn and ask to confirm
-
-Completion is the end of the story. Ship and move on.
+Main conversation stays clean. All completion operations happen in agent context.

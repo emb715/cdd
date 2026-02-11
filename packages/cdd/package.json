@@ -4,7 +4,7 @@
   "description": "Context-Driven Development - AI-native productivity workflow with human-centered decision making",
   "main": "index.js",
   "bin": {
-    "cdd": "bin/cdd-v2.js"
+    "cdd": "bin/cdd.js"
   },
   "keywords": [
     "cdd",

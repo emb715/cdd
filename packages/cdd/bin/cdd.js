@@ -122,7 +122,7 @@ async function initCDD(args) {
       fs.mkdirSync(exampleDir, { recursive: true });
 
       // Copy example CONTEXT.md
-      const exampleContext = path.join(metaDir, 'templates', 'v2', 'CONTEXT.md');
+      const exampleContext = path.join(metaDir, 'templates', 'CONTEXT.md');
       const destContext = path.join(exampleDir, 'CONTEXT.md');
 
       if (fs.existsSync(exampleContext)) {
@@ -134,7 +134,7 @@ async function initCDD(args) {
       }
 
       // Copy example SESSIONS.md
-      const exampleSessions = path.join(metaDir, 'templates', 'v2', 'SESSIONS.md');
+      const exampleSessions = path.join(metaDir, 'templates', 'SESSIONS.md');
       const destSessions = path.join(exampleDir, 'SESSIONS.md');
 
       if (fs.existsSync(exampleSessions)) {
@@ -146,38 +146,14 @@ async function initCDD(args) {
       console.log('   ✓ 0000-example/ created (you can delete this)');
     }
 
-    console.log('\n✅ CDD v2.1 initialized successfully!\n');
-    console.log('━'.repeat(50));
-    console.log('');
-    console.log('📚 What\'s New in v2.1:');
-    console.log('   • Honest agent integration (autonomous execution)');
-    console.log('   • 70% cleaner main conversation');
-    console.log('   • All commands agent-based (start/log/decide/done)');
-    console.log('   • Instruction templates for specialized workflows');
-    console.log('');
-    console.log('📚 What\'s New in v2.0:');
-    console.log('   • Single progressive template (no more modes!)');
-    console.log('   • Unified CONTEXT.md (DECISIONS + IMPLEMENTATION_PLAN)');
-    console.log('   • Multi-agent decision making (/cdd:decide)');
-    console.log('   • Zero-ceremony logging (/cdd:log)');
-    console.log('');
-    console.log('🚀 Quick Start:');
-    console.log('   1. Check example: cdd/0000-example/CONTEXT.md');
-    console.log('   2. Create work:   /cdd:start [description]');
-    console.log('   3. Make progress: (code, code, code...)');
-    console.log('   4. Log session:   /cdd:log');
-    console.log('   5. Hard decision: /cdd:decide [topic]');
-    console.log('   6. Finish:        /cdd:done');
-    console.log('');
-    console.log('📖 Documentation:');
-    console.log('   • Templates:      cdd/.meta/templates/v2/');
-    console.log('   • Instructions:   cdd/.meta/instructions/');
-    console.log('   • Commands:       .claude/commands/cdd:*');
-    console.log('');
-    console.log('━'.repeat(50));
-    console.log('');
-    console.log('Happy building! 🎉');
-    console.log('');
+    console.log('\n✅ CDD initialized\n');
+    console.log('Workflow:');
+    console.log('  /cdd:start [description]  - Create work item');
+    console.log('  /cdd:log                  - Log progress');
+    console.log('  /cdd:decide [topic]       - Multi-agent decision');
+    console.log('  /cdd:done                 - Mark complete');
+    console.log('\nExample: cdd/0000-example/CONTEXT.md');
+    console.log('Docs: https://github.com/emb715/cdd\n');
 
   } catch (error) {
     console.error('\n❌ Error during initialization:', error.message);
@@ -194,38 +170,23 @@ function showVersion() {
 
 function showHelp() {
   console.log(`
-CDD v2.1 - Context-Driven Development CLI
+CDD - Context-Driven Development
 
 Usage:
   npx @emb715/cdd <command>
 
 Commands:
-  init              Initialize CDD v2.1 in your project
-  version           Show version information
-  help              Show this help message
+  init      Initialize CDD in your project
+  version   Show version
+  help      Show this help
 
-Quick Start:
-  npx @emb715/cdd init          # Set up CDD v2.1
-  /cdd:start my-feature         # Create work item (in Claude)
-  /cdd:log                      # Log session (in Claude)
-  /cdd:decide "topic"           # Multi-agent decision (in Claude)
-  /cdd:done                     # Mark complete (in Claude)
+Workflow:
+  /cdd:start [description]  - Create work item
+  /cdd:log                  - Log progress
+  /cdd:decide [topic]       - Multi-agent decision
+  /cdd:done                 - Mark complete
 
-What's New in v2.1:
-  • Honest agent integration (autonomous execution)
-  • 70% cleaner main conversation
-  • All commands agent-based (start/log/decide/done)
-  • Instruction templates for specialized workflows
-
-What's New in v2.0:
-  • 70% less boilerplate
-  • Single progressive template (no modes)
-  • Multi-agent decision making
-  • Zero-ceremony logging
-  • Unified CONTEXT.md file
-
-Documentation:
-  https://github.com/emb715/cdd
+Docs: https://github.com/emb715/cdd
 `);
 }
 

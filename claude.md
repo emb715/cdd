@@ -18,9 +18,9 @@ packages/cdd/
 │   │   └── cdd:done.md      # Complete work (66 lines)
 │   └── agents/              # Bundled CDD agent
 │       └── cdd-honest.md    # Pre-configured with git read permissions
-├── bin/cdd-v2.js            # CLI installer
+├── bin/cdd.js               # CLI installer
 ├── cdd/.meta/               # Templates and metadata
-│   ├── templates/v2/        # v2 templates (CONTEXT.md, SESSIONS.md)
+│   ├── templates/           # Templates (CONTEXT.md, SESSIONS.md)
 │   └── instructions/        # Agent instruction files (start.md, log.md, done.md)
 ├── package.json             # NPM package config
 └── README.md                # User documentation
@@ -34,13 +34,13 @@ packages/cdd/
 - Each command has: Usage, Process steps, One example, Error handling
 
 **CLI:**
-- `bin/cdd-v2.js` - Installs templates and commands to user projects
+- `bin/cdd.js` - Installs templates and commands to user projects
 - Copies `.meta/` to `cdd/` and commands to `.claude/commands/`
 
 **Templates:**
-- `cdd/.meta/templates/v2/CONTEXT.md` - Single progressive template (unified from v1's 3 modes)
-- `cdd/.meta/templates/v2/SESSIONS.md` - Minimal session log
-- `cdd/.meta/templates/v2/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
+- `cdd/.meta/templates/CONTEXT.md` - Progressive work item template
+- `cdd/.meta/templates/SESSIONS.md` - Minimal session log
+- `cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
 
 ## Version 2.0 Changes (from v1)
 
@@ -60,7 +60,7 @@ packages/cdd/
 
 **Command naming:**
 - Files: `cdd:log.md`, `cdd:decide.md` (NOT `cdd:save.md` or `cdd:plan.md`)
-- CLI must reference correct filenames in `bin/cdd-v2.js` lines 88-92
+- CLI must reference correct filenames in `bin/cdd.js` lines 88-92
 
 **LLM optimization rules:**
 - No emojis in command files (no semantic value for LLMs)
@@ -114,12 +114,6 @@ npx @emb715/cdd init
 6. `/cdd:done` - Complete work
 
 **Key decision:** Humans decide, AI researches. This is embodied in `/cdd:decide` which launches 4 agents in parallel to research options, but the human makes the final call.
-
-## Files to Ignore
-
-- `cdd/.meta/examples/` - Old examples from v1
-- `cdd/.meta/metrics/` - v1 metrics system (largely deprecated)
-- `README-v1-OLD.md` - v1 documentation (archived)
 
 ## Context Window Optimization
 

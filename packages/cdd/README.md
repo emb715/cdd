@@ -116,7 +116,7 @@ project/
 │       ├── cdd:decide.md            # Multi-agent decision planning
 │       └── cdd:done.md            # Mark complete
 └── cdd/.meta/                     # Templates and tools
-    └── templates/v2/              # Progressive templates
+    └── templates/                 # Progressive templates
 ```
 
 ### CONTEXT.md - The Heart of v2

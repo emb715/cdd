@@ -53,7 +53,6 @@ In Claude Code, type `/cdd:` and you should see autocomplete for:
 - `/cdd:log` - Auto-detect and log session activity
 - `/cdd:decide` - Multi-agent collaborative planning
 - `/cdd:done` - Mark work complete with evidence
-- `/cdd:list` - View all work items and status
 
 ---
 
@@ -129,11 +128,9 @@ Monthly budget limit:        $10 (configurable)
 
 ## Core Concepts
 
-### v2.1 Architecture: Honest Agent Orchestration
+### Architecture: Honest Agent Orchestration
 
-**What changed in v2.1:**
-
-Every CDD command now uses the **Honest Agent** for autonomous execution. This means cleaner conversations, faster execution, and smarter workflows.
+CDD commands use the **Honest Agent** for autonomous execution. This means cleaner conversations, faster execution, and smarter workflows.
 
 **How it works:**
 
@@ -148,7 +145,7 @@ Flow:
 5. Main conversation stays unpolluted
 ```
 
-**Intelligence features in v2.1:**
+**Intelligence features:**
 
 1. **Cross-command context:** Agents read SESSIONS.md to learn from prior sessions
    - `/cdd:log` prioritizes tasks mentioned in previous "Next" sections
@@ -182,7 +179,7 @@ This means CDD commands run autonomously without prompting you for git operation
 
 ### Unified Context File
 
-V2 uses a single progressive `CONTEXT.md` file that grows with your project:
+CDD uses a single progressive `CONTEXT.md` file that grows with your project:
 
 **CONTEXT.md structure:**
 ```markdown
@@ -850,9 +847,8 @@ Reviews code with full context, catches divergence from requirements.
 | `/cdd:log` | Auto-detect and log session | `/cdd:log` |
 | `/cdd:decide` | Multi-agent collaborative planning | `/cdd:decide` |
 | `/cdd:done` | Mark complete with evidence | `/cdd:done` |
-| `/cdd:list` | Show all work items | `/cdd:list` |
-| `/cdd:query` | Search documentation | `/cdd:query "auth patterns"` |
-| `/cdd:query --ai` | AI-powered answer | `/cdd:query "CORS fix" --ai` |
+| `/cdd:query` | Search documentation (RAG) | `/cdd:query "auth patterns"` |
+| `/cdd:query --ai` | AI-powered answer (RAG) | `/cdd:query "CORS fix" --ai` |
 
 **Installation commands:**
 ```bash

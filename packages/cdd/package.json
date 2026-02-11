@@ -30,7 +30,7 @@
     ".claude/",
     "bin/",
     "README.md",
-    "QUICK_START_V2.md"
+    "QUICK_START.md"
   ],
   "engines": {
     "node": ">=14.0.0"

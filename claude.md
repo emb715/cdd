@@ -2,7 +2,7 @@
 
 ## What This Is
 
-CDD is an npm package that provides AI workflow commands for solo developers. Version 2.0 is optimized for speed, minimal ceremony, and LLM efficiency.
+CDD is an npm package that provides AI workflow commands for solo developers. Optimized for speed, minimal ceremony, and LLM efficiency.
 
 **Core Philosophy:** Humans decide, AI assists. No boilerplate, no ceremony, just work.
 
@@ -42,15 +42,8 @@ packages/cdd/
 - `cdd/.meta/templates/SESSIONS.md` - Minimal session log
 - `cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
 
-## Version 2.0 Changes (from v1)
+## Philosophy
 
-**Removed:**
-- 5 v1 commands (3,763 lines) → 4 v2 commands (1,843 lines)
-- 3 template modes → 1 progressive template
-- Mandatory metrics system (v1 complexity)
-- CHANGELOG.md → Auto-generated release notes
-
-**Philosophy:**
 - Speed over perfection (30 sec to start vs 10 min)
 - Zero ceremony (no mandatory tracking or metrics)
 - Progressive disclosure (start minimal, expand as needed)
@@ -84,8 +77,8 @@ npx @emb715/cdd init
 
 1. **Command files = LLM instructions** - Optimize for machine parsing, not human reading
 2. **No CHANGELOG.md** - Use git commit history and GitHub auto-generated release notes
-3. **Template modes removed** - Single progressive template serves all use cases
-4. **No metrics system** - Zero overhead, no ceremony (archived in v2.1)
+3. **Single progressive template** - One template serves all use cases
+4. **No metrics system** - Zero overhead, no ceremony
 5. **Reduce context window usage** - Keep files lean, remove redundancy
 
 ## Release Process
@@ -95,13 +88,6 @@ npx @emb715/cdd init
 3. Tag: `git tag vX.Y.Z`
 4. Push: `git push origin main --tags`
 5. GitHub Actions auto-publishes to npm
-
-## Current State (2026-02-04)
-
-- **Version:** 0.2.0 (feat/cdd-v2 branch)
-- **Status:** Pre-release cleanup complete
-- **Commands:** 4 (1088 lines total, 45% reduction achieved)
-- **Next:** Merge to main, tag, release
 
 ## Quick Reference
 

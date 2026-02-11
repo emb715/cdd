@@ -1,31 +1,18 @@
-# CDD v2.1 - Context-Driven Development
+# CDD - Context-Driven Development
 
 > **Productivity-first AI workflow. Zero ceremony, maximum focus.**
 
-## What is CDD v2.1?
+## What is CDD?
 
 CDD (Context-Driven Development) is a methodology for working with AI assistants that keeps you in flow state. **No interviews, no boilerplate, no context pollution.**
 
-**v2.1 adds:** Honest Agent orchestration for autonomous execution, cross-command intelligence, and pattern learning.
-
 ### Core Philosophy
 
-**v2.1 is built on three principles:**
+**CDD is built on three principles:**
 
 1. **Speed over perfection** - Start working in 30 seconds, refine as you go
 2. **AI-native decisions** - Let multiple agents research in parallel, you make the call
 3. **Zero ceremony** - No mandatory tracking, no overhead, just work
-
-### What Changed?
-
-| Aspect | v1 | v2.0 | v2.1 | Improvement |
-|--------|----|----|------|-------------|
-| **Commands** | 5 commands, 3,700 lines | 4 commands, ~800 lines | 4 commands, 441 lines (wrappers) | 88% reduction |
-| **Execution** | Direct in main LLM | Direct in main LLM | Honest Agent orchestration | Clean conversations |
-| **Intelligence** | Static | Static | Cross-command + pattern learning | Adaptive |
-| **Templates** | 3 modes | 1 progressive | 1 progressive | 100% simpler |
-| **Getting started** | 10 min | 30 seconds | 30 seconds | 95% faster |
-| **Decisions** | Manual YAML | Multi-agent | Multi-agent | Revolutionary |
 
 ---
 
@@ -94,9 +81,9 @@ npx @emb715/cdd init
 
 ---
 
-## The v2.1 Workflow
+## The Workflow
 
-### File Structure (Simplified!)
+### File Structure
 
 ```
 project/
@@ -113,13 +100,13 @@ project/
 │   └── commands/
 │       ├── cdd:start.md           # Create work item
 │       ├── cdd:log.md             # Log session
-│       ├── cdd:decide.md            # Multi-agent decision planning
+│       ├── cdd:decide.md          # Multi-agent decision planning
 │       └── cdd:done.md            # Mark complete
 └── cdd/.meta/                     # Templates and tools
     └── templates/                 # Progressive templates
 ```
 
-### CONTEXT.md - The Heart of v2
+### CONTEXT.md - The Heart of CDD
 
 **One file, progressive disclosure:**
 
@@ -179,7 +166,7 @@ OAuth2 (Google, GitHub) + JWT sessions.
 ```
 
 **Why this is better:**
-- ✅ Single file to read (no jumping between DECISIONS + IMPLEMENTATION_PLAN)
+- ✅ Single file to read (no jumping between multiple docs)
 - ✅ Progressive disclosure (collapse what you don't need)
 - ✅ Tasks have file hints (AI can auto-detect completion)
 - ✅ Decisions collapsed by default (low noise)
@@ -299,21 +286,19 @@ Supports:
 - **Glob patterns:** `lib/auth/providers/*.ts` matches `lib/auth/providers/google.ts`
 - **Partial match:** Creating test files alongside source files suggests both are done
 
-### Multi-Agent Architecture (v2.1)
+### Multi-Agent Architecture
 
-**What's New in v2.1:**
-
-CDD v2.1 uses the **Honest Agent** for autonomous workflow execution. Every command (`/cdd:start`, `/cdd:log`, `/cdd:done`) spawns a specialized agent with optimized instructions.
+CDD uses the **Honest Agent** for autonomous workflow execution. Every command (`/cdd:start`, `/cdd:log`, `/cdd:done`) spawns a specialized agent with optimized instructions.
 
 **Architecture:**
 ```
-User → /cdd:start → Wrapper (56 lines) → Honest Agent → Autonomous Execution → Clean Output
-                                            ↓
-                                  Instruction Template (97 lines)
-                                  - Direct, imperative
-                                  - No ceremony
-                                  - Efficiency hints
-                                  - Pattern learning
+User → /cdd:start → Wrapper → Honest Agent → Autonomous Execution → Clean Output
+                        ↓
+              Instruction Template
+              - Direct, imperative
+              - No ceremony
+              - Efficiency hints
+              - Pattern learning
 ```
 
 **Benefits:**
@@ -501,7 +486,7 @@ Mark work item complete.
 **Does NOT:**
 - ❌ Create any application code
 - ❌ Modify git repository
-- ❌ Ask 10+ questions (v1 style)
+- ❌ Ask 10+ questions
 - ❌ Force a specific template structure
 
 **Takes:** 30 seconds | **When to use:** Starting any new work item
@@ -568,27 +553,11 @@ Mark work item complete.
 
 ---
 
----
-
 ## Philosophy Deep Dive
 
-### Why v2 Exists
+### The Template Philosophy
 
-**v1 problems:**
-- 📝 Too much boilerplate (3,700 lines of commands)
-- ⏱️ Too slow (10 min to create work item)
-- 🎭 Too many modes (solo-dev, minimal, comprehensive - confusing)
-- 🧠 Context pollution (huge prompts → worse AI responses)
-
-**v2 solutions:**
-- ⚡ 78% less code
-- 🚀 30 second work item creation
-- 📖 Single progressive template
-- 🧠 Lean prompts (better AI responses)
-
-### Progressive Disclosure
-
-**The v2 template philosophy:**
+**Design principles:**
 
 Start minimal:
 ```markdown
@@ -630,116 +599,6 @@ Full decision details (collapsed by default)
 - ✅ Expand when needed (click `<details>`)
 - ✅ Low context pollution
 - ✅ Works for any complexity
-
----
-
-## Comparison: v1 vs v2
-
-### Creating a Work Item
-
-**v1 (10 minutes):**
-```
-/cdd:create-work user authentication
-
-> What type? (A/B/C/D/E)
-> Which template mode? (solo-dev/minimal/comprehensive)
-> What's the problem?
-> Who are the users?
-> What are the requirements?
-> What's the success criteria?
-> Any constraints?
-> Priority? (A/B/C/D)
-> [... 8+ questions ...]
-
-✅ Created after 10 minutes
-```
-
-**v2 (30 seconds):**
-```
-/cdd:start user authentication
-
-> Quick context (optional, press Enter to skip):
-
-✅ Created in 30 seconds
-```
-
-### Logging a Session
-
-**v1 (2-3 minutes):**
-```
-/cdd:save-session 0001
-
-> Duration? (A/B/C/D/E)
-> Reacquisition time? (A/B/C/D/E)
-> Status change? (A/B/C)
-> Which tasks completed? (manual list)
-> [Updates CONTEXT.md with completed tasks, generates session log]
-
-✅ Logged after 2-3 minutes
-```
-
-**v2 (10 seconds):**
-```
-/cdd:log
-
-[Auto-detects work item, files, tasks, duration]
-> Mark OAuth, JWT as complete? (y)
-
-✅ Logged in 10 seconds
-```
-
-### Making a Decision
-
-**v1 (manual):**
-```
-[Research PostgreSQL yourself]
-[Research MongoDB yourself]
-[Write decision in YAML frontmatter]
-[Hope you didn't miss something]
-
-Time: Hours
-Quality: Depends on your research
-```
-
-**v2 (AI-assisted, human-decided):**
-```
-/cdd:decide PostgreSQL vs MongoDB
-
-[4 AI agents research in parallel]
-[Objective analysis + AI suggestion]
-[YOU make final decision]
-[Full artifact saved with your rationale]
-
-Time: 2-3 minutes
-Quality: Expert-level research + human judgment
-```
-
----
-
-## Migration from v1
-
-**Short answer: Don't.**
-
-v2 is a clean break. If you have existing v1 work items:
-
-**Option 1: Keep v1 for old work**
-- Keep using v1 commands for existing work
-- Start v2 for new work
-
-**Option 2: Manual migration**
-1. Copy Problem + Solution from DECISIONS.md to CONTEXT.md
-2. Copy tasks from IMPLEMENTATION_PLAN.md to CONTEXT.md
-3. Simplify SESSION_NOTES.md to SESSIONS.md
-4. Delete old templates
-
-**Option 3: Fresh start**
-- Archive v1 work items
-- Start fresh with v2
-
-**Why no migration script?**
-- v1 and v2 are philosophically different
-- Better to start clean than force-fit
-- v2 is simple enough to recreate quickly
 
 ---
 
@@ -786,38 +645,28 @@ See previous analysis: [.meta/decisions-library/database-choices.md]
 
 ## FAQ
 
-### Why is v2 so different from v1?
-
-**v1 was built for teams and compliance.** Lots of modes, heavy documentation, complex workflows.
-
-**v2 is built for productivity.** Solo devs, small teams, AI-native workflows. Get out of the way.
-
-### Can I use v1 and v2 together?
-
-Technically yes (different command names), but not recommended. Pick one philosophy.
-
-### Is v2 suitable for teams?
+### Is CDD suitable for teams?
 
 **Yes**, but:
 - Best for small teams (2-5 people)
 - Self-organizing teams
 - Teams that value speed over process
 
-For large teams or compliance-heavy environments, v1's comprehensive mode might be better.
+For large teams or compliance-heavy environments, you may need additional tooling.
 
 ### Can I still use CDD-RAG?
 
-Yes! The RAG extension works with both v1 and v2. It searches across CONTEXT.md and DECISIONS.md.
+Yes! The RAG extension searches across CONTEXT.md and decision files.
 
 ---
 
 ## Contributing
 
-CDD v2 is open source and MIT licensed.
+CDD is open source and MIT licensed.
 
 **How to contribute:**
 1. Fork the repo
-2. Try v2 on your projects
+2. Try CDD on your projects
 3. Report issues or suggest improvements
 4. Submit PRs with bug fixes or enhancements
 
@@ -845,4 +694,4 @@ MIT License - see LICENSE file
 
 **Built with ❤️ by developers who hate ceremony.**
 
-*v2.0 - Zero boilerplate, maximum flow.*
+*CDD - Zero ceremony, maximum flow.*

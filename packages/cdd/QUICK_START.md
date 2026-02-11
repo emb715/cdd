@@ -1,4 +1,4 @@
-# CDD v2.0 Quick Start Guide
+# CDD Quick Start Guide
 
 > **Get started in 2 minutes. Zero ceremony.**
 
@@ -13,7 +13,7 @@ npx @emb715/cdd init
 ✅ Done! You now have:
 - `cdd/` folder (work items go here)
 - `.claude/commands/` (AI commands)
-- `cdd/.meta/templates/v2/` (templates)
+- `cdd/.meta/templates/` (templates)
 
 ---
 
@@ -65,10 +65,10 @@ npx @emb715/cdd init
 
 ---
 
-### 3. Make Decisions (`/cdd:plan`)
+### 3. Make Decisions (`/cdd:decide`)
 
 ```bash
-/cdd:plan Should we use PostgreSQL or MongoDB?
+/cdd:decide Should we use PostgreSQL or MongoDB?
 ```
 
 **What happens:**
@@ -137,17 +137,17 @@ your-project/
 │   └── commands/
 │       ├── cdd:start.md        # The 4 commands
 │       ├── cdd:log.md
-│       ├── cdd:plan.md
+│       ├── cdd:decide.md
 │       └── cdd:done.md
 └── cdd/.meta/
-    └── templates/v2/           # Templates
+    └── templates/              # Templates
 ```
 
 ---
 
 ## CONTEXT.md Anatomy
 
-The heart of v2 - everything in one file:
+Single file with everything you need:
 
 ```markdown
 ---
@@ -266,7 +266,7 @@ Next:
 /cdd:start implement caching layer
 
 # Hit decision point
-/cdd:plan Redis vs Memcached vs in-memory cache
+/cdd:decide Redis vs Memcached vs in-memory cache
 
 # AI launches agents (2 min)...
 # 🤖 AI SUGGESTION: Redis (Confidence: 🟢 High)
@@ -372,7 +372,7 @@ Mark both complete? (y/n)
 /cdd:start implement caching layer
 
 # Research decision
-/cdd:plan "Redis vs Memcached vs in-memory"
+/cdd:decide "Redis vs Memcached vs in-memory"
 
 # Code based on decision
 # (implement chosen approach)
@@ -381,7 +381,7 @@ Mark both complete? (y/n)
 /cdd:log
 
 # Make another decision
-/cdd:plan "Caching strategy: write-through vs write-back"
+/cdd:decide "Caching strategy: write-through vs write-back"
 
 # Code more
 # Log more
@@ -492,11 +492,11 @@ Reference past decisions:
 /cdd:log --force            # Skip confirmations
 ```
 
-### `/cdd:plan` flags
+### `/cdd:decide` flags
 
 ```bash
-/cdd:plan [topic]                         # Binary or open-ended
-/cdd:plan --options="A,B,C" [topic]       # Multi-option
+/cdd:decide [topic]                         # Binary or open-ended
+/cdd:decide --options="A,B,C" [topic]       # Multi-option
 ```
 
 ### `/cdd:done` flags
@@ -521,7 +521,7 @@ Reference past decisions:
 | Generate summary | 1 min | Optional at completion |
 
 **Rule of thumb:**
-- Use `/cdd:plan` when: "I'm not sure which is better, need research"
+- Use `/cdd:decide` when: "I'm not sure which is better, need research"
 - Just decide when: "I know what to do, just documenting it"
 
 ---
@@ -571,7 +571,7 @@ git status
 **Problem:** Noisy sessions log, overhead
 **Instead:** Log every 30-60 minutes or at natural breakpoints
 
-### ❌ Don't: Use /cdd:plan for simple choices
+### ❌ Don't: Use /cdd:decide for simple choices
 **Problem:** Wastes 2-5 minutes on obvious decisions
 **Instead:** Just decide and add to CONTEXT.md Decisions section manually
 
@@ -611,8 +611,8 @@ git status
 
 ### Making decisions
 ```bash
-/cdd:plan Should we use REST or GraphQL?
-/cdd:plan "Best auth strategy" --options="OAuth,Custom,Magic Link"
+/cdd:decide Should we use REST or GraphQL?
+/cdd:decide "Best auth strategy" --options="OAuth,Custom,Magic Link"
 ```
 
 ### Finishing
@@ -636,7 +636,7 @@ git status
 2. ✅ **Create:** `/cdd:start your-first-feature`
 3. ✅ **Code:** Build something!
 4. ✅ **Log:** `/cdd:log`
-5. ✅ **Read:** [README-v2.md](README-v2.md) for deep dive
+5. ✅ **Read:** [README.md](README.md) for deep dive
 
 ---
 
@@ -644,11 +644,11 @@ git status
 
 - **Docs:** [README.md](README.md)
 - **Examples:** `cdd/0000-example/`
-- **Templates:** `cdd/.meta/templates/v2/`
+- **Templates:** `cdd/.meta/templates/`
 - **Issues:** https://github.com/emb715/cdd/issues
 
 ---
 
 **Happy building! 🚀**
 
-*CDD v2.0 - Zero ceremony, maximum flow*
+*CDD - Zero ceremony, maximum flow*

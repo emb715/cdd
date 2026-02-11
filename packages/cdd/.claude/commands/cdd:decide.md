@@ -4,15 +4,15 @@ author: EMB (Ezequiel M. Benitez) @emb715
 version: 2.1.0
 ---
 
-# /cdd:plan - AI-Assisted Decision Planning (v2.1 - Multi-Agent)
+# /cdd:decide - AI-Assisted Decision Planning (v2.1 - Multi-Agent)
 
 ## Usage
 
 ```bash
-/cdd:plan [topic/question]
-/cdd:plan "Should we use REST or GraphQL?"
-/cdd:plan "PostgreSQL vs MongoDB for user data"
-/cdd:plan --options="A,B,C" [topic]
+/cdd:decide [topic/question]
+/cdd:decide "Should we use REST or GraphQL?"
+/cdd:decide "PostgreSQL vs MongoDB for user data"
+/cdd:decide --options="A,B,C" [topic]
 ```
 
 ## Process

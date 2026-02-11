@@ -72,7 +72,7 @@ npx @emb715/cdd init
 
 ```bash
 # When you hit a decision point
-/cdd:plan Should we use REST or GraphQL?
+/cdd:decide Should we use REST or GraphQL?
 
 # AI spawns 4 agents in parallel:
 # - REST advocate (researches pros/cons)
@@ -113,7 +113,7 @@ project/
 │   └── commands/
 │       ├── cdd:start.md           # Create work item
 │       ├── cdd:log.md             # Log session
-│       ├── cdd:plan.md            # Multi-agent decision planning
+│       ├── cdd:decide.md            # Multi-agent decision planning
 │       └── cdd:done.md            # Mark complete
 └── cdd/.meta/                     # Templates and tools
     └── templates/v2/              # Progressive templates
@@ -193,7 +193,7 @@ OAuth2 (Google, GitHub) + JWT sessions.
 When you need to make a hard decision, instead of researching yourself:
 
 ```bash
-/cdd:plan PostgreSQL vs MongoDB for user preferences
+/cdd:decide PostgreSQL vs MongoDB for user preferences
 ```
 
 **Behind the scenes (2-3 minutes):**
@@ -442,7 +442,7 @@ Log your session progress.
 
 ---
 
-### `/cdd:plan [topic]`
+### `/cdd:decide [topic]`
 
 Launch multi-agent decision planning (AI researches, you decide).
 
@@ -451,9 +451,9 @@ Launch multi-agent decision planning (AI researches, you decide).
 
 **Examples:**
 ```bash
-/cdd:plan Should we use REST or GraphQL?
-/cdd:plan PostgreSQL vs MongoDB for user data
-/cdd:plan "Best auth strategy" --options="OAuth,Custom,Passwordless"
+/cdd:decide Should we use REST or GraphQL?
+/cdd:decide PostgreSQL vs MongoDB for user data
+/cdd:decide "Best auth strategy" --options="OAuth,Custom,Passwordless"
 ```
 
 **What it does:**
@@ -528,7 +528,7 @@ Mark work item complete.
 
 ---
 
-### /cdd:plan
+### /cdd:decide
 
 **Does:**
 - ✅ Launch 4+ AI agents in parallel
@@ -703,7 +703,7 @@ Quality: Depends on your research
 
 **v2 (AI-assisted, human-decided):**
 ```
-/cdd:plan PostgreSQL vs MongoDB
+/cdd:decide PostgreSQL vs MongoDB
 
 [4 AI agents research in parallel]
 [Objective analysis + AI suggestion]

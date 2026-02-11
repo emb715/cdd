@@ -14,7 +14,7 @@ packages/cdd/
 │   ├── commands/             # 4 AI command wrappers (optimized for LLMs)
 │   │   ├── cdd:start.md     # Create work item (56 lines)
 │   │   ├── cdd:log.md       # Save session (66 lines)
-│   │   ├── cdd:plan.md      # Multi-agent decision (253 lines)
+│   │   ├── cdd:decide.md    # Multi-agent decision (253 lines)
 │   │   └── cdd:done.md      # Complete work (66 lines)
 │   └── agents/              # Bundled CDD agent
 │       └── cdd-honest.md    # Pre-configured with git read permissions
@@ -59,8 +59,8 @@ packages/cdd/
 ## Working with This Codebase
 
 **Command naming:**
-- Files: `cdd:log.md`, `cdd:plan.md` (NOT `cdd:save.md` or `cdd:decide.md`)
-- CLI must reference correct filenames in `bin/cdd-v2.js` lines 83-88
+- Files: `cdd:log.md`, `cdd:decide.md` (NOT `cdd:save.md` or `cdd:plan.md`)
+- CLI must reference correct filenames in `bin/cdd-v2.js` lines 88-92
 
 **LLM optimization rules:**
 - No emojis in command files (no semantic value for LLMs)
@@ -110,10 +110,10 @@ npx @emb715/cdd init
 2. `/cdd:start my-feature` - Create work item
 3. Code...
 4. `/cdd:log` - Save session
-5. `/cdd:plan "REST or GraphQL?"` - Hard decisions (multi-agent)
+5. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
 6. `/cdd:done` - Complete work
 
-**Key decision:** Humans decide, AI researches. This is embodied in `/cdd:plan` which launches 4 agents in parallel to research options, but the human makes the final call.
+**Key decision:** Humans decide, AI researches. This is embodied in `/cdd:decide` which launches 4 agents in parallel to research options, but the human makes the final call.
 
 ## Files to Ignore
 

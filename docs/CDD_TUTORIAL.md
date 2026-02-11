@@ -51,7 +51,7 @@ cdd/
 In Claude Code, type `/cdd:` and you should see autocomplete for:
 - `/cdd:start` - Start new work session
 - `/cdd:log` - Auto-detect and log session activity
-- `/cdd:plan` - Multi-agent collaborative planning
+- `/cdd:decide` - Multi-agent collaborative planning
 - `/cdd:done` - Mark work complete with evidence
 - `/cdd:list` - View all work items and status
 
@@ -465,7 +465,7 @@ Switched from Date objects to Unix timestamps.
 Before building the chart, you want expert input:
 
 ```bash
-/cdd:plan
+/cdd:decide
 ```
 
 **Prompt:**
@@ -704,10 +704,10 @@ Returns: Synthesized answer using local context + external knowledge.
 
 ### RAG-Enhanced Planning
 
-When running `/cdd:plan`, RAG auto-injects relevant context:
+When running `/cdd:decide`, RAG auto-injects relevant context:
 
 ```bash
-/cdd:plan
+/cdd:decide
 ```
 
 RAG searches for:
@@ -848,7 +848,7 @@ Reviews code with full context, catches divergence from requirements.
 |---------|---------|---------|
 | `/cdd:start` | Start new work session | `/cdd:start` |
 | `/cdd:log` | Auto-detect and log session | `/cdd:log` |
-| `/cdd:plan` | Multi-agent collaborative planning | `/cdd:plan` |
+| `/cdd:decide` | Multi-agent collaborative planning | `/cdd:decide` |
 | `/cdd:done` | Mark complete with evidence | `/cdd:done` |
 | `/cdd:list` | Show all work items | `/cdd:list` |
 | `/cdd:query` | Search documentation | `/cdd:query "auth patterns"` |
@@ -885,7 +885,7 @@ requirements.txt      # Python dependencies
 
 1. **Start your first session:** Run `/cdd:start` in Claude Code
 2. **Install RAG when you hit 10+ files:** `npx @emb715/cdd add rag`
-3. **Use /cdd:plan for complex decisions:** Get multi-agent expert input
+3. **Use /cdd:decide for complex decisions:** Get multi-agent expert input
 4. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
 
 **Feedback and discussions:** https://github.com/emb715/cdd/discussions

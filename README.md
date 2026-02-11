@@ -289,10 +289,10 @@ When `/cdd:log` runs, it matches git changes to these files and auto-marks tasks
 
 ## Documentation
 
-- **Quick Start:** [QUICK_START.md](packages/cdd/QUICK_START.md)
-- **Full Package Docs:** [packages/cdd/README.md](packages/cdd/README.md)
-- **Tutorial:** [docs/CDD_TUTORIAL.md](docs/CDD_TUTORIAL.md)
-- **Templates:** `cdd/.meta/templates/`
+- **Quick Start:** [2-minute introduction](packages/cdd/QUICK_START.md) - Get productive immediately
+- **Tutorial:** [Complete guide with examples](docs/CDD_TUTORIAL.md) - Deep dive into architecture, RAG, and best practices
+- **Package Docs:** [Technical reference](packages/cdd/README.md) - Full feature documentation
+- **Templates:** `cdd/.meta/templates/` - See what gets generated
 - **Issues:** https://github.com/emb715/cdd/issues
 
 ---

@@ -1,5 +1,11 @@
 # Context-Driven Development (CDD) Tutorial
 
+> **Just want to start coding?** See [Quick Start](../packages/cdd/QUICK_START.md) for a 2-minute introduction.
+>
+> **This guide** provides deep understanding, complete examples, and best practices.
+
+---
+
 ## Why CDD?
 
 Every AI coding session starts the same way: you paste context, explain what you're building, clarify decisions you already made. By the third session, you're re-explaining your database schema. By the tenth, the AI suggests changes that contradict decisions from two weeks ago.
@@ -740,6 +746,148 @@ When limit hit, AI answers disabled automatically. Local search continues workin
 
 ---
 
+## Advanced Usage
+
+### Task Auto-Detection with File Hints
+
+Add file hints to tasks for automatic completion detection:
+
+```markdown
+- [ ] Implement OAuth
+      **Files:** `lib/auth/oauth.ts`, `lib/auth/providers/*.ts`
+```
+
+When `/cdd:log` runs, it matches git changes to these files and auto-marks tasks complete.
+
+**Smart matching:**
+- **Exact:** `lib/auth/oauth.ts` = `lib/auth/oauth.ts`
+- **Glob patterns:** `lib/auth/providers/*.ts` matches any file in that folder
+- **Related files:** Creating test files alongside source files suggests both are done
+
+### Decision Reuse
+
+Reference past decisions in new work:
+
+```markdown
+**See previous:** [decisions/2024-01-10-similar-topic.md](decisions/2024-01-10-similar-topic.md)
+```
+
+Build a decision library over time. Future decisions benefit from past research.
+
+### Multiple Work Items in Parallel
+
+```bash
+# Work on feature 1
+/cdd:start feature A
+# ... code ...
+/cdd:log
+
+# Switch to feature 2
+/cdd:start feature B
+# ... code ...
+/cdd:log
+
+# Both tracked separately
+```
+
+Each work item has its own folder, context, and session log. No conflicts.
+
+### Enable Metrics (Optional)
+
+Track time and task completion metrics:
+
+```bash
+/cdd:start my-feature --track-metrics
+```
+
+Metrics tracked in CONTEXT.md frontmatter:
+```yaml
+metrics:
+  sessions: 3
+  hours: 5.5
+  tasks_completed: 8
+  tasks_planned: 12
+```
+
+View aggregate metrics:
+```bash
+node cdd/.meta/metrics/scripts/collect-metrics.js
+```
+
+**Note:** Metrics are optional. Only use when you need data for retrospectives or reporting.
+
+---
+
+## Troubleshooting
+
+### "Work item not found"
+
+**Problem:** `/cdd:log` can't find work item
+
+**Solution:**
+```bash
+# Specify explicitly
+/cdd:log 0001
+
+# Or check folder name
+ls cdd/
+```
+
+**Root cause:** Usually happens when working directory doesn't match git changes, or you have multiple work items.
+
+---
+
+### "No file changes detected"
+
+**Problem:** You worked but git shows no changes
+
+**Solution:**
+```bash
+# Check git status
+git status
+
+# Or specify work manually
+/cdd:log 0001
+# Then describe what you did
+```
+
+**Root cause:** Files not saved, or changes not in git working directory.
+
+---
+
+### "Agent failed to complete"
+
+**Problem:** Multi-agent decision had errors
+
+**Solution:**
+- Retry: `/cdd:decide [topic]` again
+- Or simplify: Research manually, document in CONTEXT.md
+
+**Root cause:** Network issues, API rate limits, or complex topics requiring more context.
+
+---
+
+### RAG indexing errors
+
+**Problem:** `python scripts/index_docs.py` fails
+
+**Common causes:**
+- Python dependencies not installed: `pip install -r requirements.txt`
+- Virtual environment not activated: `source .venv/bin/activate`
+- ChromaDB version mismatch: `pip install --upgrade chromadb`
+
+**Solution:**
+```bash
+# Clean install
+rm -rf .venv .chroma
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python scripts/index_docs.py
+```
+
+---
+
 ## Best Practices
 
 ### Writing Good Evidence
@@ -767,6 +915,54 @@ Evidence: Login flow test results
 ```
 
 **Why good?** Future you can verify claims. Screenshots prove UI works. Test output shows edge cases covered. Deployment URL enables manual verification.
+
+### Anti-Patterns: What NOT to Do
+
+#### ❌ Don't: Log every 5 minutes
+**Problem:** Noisy sessions log, overhead exceeds value
+
+**Instead:** Log every 30-60 minutes or at natural breakpoints (after completing a task, before switching context)
+
+---
+
+#### ❌ Don't: Use /cdd:decide for simple choices
+**Problem:** Wastes 2-5 minutes on obvious decisions
+
+**Instead:** Just decide and add to CONTEXT.md Decisions section manually. Reserve `/cdd:decide` for genuinely hard technical choices with multiple valid approaches.
+
+---
+
+#### ❌ Don't: Skip file hints in tasks
+**Problem:** Auto-detection can't match tasks to file changes
+
+**Instead:** Add `**Files:**` hints for auto-completion:
+```markdown
+- [ ] Task name
+      **Files:** `path/to/file.ts`
+```
+
+---
+
+#### ❌ Don't: Create work items for 5-minute changes
+**Problem:** Overhead exceeds work time
+
+**Instead:** Use CDD for features/bugs taking >30 minutes. For quick fixes, just commit with a good message.
+
+---
+
+#### ❌ Don't: Enable metrics for every work item
+**Problem:** Frontmatter pollution, slows logging, adds ceremony
+
+**Instead:** Only use `--track-metrics` when you need data for retrospectives or reporting.
+
+---
+
+#### ✅ Do: Keep CONTEXT.md focused
+**Why:** Long context = slower AI comprehension, harder to scan
+
+**How:** Use `<details>` for optional sections, keep Problem/Solution concise (2-3 sentences each)
+
+---
 
 ### When to Use decisions/ Folder
 

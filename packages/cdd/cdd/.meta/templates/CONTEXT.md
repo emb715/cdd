@@ -9,6 +9,12 @@ updated: YYYY-MM-DD
 
 # [Work Title]
 
+## 📋 Original Prompt
+
+> `/cdd:start [original user input]`
+
+Use this to iterate on the problem definition or refine your PRD.
+
 ## 🎯 Why (Problem)
 
 > What problem are you solving? Keep it concise (2-3 sentences).

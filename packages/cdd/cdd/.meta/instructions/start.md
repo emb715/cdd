@@ -45,8 +45,9 @@ Copy and populate templates:
 **CONTEXT.md:**
 1. Read template: `cdd/.meta/templates/v2/CONTEXT.md`
 2. Fill frontmatter: `id`, `title`, `type`, `status: draft`, `created`, `updated` (YYYY-MM-DD)
-3. Fill "Why (Problem)" with description
-4. Infer 3-5 starter tasks (check similar work items in cdd/ for patterns), leave Solution/Context/Decisions empty
+3. Fill "Original Prompt" with raw user input (preserve exactly as entered)
+4. Fill "Why (Problem)" with description
+5. Infer 3-5 starter tasks (check similar work items in cdd/ for patterns), leave Solution/Context/Decisions empty
 
 **SESSIONS.md:**
 Copy template from `cdd/.meta/templates/v2/SESSIONS.md` as-is.

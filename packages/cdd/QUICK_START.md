@@ -74,6 +74,21 @@ Mark work complete.
 
 ---
 
+## Available Agents
+
+Beyond the 4 CDD commands, you can invoke specialized agents directly:
+
+```bash
+/cdd-sage                # Adaptive expert (auto-selects mode)
+/cdd-sage-specialist     # Deep technical work
+/cdd-sage-balanced       # Efficient development (recommended)
+/cdd-sage-mentor         # Learning mode
+```
+
+→ *See [AGENTS.md](AGENTS.md) for complete agent guide*
+
+---
+
 ## Complete Example: Feature with Decision
 
 ```bash

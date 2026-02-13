@@ -113,6 +113,8 @@ async function initCDD(args) {
     if (fs.existsSync(agentsSource)) {
       copyDir(agentsSource, claudeAgentsDir);
       console.log('   ✓ cdd-honest agent installed');
+      console.log('   ✓ cdd-sage agent family installed (cdd-sage, cdd-sage-specialist, cdd-sage-balanced, cdd-sage-mentor)');
+      console.log('   📖 See AGENTS.md for usage guide');
     }
 
     // Create example structure (optional)

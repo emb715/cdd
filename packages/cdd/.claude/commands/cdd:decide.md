@@ -1,10 +1,10 @@
 ---
 description: Launch multi-agent research to help you plan decisions with parallel consultation
 author: EMB (Ezequiel M. Benitez) @emb715
-version: 2.1.0
+version: 2.2.0
 ---
 
-# /cdd:decide - AI-Assisted Decision Planning (v2.1 - Multi-Agent)
+# /cdd:decide - AI-Assisted Decision Planning (v2.2 - Sage Integration)
 
 ## Usage
 
@@ -17,7 +17,7 @@ version: 2.1.0
 
 ## Process
 
-**Note:** This command uses multi-agent architecture (not Honest agent). Human decides, AI researches.
+**Note:** This command uses domain-aware Sage agents for specialized research (not cdd-honest). Human decides, AI researches.
 
 ### Step 1: Parse Decision Topic
 
@@ -40,18 +40,66 @@ Ask user (optional, 1-2 sentences each):
 2. Any constraints (time, budget, team)?
 3. Impact if wrong choice?
 
-### Step 3: Launch Parallel Agents
+### Step 2.5: Detect Domain & Complexity
 
-Use Task tool to spawn 4+ specialized agents simultaneously:
+**Part A: Domain Detection**
 
-1. **Advocate Agent A** - Research Option A (pros, cons, use cases, examples)
-2. **Advocate Agent B** - Research Option B (pros, cons, use cases, examples)
-3. **Codebase Context Agent** - Analyze patterns, dependencies, migration complexity
-4. **Analysis Agent** - Compare objectively, provide AI suggestion (NOT final decision)
+Use Glob tool to scan project files for domain patterns:
 
-**Agent prompts:** See detailed templates in original v2.0 implementation or codebase analysis patterns.
+| Pattern | Domain |
+|---------|--------|
+| `.tf`, `*.hcl`, `Dockerfile`, `docker-compose.yml` | DevOps/Infrastructure |
+| `.tsx`, `*.jsx`, `*.vue`, `*.svelte` | Frontend |
+| `.sol`, `*.cairo` | Blockchain/Smart Contracts |
+| `.py` + ML indicators (`requirements.txt`, ML libs) | ML/Data Science |
+| `.rs`, `*.go` | Systems Programming |
+| `.java`, `*.kt` | Enterprise/JVM |
 
-**Execution:** Parallel. Estimated time: 2-3 min (binary), 3-4 min (3+ options).
+Detect primary domain from file counts. If mixed or unclear, note as "General" domain.
+
+**Part B: Complexity Detection**
+
+Parse decision topic for keywords to determine advocate depth:
+
+**Specialist keywords** (use `cdd-sage-specialist` for advocates):
+- architecture, optimize, scale, performance, security
+- pattern, tradeoff, best practice, enterprise, production
+
+**Balanced keywords** (use `cdd-sage-balanced` for advocates):
+- simple, quick, small, "should I", "what about"
+
+**Default:** If uncertain, use `cdd-sage-balanced` (efficient, still domain-aware)
+
+**Agent Selection:**
+- **Advocate A/B**: Specialist if complexity keywords detected, else Balanced
+- **Codebase Context**: Always Balanced (efficient analysis)
+- **Analysis**: Always Specialist (deep tradeoff comparison)
+
+### Step 3: Launch Parallel Sage Agents
+
+Spawn 4 specialized Sage agents in parallel using Task tool:
+
+**1. Advocate Agent A (Option A):**
+- **Agent**: `cdd-sage-specialist` or `cdd-sage-balanced` (based on complexity from Step 2.5)
+- **Prompt**: "You are advocating for [Option A]. Research pros, cons, use cases, and examples. Domain context: [detected domain from Step 2.5]. Be thorough but balanced - present honest trade-offs, not just positives. Focus on domain-specific considerations."
+- **Output**: Strengths, drawbacks, use cases, domain-specific considerations
+
+**2. Advocate Agent B (Option B):**
+- **Agent**: Same selection as Advocate A
+- **Prompt**: Same structure as Advocate A, but advocating for Option B
+- **Output**: Same structure as Advocate A
+
+**3. Codebase Context Agent:**
+- **Agent**: Always `cdd-sage-balanced`
+- **Prompt**: "Analyze codebase for patterns, dependencies, and migration complexity. Domain: [detected domain]. Focus on: existing patterns that align with options, architectural fit, implementation effort estimate."
+- **Output**: Existing patterns, dependencies, migration complexity
+
+**4. Analysis Agent:**
+- **Agent**: Always `cdd-sage-specialist`
+- **Prompt**: "Compare [Option A] vs [Option B] objectively. Domain: [detected domain]. Provide AI suggestion with confidence level (High/Medium/Low), rationale, and trade-offs. Consider: technical fit, maintainability, team expertise, scalability. Remember: human decides, you assist."
+- **Output**: Comparison table, AI suggestion with confidence, key trade-offs
+
+**Execution:** Parallel (single message with 4 Task tool calls). Estimated time: 2-3 min (binary), 3-4 min (3+ options).
 
 ### Step 4: Collect Results
 
@@ -91,7 +139,8 @@ Update `CONTEXT.md` Decisions section with summary and link.
 ### Step 7: Return Summary
 
 Show:
-- Agents consulted (count)
+- Sage agents consulted (list: Advocate A, Advocate B, Codebase Context, Analysis)
+- Detected domain and complexity level
 - Decision maker: Human
 - File location
 - Human decision + rationale
@@ -101,6 +150,7 @@ Show:
 ## Key Principles
 
 - **Human decides, AI researches** - Final decision always human-made
+- **Domain-aware advocates** - Sage agents adapt to project type (DevOps, Frontend, Blockchain, etc.)
 - **Multi-agent research** - Parallel specialized agents for speed and depth
 - **Evidence-based** - Codebase context + external research
 - **Documented rationale** - Decision file preserves reasoning

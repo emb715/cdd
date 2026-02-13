@@ -243,6 +243,23 @@ Your rationale: "Matches our existing stack, makes sense."
 
 ---
 
+## Available Agents
+
+CDD includes specialized AI agents for different workflows:
+
+- **Workflow agents** (`cdd-honest`) - Used internally by `/cdd:start`, `/cdd:log`, `/cdd:done` commands
+- **Expert agents** (`cdd-sage` family) - Invoke directly for specialized development work
+
+See [AGENTS.md](AGENTS.md) for complete guide.
+
+**Quick usage:**
+- `/cdd-sage` - Adaptive expert (auto-selects mode based on your interaction)
+- `/cdd-sage-specialist` - Deep technical work (architecture, optimization, edge cases)
+- `/cdd-sage-balanced` - Efficient development with domain expertise (recommended default)
+- `/cdd-sage-mentor` - Learning mode (explains WHY, builds mental models)
+
+---
+
 ## How It Works Under the Hood
 
 ### Auto-Detection Intelligence
@@ -288,7 +305,9 @@ Supports:
 
 ### Multi-Agent Architecture
 
-CDD uses the **Honest Agent** for autonomous workflow execution. Every command (`/cdd:start`, `/cdd:log`, `/cdd:done`) spawns a specialized agent with optimized instructions.
+CDD uses specialized agents for different workflows:
+- **Honest Agent** (`cdd-honest`) - Used by `/cdd:start`, `/cdd:log`, `/cdd:done` for autonomous workflow execution
+- **Sage Agents** (`cdd-sage-*`) - Used by `/cdd:decide` for domain-aware decision research
 
 **Architecture:**
 ```
@@ -400,7 +419,7 @@ Create a new work item.
 **What it does:**
 1. Auto-detects type from keywords
 2. Auto-increments sequence number
-3. Creates CONTEXT.md + SESSIONS.md
+3. Creates CONTEXT.md (preserves your original prompt) + SESSIONS.md
 4. Done in 30 seconds
 
 ---

@@ -1,22 +1,21 @@
 #!/usr/bin/env node
 
 /**
- * CDD CLI v2.1
+ * CDD CLI v1.0.0
  *
- * Command-line interface for Context-Driven Development v2
+ * Command-line interface for Context-Driven Development
  *
- * Changes in v2.1:
+ * Changes in v1.0.0 (First Stable Release):
+ * - Sage agent integration for domain-aware decisions
  * - Honest agent integration for autonomous execution
  * - Command wrappers spawn specialized agents
  * - Instruction templates for agent-based workflows
+ * - Single progressive template (removed complexity tiers)
+ * - Complete metrics system removal
  * - 70% cleaner main conversation context
  *
- * Changes in v2.0:
- * - Simplified templates (single progressive template)
- * - Clean break from v1 (no migration support)
- *
  * Usage:
- *   npx @emb715/cdd init         - Initialize CDD v2 in current project
+ *   npx @emb715/cdd init         - Initialize CDD in current project
  *   npx @emb715/cdd version      - Show version
  */
 
@@ -44,7 +43,7 @@ async function main() {
 }
 
 async function initCDD(args) {
-  console.log('🚀 Initializing CDD v2.1 in your project...\n');
+  console.log('🚀 Initializing CDD v1.0.0 in your project...\n');
 
   const cwd = process.cwd();
   const packageRoot = path.join(__dirname, '..');
@@ -112,8 +111,8 @@ async function initCDD(args) {
     const agentsSource = path.join(packageRoot, '.claude', 'agents');
     if (fs.existsSync(agentsSource)) {
       copyDir(agentsSource, claudeAgentsDir);
-      console.log('   ✓ cdd-honest agent installed');
-      console.log('   ✓ cdd-sage agent family installed (cdd-sage, cdd-sage-specialist, cdd-sage-balanced, cdd-sage-mentor)');
+      console.log('   ✓ cdd-honest agent installed (v1.0.0)');
+      console.log('   ✓ cdd-sage agent family installed (v1.0.0)');
       console.log('   📖 See AGENTS.md for usage guide');
     }
 

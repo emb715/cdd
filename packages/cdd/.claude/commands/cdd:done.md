@@ -1,10 +1,10 @@
 ---
 description: Mark work item complete with optional summary
 author: EMB (Ezequiel M. Benitez) @emb715
-version: 2.1.0
+version: 1.0.0
 ---
 
-# /cdd:done - Complete Work Item (v2.1 - Honest Agent)
+# /cdd:done - Complete Work Item (v1.0 - Honest Agent)
 
 ## Usage
 

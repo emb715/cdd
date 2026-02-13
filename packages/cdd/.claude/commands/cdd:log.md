@@ -1,10 +1,10 @@
 ---
 description: Save session progress with zero-ceremony auto-detection
 author: EMB (Ezequiel M. Benitez) @emb715
-version: 2.1.0
+version: 1.0.0
 ---
 
-# /cdd:log - Save Session (v2.1 - Honest Agent)
+# /cdd:log - Save Session (v1.0 - Honest Agent)
 
 ## Usage
 

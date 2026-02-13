@@ -12,9 +12,9 @@ CDD is an npm package that provides AI workflow commands for solo developers. Op
 packages/cdd/
 ├── .claude/
 │   ├── commands/             # 4 AI command wrappers (optimized for LLMs)
-│   │   ├── cdd:start.md     # Create work item (56 lines)
-│   │   ├── cdd:log.md       # Save session (66 lines)
-│   │   ├── cdd:decide.md    # Multi-agent decision (253 lines)
+│   │   ├── cdd:start.md     # Create work item (55 lines)
+│   │   ├── cdd:log.md       # Save session (65 lines)
+│   │   ├── cdd:decide.md    # Multi-agent decision (167 lines)
 │   │   └── cdd:done.md      # Complete work (66 lines)
 │   └── agents/              # Bundled CDD agent
 │       └── cdd-honest.md    # Pre-configured with git read permissions
@@ -30,7 +30,7 @@ packages/cdd/
 
 **Commands (LLM-optimized):**
 - All commands in `.claude/commands/` are optimized for LLM parsing (no emojis, minimal boilerplate)
-- Total: 1088 lines (reduced from 1997 lines - 45% reduction)
+- Total: 353 lines (reduced from 1997 lines - 82% reduction)
 - Each command has: Usage, Process steps, One example, Error handling
 
 **CLI:**
@@ -109,4 +109,4 @@ This project practices what it preaches:
 - Single source of truth (CONTEXT.md in user projects)
 - Progressive disclosure (detail when needed, not upfront)
 
-**Target:** Keep every file under 500 lines. Commands average 272 lines each.
+**Target:** Keep every file under 300 lines. Commands average 88 lines each.

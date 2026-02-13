@@ -1,10 +1,10 @@
 ---
 description: Create a new work item with zero-ceremony quick start
 author: EMB (Ezequiel M. Benitez) @emb715
-version: 2.1.0
+version: 1.0.0
 ---
 
-# /cdd:start - Create Work Item (v2.1 - Honest Agent)
+# /cdd:start - Create Work Item (v1.0 - Honest Agent)
 
 ## Usage
 

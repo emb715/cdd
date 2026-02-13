@@ -1,10 +1,10 @@
 ---
 description: Launch multi-agent research to help you plan decisions with parallel consultation
 author: EMB (Ezequiel M. Benitez) @emb715
-version: 2.2.0
+version: 1.0.0
 ---
 
-# /cdd:decide - AI-Assisted Decision Planning (v2.2 - Sage Integration)
+# /cdd:decide - AI-Assisted Decision Planning (v1.0 - Sage Integration)
 
 ## Usage
 

@@ -1,6 +1,6 @@
 {
   "name": "@emb715/cdd",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Context-Driven Development - AI-native productivity workflow with human-centered decision making",
   "main": "index.js",
   "bin": {
@@ -30,7 +30,8 @@
     ".claude/",
     "bin/",
     "README.md",
-    "QUICK_START.md"
+    "QUICK_START.md",
+    "AGENTS.md"
   ],
   "engines": {
     "node": ">=14.0.0"

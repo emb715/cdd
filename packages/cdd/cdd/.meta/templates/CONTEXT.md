@@ -100,5 +100,5 @@ Use this to iterate on the problem definition or refine your PRD.
 
 **Quick Commands:**
 - `/cdd:log` - Save session progress
-- `/cdd:plan [topic]` - Launch multi-agent decision planning (AI researches, you decide)
+- `/cdd:decide [topic]` - Launch multi-agent decision planning (AI researches, you decide)
 - `/cdd:done` - Mark work complete

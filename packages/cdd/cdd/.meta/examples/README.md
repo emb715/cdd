@@ -1,61 +1,91 @@
-# CDD Examples
+# CDD Examples - Zero Ceremony
 
-This directory contains example work items demonstrating the CDD methodology.
-
-## Available Examples
-
-### 0001-example-feature/
-**Type:** Feature
-**Topic:** User Profile Page
-
-A complete example showing:
-- Well-structured DECISIONS.md with all sections
-- Comprehensive requirements and technical decisions
-- AI implementation hints
-- Proper frontmatter metadata
-
-**Use this example to:**
-- Understand what a good DECISIONS.md looks like
-- See how to structure technical decisions
-- Learn how to provide AI implementation context
-- Reference when creating your own work items
-
-## How to Use These Examples
-
-### Option 1: Reference While Creating
-When running `/cdd:create-work`, refer to these examples to see what good documentation looks like.
-
-### Option 2: Copy as Template
-```bash
-# Copy example structure
-cp -r cdd/.meta/examples/0001-example-feature cdd/XXXX-your-work-name/
-
-# Edit DECISIONS.md with your requirements
-# Update frontmatter (id, title, dates, etc.)
-# Replace example content with your actual requirements
-```
-
-### Option 3: Study for Learning
-Read through the examples to understand:
-- How to write clear functional requirements
-- How to document technical decisions
-- How to provide context for AI
-- What level of detail is appropriate
-
-## Creating Your Own Examples
-
-If you create exemplary work items in your project, consider copying them here as references:
-
-```bash
-# After completing great work
-cp -r cdd/XXXX-your-work/ cdd/.meta/examples/XXXX-your-work/
-
-# Clean up any project-specific details
-# Add notes about what makes it a good example
-```
+> **Purpose:** Real-world examples showing CDD methodology in practice
+> **Audience:** New users learning CDD workflow
 
 ---
 
-More examples will be added as the methodology evolves.
+## Available Examples
 
-*For methodology details and attribution, see the main repository README.md*
+### [0001-login-timeout-fix](0001-login-timeout-fix/)
+
+**Type:** Bug fix (production issue)
+**Complexity:** Medium (investigation + implementation)
+**Duration:** 3 days (spread over 4 calendar days)
+
+**What it demonstrates:**
+- ✅ Progressive disclosure (started minimal, expanded as learned)
+- ✅ Multiple decisions documented with `/cdd:decide`
+- ✅ Session logs showing thought process
+- ✅ Task phases (investigation → quick fix → proper solution)
+- ✅ Trade-off analysis (heartbeat interval 30s vs 60s)
+
+**Key takeaways:**
+- Problem statement evolved as root cause discovered
+- Quick fix deployed first, proper solution followed
+- Decisions captured with rationale, not just "what"
+- Sessions show debugging journey, not just results
+
+**Files to study:**
+- `CONTEXT.md` - See how problem/solution evolved
+- `SESSIONS.md` - Notice debugging breadcrumbs
+- `decisions/2024-02-11-session-strategy.md` - Multi-agent decision output
+
+---
+
+## Using These Examples
+
+### For New Users
+
+**Start here:**
+1. Read `0001-login-timeout-fix/CONTEXT.md` top to bottom
+2. Notice the progressive disclosure (collapsed sections)
+3. Read `SESSIONS.md` to see the timeline
+4. Check `decisions/` to see how `/cdd:decide` works
+
+**What to look for:**
+- How minimal the initial problem statement was
+- How it expanded as investigation progressed
+- How decisions link back to CONTEXT.md
+- How sessions build context incrementally
+
+### For Experienced Users
+
+**Study patterns:**
+- Task organization (phases with clear goals)
+- Decision documentation (why, not just what)
+- Context for AI (patterns, files, constraints)
+- Trade-off clarity (what you're giving up)
+
+**Adapt to your context:**
+- Copy structure that fits your workflow
+- Ignore sections that don't apply
+- Add sections that help your team
+
+---
+
+## Example Philosophy
+
+These examples follow the **zero ceremony** approach:
+
+**Not perfect, but real:**
+- Shows actual work progression, not idealized workflow
+- Includes false starts and course corrections
+- Documents what actually happened, not what "should have"
+
+**Minimal but complete:**
+- Only essential detail (no exhaustive documentation)
+- Focuses on decisions and non-obvious context
+- Trusts code to show implementation details
+
+**Human-centric:**
+- Written for future humans, not compliance
+- Explains "why" before "what"
+- Captures thought process, not just outcomes
+
+---
+
+## Questions?
+
+**Need help understanding examples?**
+- Open [GitHub Discussion](https://github.com/emb715/cdd/discussions)

@@ -1,6 +1,6 @@
 {
   "name": "cdd-monorepo",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Context-Driven Development monorepo",
   "private": true,
   "workspaces": [

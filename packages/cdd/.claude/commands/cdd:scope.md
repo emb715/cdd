@@ -85,7 +85,7 @@ Main conversation stays clean. All drafting happens in agent context.
 
 - **Draft only** - No work item folders created by this command
 - **Human edits** - Scope plan is a reference doc, not a locked artifact
-- **Sage drafts, honest creates** - /cdd:start picks up from the scope plan
+- **Sage drafts, cdd-honest creates** - /cdd:start picks up from the scope plan
 - **5-10 items max** - If scope is larger, suggest breaking into multiple scopes
 
 ## Tools & Timing

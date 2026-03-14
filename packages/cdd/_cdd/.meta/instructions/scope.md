@@ -130,6 +130,8 @@ If no existing source code or _cdd/ items were found: note "No existing code det
 
 Autonomous — no questions. Infer all defaults from brief and project scan.
 
+If brief clearly resolves to a single work item: abort and respond "This looks like a single work item. Use /cdd:start [description] instead."
+
 If brief is ambiguous (could be 1 item): produce the plan anyway with a note "If this is a single feature, use /cdd:start instead."
 
 Errors:

@@ -130,7 +130,8 @@ If no existing source code or _cdd/ items were found: note "No existing code det
 
 Autonomous — no questions. Infer all defaults from brief and project scan.
 
-If brief is ambiguous (could be 1 item): produce the plan anyway with a note "If this is a single feature, use /cdd:start instead."
+If the brief clearly describes a single work item (one feature, no distinct areas of work or phases): abort scope planning and respond with a short message redirecting the user to `/cdd:start` using that brief as the first work item.
+If the brief is ambiguous (could be 1 item or multiple): produce the scope plan anyway, but include a note: "If this is a single feature, use /cdd:start instead."
 
 Errors:
 - No brief → abort, show usage

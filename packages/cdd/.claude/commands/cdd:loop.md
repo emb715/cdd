@@ -267,7 +267,7 @@ REVIEW_LOOP:
       If only NON_BLOCKING issues remain → SOFT STOP:
         Append to loop-log.md: "SOFT STOP | unresolved after [review_attempt] attempts | [issue list]"
         Write checkpoint.md
-        Write .resume (Stop hook will NOT auto-fire — user must choose an option explicitly)
+        Do NOT write .resume — preserves human choice; any auto-resume hook must remain idle until user runs a command
         Emit to user:
           [LOOP] SOFT STOP — [N] non-blocking issues unresolved after [review_max_retries] attempts.
           Issues: [list]

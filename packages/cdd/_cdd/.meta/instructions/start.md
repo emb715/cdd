@@ -40,9 +40,16 @@ Example: "Fix Login Timeout" → `0002-fix-login-timeout`
 Before creating the work item, check if a scope plan exists:
 
 Scan `_cdd/.meta/scope/` for `.md` files. If any exist:
-- Read the most recent one
-- Search its work items table for a row whose folder name or purpose matches the current description (case-insensitive, partial match)
-- If a match is found, note: `scope_match = true`, extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`
+- Sort them by last modified time (mtime) descending; if mtimes are equal, sort by filename descending
+- Select the first file in this sorted list as the **most recent** scope plan
+- Read its work items table
+- Let `generated_folder_name` be the folder name from Step 3 (e.g., `0002-fix-login-timeout`)
+- Find all rows where the folder-name column equals `generated_folder_name` (case-insensitive, exact match)
+  - If exactly one row matches, select that row as the scope row
+  - Otherwise, find all rows where the purpose column equals the current description (after stripping `(scoped)`) using a case-insensitive, exact match
+    - If exactly one row matches, select that row as the scope row
+- If and only if a single, unambiguous scope row is selected, note: `scope_match = true`, and extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`
+- If no unique row is found (zero or multiple candidates at each step), treat as `scope_match = false` and skip scope-based enrichment
 
 If `scope_match = true`:
 - Use `scope_folder_name` as the folder name (overrides Step 3 generation)

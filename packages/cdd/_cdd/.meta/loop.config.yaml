@@ -1,0 +1,30 @@
+# CDD Loop Orchestrator Config
+# Edit these values to control loop behavior in your project.
+
+# Context rotation: how many events before saving checkpoint and stopping
+# One event = one task group complete, one auto-log, or one review
+rotation_threshold: 4
+
+# Sub-agent health check: seconds to wait before pinging a stuck agent
+# If agent has not emitted output in this time, orchestrator pings it
+agent_timeout_seconds: 120
+
+# If agent doesn't respond to ping within this window, mark it as stuck
+agent_stuck_threshold_seconds: 30
+
+# Max retries for a stuck/failed task before marking it "error" and moving on
+task_max_retries: 1
+
+# Review: run cdd-victor-reid after each full pass of task groups
+review_enabled: true
+
+# Max fix-and-review iterations before escalating to SOFT/HARD STOP
+review_max_retries: 3
+
+# Auto-done: spawn /cdd:done when all tasks are checked off
+# false = loop stops and tells you to run /cdd:done manually (recommended)
+# true  = loop auto-closes the work item (opt-in for full automation)
+auto_done: false
+
+# Dry run default (overridden by --dry-run flag)
+dry_run: false

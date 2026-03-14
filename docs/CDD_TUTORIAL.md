@@ -62,73 +62,37 @@ In Claude Code, type `/cdd:` and you should see autocomplete for:
 
 ---
 
-## Adding RAG (Optional Enhancement)
+## Code Search with jcodemunch-mcp (Optional Enhancement)
 
-### When to Add RAG
+### When to Add Code Search
 
-**Threshold:** 10+ work items or 50+ documentation files
+**Threshold:** 10+ work items or when you need to find patterns across your codebase fast.
 
-**Benefits:**
-- Query your project's history: "How did we handle rate limiting?"
-- Auto-inject relevant context into planning
-- Find decisions made 6 months ago in seconds
-
-**Without RAG:** You rely on manual search and memory. Fine for small projects.
-
-### Installation
+### Setup
 
 ```bash
-# Add RAG components
-npx @emb715/cdd add rag
-
-# Create Python virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Initial indexing
-python scripts/index_docs.py
+claude mcp add jcodemunch uvx jcodemunch-mcp
 ```
 
-### Minimal Configuration
+No Python, no ChromaDB, no requirements.txt. The MCP server uses tree-sitter AST parsing to index your code and provides structured retrieval tools directly in your Claude session.
 
-Create `.env`:
-```bash
-RAG_MODE=local
-CDD_WORKSPACE_PATH=/absolute/path/to/your/project
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-```
+### Available Tools
 
-**Optional AI answers:**
-```bash
-ENABLE_AI_ANSWERS=true
-OPENAI_API_KEY=your-key-here  # Any OpenAI-compatible API (Fuelix.ai recommended)
-```
+- `search_symbols` - Find functions, classes, methods by name or description
+- `search_text` - Full-text search across indexed files
+- `get_file_tree` - Browse indexed repository structure
+- `get_symbol` - Get full source of a specific symbol
+- `get_file_outline` - List all symbols in a file
 
-### Privacy Model
+### Usage in Claude Code
 
-**Local indexing/search:**
-- Documents never leave your machine
-- ChromaDB runs locally
-- Sentence-transformers runs locally
-- Cost: $0
-
-**Optional cloud AI answers:**
-- Only query results sent to OpenAI-compatible API provider
-- Original documents stay local
-- You control when to use --ai flag
-- Cost: ~$0.0006 per query (varies by provider)
-
-### Cost Breakdown
+Once installed, tools are available automatically in your session. Ask Claude to search your codebase:
 
 ```
-Local search only:           $0
-AI-powered answer (simple):  $0.0003
-AI-powered answer (complex): $0.0006
-Monthly budget limit:        $10 (configurable)
+search for all authentication-related functions
 ```
+
+Or use MCP tools directly for precise retrieval.
 
 ---
 
@@ -670,79 +634,24 @@ AI: Key learnings?
 
 ---
 
-## Working with RAG
+## Working with jcodemunch-mcp
 
-### Query Syntax
+### Searching Your Codebase
 
-**Basic search:**
-```bash
-/cdd:query "authentication patterns"
-```
+Use the `search_text` or `search_symbols` tools directly in your Claude session after installing `jcodemunch-mcp`.
 
-Returns: Local document matches ranked by relevance.
-
-**AI-powered answers:**
-```bash
-/cdd:query "authentication patterns" --ai
-```
-
-Returns: Synthesized answer using local context + external knowledge.
-
-### Example Queries
-
-**Finding past decisions:**
-```bash
-/cdd:query "why did we choose PostgreSQL over MongoDB"
-```
+**Finding past patterns:**
+Ask Claude: "search for how we handle rate limiting in this codebase"
 
 **Locating implementation patterns:**
-```bash
-/cdd:query "error handling in API routes"
-```
+Ask Claude: "find all error handling in API routes"
 
 **Understanding architecture:**
-```bash
-/cdd:query "how does the caching layer work" --ai
-```
+Ask Claude: "get the file tree for the auth module"
 
-### RAG-Enhanced Planning
+### Integration with /cdd:decide
 
-When running `/cdd:decide`, RAG auto-injects relevant context:
-
-```bash
-/cdd:decide
-```
-
-RAG searches for:
-- Similar past work items
-- Related architectural decisions
-- Common patterns in your codebase
-
-Injected into planning prompt invisibly. Result: Plans reference past solutions.
-
-### Cost Tracking
-
-Check usage:
-```bash
-python scripts/rag_query.py --usage
-```
-
-Output:
-```
-RAG Usage Report
-================
-Queries this month: 47
-AI-powered queries: 12
-Total cost: $0.0072
-Budget remaining: $9.9928
-```
-
-Set custom budget in `.env`:
-```bash
-RAG_MONTHLY_BUDGET=5.00  # $5/month limit
-```
-
-When limit hit, AI answers disabled automatically. Local search continues working.
+When running `/cdd:decide`, you can ask Claude to use jcodemunch tools to search for existing patterns before making a recommendation. This happens naturally in the same session — no separate setup.
 
 ---
 
@@ -867,26 +776,6 @@ git status
 
 ---
 
-### RAG indexing errors
-
-**Problem:** `python scripts/index_docs.py` fails
-
-**Common causes:**
-- Python dependencies not installed: `pip install -r requirements.txt`
-- Virtual environment not activated: `source .venv/bin/activate`
-- ChromaDB version mismatch: `pip install --upgrade chromadb`
-
-**Solution:**
-```bash
-# Clean install
-rm -rf .venv .chroma
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python scripts/index_docs.py
-```
-
----
 
 ## Best Practices
 
@@ -1003,10 +892,7 @@ Session notes include:
 - Check Nginx config for CORS headers
 ```
 
-Developer B starts next day:
-```bash
-/cdd:query "CORS webhook issues" --ai
-```
+Developer B starts next day: asks Claude to search for "CORS webhook issues" using jcodemunch-mcp tools.
 
 Gets context immediately, continues work.
 
@@ -1020,10 +906,7 @@ Minimal merge conflicts because CONTEXT.md is organized by feature area.
 
 **Code review integration:**
 
-Reviewer runs:
-```bash
-/cdd:query "recent authentication changes"
-```
+Reviewer asks Claude to search for "recent authentication changes" using jcodemunch-mcp tools.
 
 Gets complete context:
 - Original requirements (CONTEXT.md)
@@ -1043,14 +926,11 @@ Reviews code with full context, catches divergence from requirements.
 | `/cdd:log` | Auto-detect and log session | `/cdd:log` |
 | `/cdd:decide` | Multi-agent collaborative planning | `/cdd:decide` |
 | `/cdd:done` | Mark complete with evidence | `/cdd:done` |
-| `/cdd:query` | Search documentation (RAG) | `/cdd:query "auth patterns"` |
-| `/cdd:query --ai` | AI-powered answer (RAG) | `/cdd:query "CORS fix" --ai` |
 
 **Installation commands:**
 ```bash
-npx @emb715/cdd init                    # Install CDD core
-npx @emb715/cdd add rag                 # Add RAG capability
-python scripts/index_docs.py            # Reindex RAG
+npx @emb715/cdd init                                    # Install CDD core
+claude mcp add jcodemunch uvx jcodemunch-mcp            # Add code search (optional)
 ```
 
 **File structure:**
@@ -1061,22 +941,12 @@ cdd/
 └── decisions/        # Optional complex decision docs
 ```
 
-**RAG files:**
-```
-.chroma/              # Vector database (local)
-scripts/
-├── index_docs.py     # Indexing script
-└── rag_query.py      # Query script
-requirements.txt      # Python dependencies
-.env                  # RAG configuration
-```
-
 ---
 
 ## Next Steps
 
 1. **Start your first session:** Run `/cdd:start` in Claude Code
-2. **Install RAG when you hit 10+ files:** `npx @emb715/cdd add rag`
+2. **Add code search when you hit 10+ files:** `claude mcp add jcodemunch uvx jcodemunch-mcp`
 3. **Use /cdd:decide for complex decisions:** Get multi-agent expert input
 4. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
 

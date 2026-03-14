@@ -29,14 +29,14 @@ Unless --skip-log:
 **Work Summary:** [1-2 sentences from Solution]
 **Final Stats:** Tasks X/Y (ZZ%), Sessions N, Time Xh
 **Key Learnings:** [From decisions/sessions]
-**Status:** draft → completed
+**Status:** draft → complete
 ```
 
 Append to SESSIONS.md.
 
 ### 4. Update CONTEXT.md
 
-Frontmatter: `status: completed`, `completed: YYYY-MM-DD`, `updated: YYYY-MM-DD`
+Frontmatter: `status: complete`, `completed: YYYY-MM-DD`, `updated: YYYY-MM-DD`
 
 ### 5. Implementation Summary
 
@@ -67,12 +67,12 @@ Source: CONTEXT.md, SESSIONS.md, decisions/, git log
 Work item completed!
 
 ID: XXXX-work-name
-Status: draft → completed
+Status: draft → complete
 Duration: Xh (N sessions)
 Tasks: X/Y completed (ZZ%)
 
 Updated:
-  CONTEXT.md (status: completed)
+  CONTEXT.md (status: complete)
   SESSIONS.md (final entry)
   [IMPLEMENTATION_SUMMARY.md (generated)]
 
@@ -120,12 +120,12 @@ Output:
 Work item completed!
 
 ID: 0001-user-authentication
-Status: draft → completed
+Status: draft → complete
 Duration: 5.5h (3 sessions)
 Tasks: 8/10 completed (80%)
 
 Updated:
-  CONTEXT.md (status: completed)
+  CONTEXT.md (status: complete)
   SESSIONS.md (final entry)
   IMPLEMENTATION_SUMMARY.md (generated)
 

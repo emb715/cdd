@@ -48,25 +48,7 @@
 **The problem:** AI makes decisions without research, humans rubber-stamp them.
 **CDD solution:** AI researches in parallel, humans make informed decisions.
 
-**Embodied in `/cdd:decide`:**
-```bash
-/cdd:decide Should we use REST or GraphQL?
-
-# Behind the scenes:
-# - 4 agents research in parallel (2 min)
-# - REST advocate agent
-# - GraphQL advocate agent
-# - Codebase analyzer agent
-# - Analysis agent (objective comparison)
-
-# You get: Findings from all angles + AI suggestion
-# You decide: Based on real research, not opinions
-```
-
-**Why this works:**
-- Agents can research faster than you can Google
-- Multiple perspectives prevent blind spots
-- Final decision stays with the human (you know your context)
+**Embodied in `/cdd:decide`:** 4 agents research in parallel (advocates, codebase analyzer, objective comparison). You get findings from all angles. You make the call.
 
 ---
 
@@ -105,25 +87,6 @@ cdd/XXXX-work-name/
 3. Suggests task completions
 4. Appends session entry to SESSIONS.md
 
-**Session entry format:**
-```markdown
-## 2024-02-13 14:30 (2h)
-
-✅ **Completed:**
-- Task 1.2: Implement login service
-- Task 1.3: Add tests
-
-🔄 **In Progress:**
-- Task 2.1: OAuth integration (70% done)
-
-📝 **Next:**
-- Complete OAuth flow
-- Add error handling
-
-💡 **Notes:**
-- Found performance issue in token refresh (see CONTEXT.md Decision)
-```
-
 **Best practices:**
 - Run at end of session (habit formation)
 - Let AI auto-detect tasks when possible
@@ -140,18 +103,7 @@ cdd/XXXX-work-name/
 - Library/framework selection
 - Performance vs complexity trade-offs
 
-**What you get:**
-```
-cdd/XXXX-work-name/decisions/
-└── YYYY-MM-DD-topic.md
-
-Contents:
-- Problem statement
-- Options researched (by agents)
-- Codebase analysis (your patterns)
-- Recommendation (with rationale)
-- Trade-off matrix
-```
+**What you get:** `cdd/XXXX-work-name/decisions/YYYY-MM-DD-topic.md` with problem statement, options researched, codebase analysis, recommendation, and trade-off matrix.
 
 **Best practices:**
 - Use for non-trivial decisions (not "what to name this variable")
@@ -214,92 +166,24 @@ Don't update for:
 
 ### Progressive Disclosure in Practice
 
-**Start minimal:**
-```markdown
-## 🎯 Why (Problem)
-Users getting logged out after 5 minutes.
+Start minimal (problem + solution in 2-3 sentences). Expand as you learn:
+- Narrow the problem as root cause is discovered
+- Evolve solution from hypothesis to approach
+- Add decisions with rationale when made (collapsed by default)
 
-## 💡 Solution
-Increase session timeout, investigate token refresh.
-```
-
-**Expand as you learn:**
-```markdown
-## 🎯 Why (Problem)
-Users getting logged out after 5 minutes. Happening only on mobile browsers.
-Root cause: Token refresh fails when tab backgrounded (iOS limitation).
-
-## 💡 Solution
-1. Increase timeout from 5min to 30min (quick fix)
-2. Implement heartbeat ping to keep session alive
-3. Detect background state, pause refresh, resume on focus
-
-## 📝 Decisions
-
-<details>
-<summary><strong>2024-02-13: Why heartbeat instead of long-lived tokens?</strong></summary>
-
-**Decision:** Heartbeat ping every 60 seconds
-
-**Rationale:**
-- Long-lived tokens violate security policy (max 30min)
-- Heartbeat detects actual user activity
-- Works around iOS tab backgrounding
-
-**Trade-offs:**
-- Extra network calls (acceptable overhead)
-- Battery impact minimal (60s interval)
-
-**See full analysis:** [decisions/2024-02-13-session-strategy.md](decisions/2024-02-13-session-strategy.md)
-</details>
-```
-
-**Notice:**
-- Problem got more specific as root cause discovered
-- Solution evolved from quick fix to proper solution
-- Decision captured with rationale (not just "what")
-- Collapsed by default (progressive disclosure)
+**Rule of thumb:** If you'd want to know this after 2 weeks away, document it now.
 
 ---
 
 ### Task Management
 
-**Use phases for organization:**
-```markdown
-<details open>
-<summary><strong>Phase 1: Investigation</strong> (2/2 complete)</summary>
+**Use phases for organization:** Open current phase, collapse completed ones.
 
-- [x] **Task 1.1:** Reproduce issue on iOS Safari
-      **Files:** N/A (manual testing)
-      **Done when:** Consistent repro steps documented
+- Add `**Files:**` hints for auto-detection by `/cdd:log`
+- Add `**Done when:**` for clear completion criteria
+- Update as you discover new tasks mid-work
 
-- [x] **Task 1.2:** Analyze token refresh logic
-      **Files:** `src/auth/tokenRefresh.ts`
-      **Done when:** Root cause identified
-</details>
-
-<details>
-<summary><strong>Phase 2: Implementation</strong> (1/3 complete)</summary>
-
-- [x] **Task 2.1:** Increase timeout to 30min
-      **Files:** `src/auth/config.ts`
-      **Done when:** Tests passing, deployed to staging
-
-- [ ] **Task 2.2:** Implement heartbeat ping
-      **Files:** `src/auth/heartbeat.ts`, `src/auth/hooks/useHeartbeat.ts`
-      **Done when:** Ping working, no performance regression
-
-- [ ] **Task 2.3:** Add background state detection
-      **Files:** `src/utils/visibility.ts`
-      **Done when:** Pause/resume working on iOS
-</details>
-```
-
-**Best practices:**
-- Open current phase, collapse completed phases
-- Add file hints for auto-detection
-- "Done when" = clear completion criteria
-- Update as you discover new tasks
+See `cdd/.meta/templates/CONTEXT.md` for the full task structure.
 
 ---
 
@@ -314,28 +198,7 @@ Root cause: Token refresh fails when tab backgrounded (iOS limitation).
    - Mark completed tasks
    - Document any blockers
 
-2. **Add handoff session** (SESSIONS.md)
-   ```markdown
-   ## 2024-02-13 - Handoff to Alice
-
-   ✅ **Completed so far:**
-   - Phase 1 (Investigation) done
-   - Task 2.1 (timeout increase) deployed
-
-   🔄 **Current state:**
-   - Working on Task 2.2 (heartbeat implementation)
-   - Draft PR open: #123
-   - 60% complete
-
-   📝 **For Pepe:**
-   - iOS testing device on my desk
-   - HeartbeatService mostly done, needs tests
-   - Background detection TBD (Task 2.3)
-
-   💡 **Notes:**
-   - Security team approved heartbeat approach (Slack thread: link)
-   - Performance budget: < 1KB/min network overhead
-   ```
+2. **Add handoff session** (SESSIONS.md): note what's complete, current state, and blockers for the new owner.
 
 3. **Quick sync** (10 min)
    - Walk through CONTEXT.md
@@ -417,58 +280,6 @@ A: Yes, edit `cdd/.meta/templates/CONTEXT.md` in your project. Don't edit the pa
 
 **Q: Does this work outside Claude Code?**
 A: CDD is methodology-first. Commands are for Claude Code, but principles apply anywhere.
-
----
-
-## Philosophy Deep Dive
-
-### Why "Zero Ceremony" Matters
-
-**The problem with traditional project management:**
-- Overhead kills momentum
-- Forms to fill before you can start
-- Mandatory fields that don't help
-- Meetings to update status
-
-**CDD's approach:**
-- Start immediately, capture context as you work
-- No mandatory anything (everything is optional)
-- Context serves productivity, not compliance
-- Async by default (no meetings required)
-
-**What this enables:**
-- Flow state (no interruptions)
-- Faster iteration (no waiting for approval)
-- Better context (captured in the moment)
-- Sustainable pace (no burnout from ceremony)
-
----
-
-### Why "Humans Decide, AI Assists"
-
-**The AI alignment problem:**
-- AI makes up answers when it doesn't know
-- Humans trust AI too much ("it's smart, right?")
-- Critical decisions made without research
-
-**CDD's solution:**
-- AI does research (what it's good at)
-- Humans make decisions (what we're good at)
-- Clear separation of responsibilities
-
-**In practice:**
-```
-AI researches:
-  ✓ What are the options?
-  ✓ What are the trade-offs?
-  ✓ What does our codebase use?
-  ✓ What do experts recommend?
-
-Human decides:
-  ✓ Which option fits our constraints?
-  ✓ What trade-offs are acceptable?
-  ✓ Does this align with our goals?
-```
 
 ---
 

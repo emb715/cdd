@@ -11,7 +11,7 @@ dist/
 *.log
 
 # Local
-DONT_TRACK.*
+_DONT_TRACK/*
 
 # Root .claude/ only (exclude from tracking your local Claude Code settings)
 /.claude/

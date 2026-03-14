@@ -23,9 +23,6 @@ echo "📦 Unlinking npm packages..."
 cd "$MONOREPO_ROOT/packages/cdd"
 npm unlink -g @emb715/cdd 2>/dev/null || true
 
-cd "$MONOREPO_ROOT/packages/cdd-rag"
-npm unlink -g @emb715/cdd-rag 2>/dev/null || true
-
 echo -e "${GREEN}✅ Packages unlinked${NC}"
 echo ""
 

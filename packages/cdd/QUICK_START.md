@@ -222,7 +222,7 @@ your-project/
 - **Tutorial:** [Complete guide with examples](../../docs/CDD_TUTORIAL.md)
 - **Troubleshooting:** [Tutorial: Troubleshooting](../../docs/CDD_TUTORIAL.md#troubleshooting)
 - **Best Practices:** [Tutorial: Best Practices](../../docs/CDD_TUTORIAL.md#best-practices)
-- **RAG Setup:** [Tutorial: RAG Integration](../../docs/CDD_TUTORIAL.md#adding-rag-optional-enhancement)
+- **Code Search:** Add jcodemunch-mcp MCP server: `claude mcp add jcodemunch uvx jcodemunch-mcp`
 - **Issues:** https://github.com/emb715/cdd/issues
 
 ---

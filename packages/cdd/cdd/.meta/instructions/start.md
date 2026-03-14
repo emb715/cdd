@@ -20,7 +20,7 @@ Extract description. Detect type (case-insensitive):
 - research|explore|spike|investigate → spike
 - epic|initiative|large → epic
 
-**Smart defaults:** Scan cdd/ for recent work items. If >70% are same type, suggest that type for ambiguous descriptions.
+**Smart defaults:** Scan cdd/ for recent work items. If >70% are same type, default to that type for ambiguous descriptions.
 
 Flags: `--type=X` overrides detection. Default: feature
 

@@ -7,7 +7,6 @@ Execute CDD session logging workflow autonomously. Auto-detect work item, change
 ## Input
 
 - `work_id`: Optional (e.g., "0001" or "0001-user-auth")
-- `flags`: --force (skip confirmations)
 
 ## Steps
 

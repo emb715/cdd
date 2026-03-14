@@ -531,7 +531,7 @@ Each work item has its own folder, context, and session log. No conflicts.
 
 ## Code Search with jcodemunch-mcp (Optional)
 
-> **Full setup guide:** [docs/JCODEMUNCH.md](JCODEMUNCH.md)
+> **Full setup guide:** [JCODEMUNCH.md](JCODEMUNCH.md)
 
 https://github.com/jgravelle/jcodemunch-mcp
 

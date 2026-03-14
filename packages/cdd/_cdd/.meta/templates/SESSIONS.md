@@ -4,27 +4,6 @@
 
 ---
 
-## YYYY-MM-DD HH:MM (Xh)
-
-✅ **Completed:**
-- Task description
-- Another task
-
-🔄 **In Progress:**
-- Task name (XX% done)
-
-📝 **Next:**
-- What to do next session
-- Priority order
-
-🐛 **Issues:** *(optional - only if problems occurred)*
-- Issue description and resolution
-
-💡 **Notes:** *(optional - insights, learnings)*
-- Something worth remembering
-
----
-
 ## Template (Copy for New Sessions)
 
 ```markdown

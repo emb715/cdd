@@ -11,10 +11,13 @@ dist/
 *.log
 
 # Local
-DONT_TRACK.*
+_DONT_TRACK/*
 
 # Root .claude/ only (exclude from tracking your local Claude Code settings)
 /.claude/
+
+# BUT allow packages/cdd/.claude/ (part of the npm package)
+!/packages/cdd/.claude/
 
 # Test workspaces (runtime generated)
 test-cdd/

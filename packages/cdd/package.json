@@ -1,19 +1,21 @@
 {
   "name": "@emb715/cdd",
-  "version": "0.1.5",
-  "description": "Context-Driven Development methodology",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Context-Driven Development - AI-native productivity workflow with human-centered decision making",
   "bin": {
     "cdd": "bin/cdd.js"
   },
   "keywords": [
     "cdd",
-    "context",
-    "documentation",
-    "ai",
+    "context-driven-development",
+    "ai-workflow",
+    "productivity",
     "claude",
-    "methodology",
-    "development"
+    "multi-agent",
+    "decision-planning",
+    "human-in-the-loop",
+    "documentation",
+    "methodology"
   ],
   "author": "EMB (Ezequiel M. Benitez)",
   "license": "MIT",
@@ -23,10 +25,12 @@
   },
   "homepage": "https://github.com/emb715/cdd#readme",
   "files": [
-    "cdd/",
+    "_cdd/",
     ".claude/",
     "bin/",
-    "README.md"
+    "README.md",
+    "QUICK_START.md",
+    "AGENTS.md"
   ],
   "engines": {
     "node": ">=14.0.0"

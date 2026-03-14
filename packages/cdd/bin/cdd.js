@@ -1,30 +1,36 @@
 #!/usr/bin/env node
 
 /**
- * CDD CLI
+ * CDD CLI v1.0.0
  *
  * Command-line interface for Context-Driven Development
  *
+ * Zero Ceremony Approach:
+ * - Single progressive template (CONTEXT.md) - no multi-tier complexity
+ * - Minimal session log (SESSIONS.md) - no mandatory tracking
+ * - 4 commands: start, log, decide, done - no ceremony overhead
+ * - Honest agent for autonomous execution - no questions
+ * - Sage agents for multi-agent decisions - humans decide, AI researches
+ * - No metrics system - zero overhead
+ * - LLM-optimized commands - minimal tokens
+ *
  * Usage:
  *   npx @emb715/cdd init         - Initialize CDD in current project
- *   npx @emb715/cdd add rag      - Add RAG extension
  *   npx @emb715/cdd version      - Show version
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require("fs");
+const path = require("path");
 
 const COMMANDS = {
   init: initCDD,
-  add: addExtension,
   version: showVersion,
-  help: showHelp
+  help: showHelp,
 };
 
 async function main() {
   const args = process.argv.slice(2);
-  const command = args[0] || 'help';
+  const command = args[0] || "help";
 
   if (!COMMANDS[command]) {
     console.error(`❌ Unknown command: ${command}`);
@@ -36,224 +42,219 @@ async function main() {
 }
 
 async function initCDD(args) {
-  console.log('🚀 Initializing CDD in your project...\n');
+  const packageJson = require(path.join(__dirname, "..", "package.json"));
+  console.log(
+    `Initializing CDD v${packageJson.version} (Zero Ceremony) in your project...\n`,
+  );
 
   const cwd = process.cwd();
-  const packageRoot = path.join(__dirname, '..');
-  let skipCddFolder = false;
-
-  // Check if already initialized
-  if (fs.existsSync(path.join(cwd, 'cdd'))) {
-    console.log('⚠️  CDD already initialized in this project.');
-    console.log('   cdd/ folder already exists.\n');
-
-    const answer = await prompt('Overwrite cdd/ folder? (y/N): ');
-    if (answer.toLowerCase() !== 'y') {
-      console.log('   → Skipping cdd/ folder (keeping existing files)');
-      skipCddFolder = true;
-    }
-  }
+  const packageRoot = path.join(__dirname, "..");
 
   try {
-    // Copy cdd/ folder (unless skipped)
-    if (!skipCddFolder) {
-      console.log('\n📁 Copying CDD workspace structure...');
-      copyDir(path.join(packageRoot, 'cdd'), path.join(cwd, 'cdd'));
-      console.log('   ✓ cdd/ folder created');
-    }
+    // Check if _cdd/ already exists
+    if (fs.existsSync(path.join(cwd, "_cdd"))) {
+      console.log("⚠️  CDD directory already exists.");
+      console.log("   This will overwrite existing CDD installation.\n");
 
-    // Always copy/update .claude/commands/
-    console.log('\n📁 Installing Claude commands...');
-    const claudeDir = path.join(cwd, '.claude', 'commands');
-    if (!fs.existsSync(claudeDir)) {
-      fs.mkdirSync(claudeDir, { recursive: true });
-    }
-
-    const commandsSource = path.join(packageRoot, '.claude', 'commands');
-    const commandFiles = fs.readdirSync(commandsSource);
-
-    commandFiles.forEach(file => {
-      if (file.startsWith('cdd:')) {
-        fs.copyFileSync(
-          path.join(commandsSource, file),
-          path.join(claudeDir, file)
-        );
-        console.log(`   ✓ ${file}`);
+      const answer = await prompt("Continue? (y/N): ");
+      if (answer.toLowerCase() !== "y") {
+        console.log("   Cancelled.");
+        process.exit(0);
       }
-    });
 
-    console.log('\n✅ CDD initialized successfully!\n');
-    console.log('📚 Next steps:');
-    console.log('   1. Review cdd/.meta/README.md for full documentation');
-    console.log('   2. See cdd/.meta/SIZING_GUIDE.md to choose your template mode');
-    console.log('   3. Create your first work item:');
-    console.log('      /cdd:create-work [description]\n');
-    console.log('💡 Optional: Add RAG for semantic search');
-    console.log('   npx @emb715/cdd add rag\n');
+      // Clean up legacy files from v0.x/v1.x
+      console.log("\n🧹 Cleaning up legacy files...");
+      const legacyFiles = [
+        ".claude/commands/cdd:create-work.md",
+        ".claude/commands/cdd:plan-work.md",
+        ".claude/commands/cdd:save-session.md",
+        ".claude/commands/cdd:complete-work.md",
+        ".claude/commands/cdd:list-work.md",
+        "_cdd/.meta/metrics",
+        "_cdd/.meta/metrics-summary.json",
+        "_cdd/.meta/metrics-summary.md",
+        "_cdd/.meta/QUICK_REFERENCE.md",
+      ];
 
-  } catch (error) {
-    console.error('\n❌ Error during initialization:', error.message);
-    process.exit(1);
-  }
-}
-
-function addExtension(args) {
-  const extension = args[0];
-
-  if (!extension) {
-    console.error('❌ Please specify an extension to add.');
-    console.log('   Available extensions: rag');
-    process.exit(1);
-  }
-
-  if (extension === 'rag') {
-    addRAGExtension();
-  } else {
-    console.error(`❌ Unknown extension: ${extension}`);
-    console.log('   Available extensions: rag');
-    process.exit(1);
-  }
-}
-
-function addRAGExtension() {
-  console.log('🔍 Adding CDD-RAG extension...\n');
-
-  const cwd = process.cwd();
-
-  // Check if CDD is initialized
-  if (!fs.existsSync(path.join(cwd, 'cdd'))) {
-    console.error('❌ CDD not initialized in this project.');
-    console.log('   Run: npx @emb715/cdd init\n');
-    process.exit(1);
-  }
-
-  // Check if RAG package is available
-  try {
-    let ragPackagePath;
-
-    // Strategy 1: Try to resolve from node_modules (if user has it installed)
-    try {
-      const ragPackageJson = require.resolve('@emb715/cdd-rag/package.json');
-      ragPackagePath = path.dirname(ragPackageJson);
-      console.log('📦 Found @emb715/cdd-rag in node_modules');
-    } catch (resolveError) {
-      // Strategy 2: Check monorepo structure (development mode)
-      const monorepoPath = path.join(__dirname, '..', '..', 'cdd-rag');
-
-      if (fs.existsSync(monorepoPath)) {
-        ragPackagePath = monorepoPath;
-        console.log('📦 Using local @emb715/cdd-rag (development mode)');
-      } else {
-        // Strategy 3: Download package using npm pack to temp directory
-        console.log('📦 Downloading @emb715/cdd-rag from npm...');
-        console.log('');
-
-        const os = require('os');
-        const tempDir = path.join(os.tmpdir(), 'cdd-rag-temp-' + Date.now());
-
-        try {
-          // Create temp directory
-          fs.mkdirSync(tempDir, { recursive: true });
-
-          // Use npm pack to download the package as tarball
-          const packOutput = execSync('npm pack @emb715/cdd-rag', {
-            cwd: tempDir,
-            encoding: 'utf8'
-          }).trim();
-
-          const tarballPath = path.join(tempDir, packOutput);
-
-          // Extract tarball
-          execSync(`tar -xzf "${tarballPath}"`, { cwd: tempDir });
-
-          // Package contents are in 'package/' subdirectory
-          ragPackagePath = path.join(tempDir, 'package');
-
-          if (!fs.existsSync(ragPackagePath)) {
-            throw new Error('Package extraction failed');
+      for (const file of legacyFiles) {
+        const fullPath = path.join(cwd, file);
+        if (fs.existsSync(fullPath)) {
+          const stat = fs.statSync(fullPath);
+          if (stat.isDirectory()) {
+            fs.rmSync(fullPath, { recursive: true, force: true });
+          } else {
+            fs.unlinkSync(fullPath);
           }
-
-          console.log('✓ Package downloaded successfully');
-          console.log('');
-        } catch (downloadError) {
-          console.error('❌ Failed to download @emb715/cdd-rag');
-          console.log('');
-          console.log('   Try manual installation:');
-          console.log('   1. npm install -g @emb715/cdd-rag');
-          console.log('   2. Or clone from GitHub');
-          console.log('');
-          process.exit(1);
+          console.log(`   ✓ Removed: ${file}`);
         }
       }
     }
 
-    // Copy RAG files
-    console.log('📁 Copying RAG extension files...');
+    // Create _cdd/ structure
+    console.log("Creating CDD workspace structure...");
+    const cddDir = path.join(cwd, "_cdd");
+    const metaDir = path.join(cddDir, ".meta");
 
-    const ragSource = path.join(ragPackagePath, 'cdd', '.rag');
-    const ragDest = path.join(cwd, 'cdd', '.rag');
-
-    if (!fs.existsSync(ragSource)) {
-      console.error(`❌ RAG source not found: ${ragSource}`);
-      console.log('   The package structure may be incorrect.');
-      process.exit(1);
+    if (!fs.existsSync(cddDir)) {
+      fs.mkdirSync(cddDir, { recursive: true });
     }
 
-    copyDir(ragSource, ragDest);
-    console.log('   ✓ cdd/.rag/ created');
+    // Copy .meta/ folder (templates and instructions only - zero ceremony)
+    console.log("Installing templates and instructions...");
+    const sourceMetaDir = path.join(packageRoot, "_cdd", ".meta");
 
-    // Copy RAG command
-    const ragCommandSource = path.join(ragPackagePath, '.claude', 'commands', 'cdd:query.md');
-    const ragCommandDest = path.join(cwd, '.claude', 'commands', 'cdd:query.md');
+    // Create .meta structure
+    fs.mkdirSync(metaDir, { recursive: true });
+    fs.mkdirSync(path.join(metaDir, "templates"), { recursive: true });
+    fs.mkdirSync(path.join(metaDir, "templates", "decisions"), {
+      recursive: true,
+    });
+    fs.mkdirSync(path.join(metaDir, "instructions"), { recursive: true });
 
-    fs.copyFileSync(ragCommandSource, ragCommandDest);
-    console.log('   ✓ /cdd:query command added');
+    // Copy ONLY the essential v2 templates (zero ceremony)
+    const essentialFiles = [
+      "templates/CONTEXT.md",
+      "templates/SESSIONS.md",
+      "templates/decisions/DECISION_TEMPLATE.md",
+      "instructions/start.md",
+      "instructions/log.md",
+      "instructions/done.md",
+    ];
 
-    console.log('\n✅ CDD-RAG extension added successfully!\n');
-    console.log('📚 Next steps:');
-    console.log('   1. Install Python dependencies:');
-    console.log('      cd cdd/.rag && pip install -r requirements.txt');
-    console.log('   2. (Optional) Configure AI features:');
-    console.log('      cp cdd/.rag/.env.example cdd/.rag/.env');
-    console.log('      # Add your OPENAI_API_KEY');
-    console.log('   3. Index your CDD workspace:');
-    console.log('      python -m cdd/.rag/core.cli index');
-    console.log('   4. Try searching:');
-    console.log('      /cdd:query "your search query"\n');
-    console.log('📖 Full documentation: cdd/.rag/README.md\n');
+    for (const file of essentialFiles) {
+      const sourcePath = path.join(sourceMetaDir, file);
+      const destPath = path.join(metaDir, file);
 
+      if (fs.existsSync(sourcePath)) {
+        fs.copyFileSync(sourcePath, destPath);
+      }
+    }
+
+    console.log("   ✓ CONTEXT.md template (progressive, single file)");
+    console.log("   ✓ SESSIONS.md template (minimal logging)");
+    console.log("   ✓ DECISION_TEMPLATE.md (for /cdd:decide)");
+    console.log("   ✓ Agent instruction files (start, log, done)");
+
+    // Install Claude commands
+    console.log("\n Installing Claude commands...");
+    const claudeDir = path.join(cwd, ".claude", "commands");
+    if (!fs.existsSync(claudeDir)) {
+      fs.mkdirSync(claudeDir, { recursive: true });
+    }
+
+    const commandsSource = path.join(packageRoot, ".claude", "commands");
+    const v2Commands = [
+      "cdd:start.md",
+      "cdd:log.md",
+      "cdd:decide.md",
+      "cdd:done.md",
+    ];
+
+    for (const cmdFile of v2Commands) {
+      const sourcePath = path.join(commandsSource, cmdFile);
+      const destPath = path.join(claudeDir, cmdFile);
+
+      if (fs.existsSync(sourcePath)) {
+        fs.copyFileSync(sourcePath, destPath);
+        console.log(`   ✓ ${cmdFile}`);
+      }
+    }
+
+    // Install CDD agents
+    console.log("\n Installing CDD agents...");
+    const claudeAgentsDir = path.join(cwd, ".claude", "agents");
+    if (!fs.existsSync(claudeAgentsDir)) {
+      fs.mkdirSync(claudeAgentsDir, { recursive: true });
+    }
+
+    const agentsSource = path.join(packageRoot, ".claude", "agents");
+    if (fs.existsSync(agentsSource)) {
+      copyDir(agentsSource, claudeAgentsDir);
+      console.log("   ✓ cdd-honest (autonomous execution)");
+      console.log("   ✓ cdd-sage family (domain-aware decisions)");
+    }
+
+    // Create example structure (optional)
+    console.log("\n Creating example work item...");
+    const exampleDir = path.join(cddDir, "0000-example");
+    if (!fs.existsSync(exampleDir)) {
+      fs.mkdirSync(exampleDir, { recursive: true });
+
+      // Copy example CONTEXT.md
+      const exampleContext = path.join(metaDir, "templates", "CONTEXT.md");
+      const destContext = path.join(exampleDir, "CONTEXT.md");
+
+      if (fs.existsSync(exampleContext)) {
+        let content = fs.readFileSync(exampleContext, "utf8");
+        content = content.replace("id: XXXX", "id: 0000");
+        content = content.replace("[Work Title]", "Example Work Item");
+        content = content.replace(
+          "YYYY-MM-DD",
+          new Date().toISOString().split("T")[0],
+        );
+        fs.writeFileSync(destContext, content, "utf8");
+      }
+
+      // Copy example SESSIONS.md
+      const exampleSessions = path.join(metaDir, "templates", "SESSIONS.md");
+      const destSessions = path.join(exampleDir, "SESSIONS.md");
+
+      if (fs.existsSync(exampleSessions)) {
+        let content = fs.readFileSync(exampleSessions, "utf8");
+        content = content.replace("XXXX-[work-name]", "0000-example");
+        fs.writeFileSync(destSessions, content, "utf8");
+      }
+
+      console.log("   ✓ 0000-example/ created (you can delete this)");
+    }
+
+    console.log("\n CDD initialized (Zero Ceremony)\n");
+    console.log("Zero Ceremony Workflow:");
+    console.log(
+      "  /cdd:start [description]  - Create work item (30 sec, not 10 min)",
+    );
+    console.log("  /cdd:log                  - Save session (minimal logging)");
+    console.log(
+      "  /cdd:decide [topic]       - Multi-agent decision (you decide, AI researches)",
+    );
+    console.log("  /cdd:done                 - Mark complete (evidence-based)");
+    console.log(
+      "\nPhilosophy: Speed over perfection. Humans decide, AI assists.",
+    );
+    console.log("\nNext: Check _cdd/0000-example/CONTEXT.md");
+    console.log("Docs: https://github.com/emb715/cdd\n");
   } catch (error) {
-    console.error('\n❌ Error adding RAG extension:', error.message);
+    console.error("\n❌ Error during initialization:", error.message);
     process.exit(1);
   }
 }
 
 function showVersion() {
-  const packageJson = require(path.join(__dirname, '..', 'package.json'));
+  const packageJson = require(path.join(__dirname, "..", "package.json"));
   console.log(`CDD v${packageJson.version}`);
-  console.log('Context-Driven Development');
-  console.log('https://github.com/emb715/cdd');
+  console.log("Context-Driven Development");
+  console.log("https://github.com/emb715/cdd");
 }
 
 function showHelp() {
   console.log(`
-CDD - Context-Driven Development CLI
+CDD - Context-Driven Development
 
 Usage:
-  npx @emb715/cdd <command> [options]
+  npx @emb715/cdd <command>
 
 Commands:
-  init              Initialize CDD in your project
-  add <extension>   Add an extension (e.g., rag)
-  version           Show version information
-  help              Show this help message
+  init      Initialize CDD in your project
+  version   Show version
+  help      Show this help
 
-Examples:
-  npx @emb715/cdd init          # Set up CDD in current project
-  npx @emb715/cdd add rag       # Add RAG extension for semantic search
+Workflow:
+  /cdd:start [description]  - Create work item
+  /cdd:log                  - Log progress
+  /cdd:decide [topic]       - Multi-agent decision
+  /cdd:done                 - Mark complete
 
-Documentation:
-  https://github.com/emb715/cdd
+Docs: https://github.com/emb715/cdd
 `);
 }
 
@@ -277,15 +278,15 @@ function copyDir(src, dest) {
   }
 }
 
-// Utility: Simple prompt (for Node.js compatibility)
+// Utility: Simple prompt
 function prompt(question) {
-  const readline = require('readline').createInterface({
+  const readline = require("readline").createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
 
-  return new Promise(resolve => {
-    readline.question(question, answer => {
+  return new Promise((resolve) => {
+    readline.question(question, (answer) => {
       readline.close();
       resolve(answer);
     });
@@ -293,7 +294,7 @@ function prompt(question) {
 }
 
 // Run main
-main().catch(error => {
-  console.error('Fatal error:', error);
+main().catch((error) => {
+  console.error("Fatal error:", error);
   process.exit(1);
 });

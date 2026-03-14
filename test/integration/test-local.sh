@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # CDD Local Testing Script
-# Tests CLI functionality, RAG integration, and end-to-end workflows
+# Tests CLI functionality and end-to-end workflows
 #
 
 set -e  # Exit on error
@@ -97,77 +97,10 @@ fi
 
 echo ""
 
-# Test 2: Add RAG Extension
-print_header "Test 2: Add RAG Extension"
+# Test 2: File Permissions
+print_header "Test 2: File Permissions"
 run_test
-print_test "2.1" "Running 'cdd add rag'"
-
-node "$CDD_BIN" add rag > /dev/null 2>&1
-
-if [ -d "cdd/.rag" ]; then
-  print_success "cdd/.rag/ directory created"
-else
-  print_failure "cdd/.rag/ directory NOT created"
-fi
-
-run_test
-print_test "2.2" "Checking RAG command"
-if [ -f ".claude/commands/cdd:query.md" ]; then
-  print_success "cdd:query command added"
-else
-  print_failure "cdd:query command NOT added"
-fi
-
-run_test
-print_test "2.3" "Checking RAG structure"
-if [ -f "cdd/.rag/requirements.txt" ] && [ -d "cdd/.rag/core" ]; then
-  print_success "RAG structure complete"
-else
-  print_failure "RAG structure incomplete"
-fi
-
-echo ""
-
-# Test 3: Python Environment (Optional - skip if Python not available)
-print_header "Test 3: Python Environment"
-
-if command -v python3 &> /dev/null; then
-  run_test
-  print_test "3.1" "Creating Python virtual environment"
-
-  cd cdd/.rag
-  python3 -m venv venv > /dev/null 2>&1
-
-  if [ -d "venv" ]; then
-    print_success "Virtual environment created"
-  else
-    print_failure "Virtual environment creation failed"
-  fi
-
-  run_test
-  print_test "3.2" "Installing Python dependencies"
-
-  source venv/bin/activate
-  pip install -q -r requirements.txt > /dev/null 2>&1
-
-  if [ $? -eq 0 ]; then
-    print_success "Python dependencies installed"
-  else
-    print_failure "Python dependencies installation failed"
-  fi
-
-  deactivate
-  cd ../..
-else
-  print_info "⚠️  Python3 not found - skipping Python tests"
-fi
-
-echo ""
-
-# Test 4: File Permissions
-print_header "Test 4: File Permissions"
-run_test
-print_test "4.1" "Checking CDD CLI is executable"
+print_test "2.1" "Checking CDD CLI is executable"
 
 if [ -x "$CDD_BIN" ]; then
   print_success "CDD CLI has execute permission"
@@ -177,8 +110,8 @@ fi
 
 echo ""
 
-# Test 5: Edge Cases
-print_header "Test 5: Edge Cases"
+# Test 3: Edge Cases
+print_header "Test 3: Edge Cases"
 
 # Create a new test directory for edge case testing
 EDGE_TEST_DIR=$(mktemp -d -t cdd-edge-XXXXXX)
@@ -186,19 +119,7 @@ trap "rm -rf $TEST_DIR $EDGE_TEST_DIR" EXIT
 cd "$EDGE_TEST_DIR"
 
 run_test
-print_test "5.1" "Testing 'add rag' before 'init' (should fail gracefully)"
-
-node "$CDD_BIN" add rag > /dev/null 2>&1
-EXIT_CODE=$?
-
-if [ $EXIT_CODE -ne 0 ]; then
-  print_success "Correctly rejects 'add rag' before init"
-else
-  print_failure "Should reject 'add rag' before init"
-fi
-
-run_test
-print_test "5.2" "Testing double init (should handle existing files)"
+print_test "3.1" "Testing double init (should handle existing files)"
 
 node "$CDD_BIN" init > /dev/null 2>&1
 node "$CDD_BIN" init > /dev/null 2>&1

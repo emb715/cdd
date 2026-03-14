@@ -13,12 +13,15 @@ version: 1.0.0
 /cdd:loop [work-id]
 /cdd:loop --resume      # Resume from checkpoint
 /cdd:loop --dry-run     # Plan task groups only, no implementation
+/cdd:loop --accept      # Continue past non-blocking review issues (SOFT STOP)
+/cdd:loop --skip        # Skip review entirely and proceed to completion
+/cdd:loop --rollback    # Reset to last checkpoint
 ```
 
 ## Activation
 
 On invocation:
-1. Parse input: work-id (optional), --resume flag, --dry-run flag
+1. Parse input: work-id (optional), flags: --resume, --dry-run, --accept, --skip, --rollback
 2. Check for _cdd/[work-id]/.loop/.resume — if found, set resume_mode=true
 3. Read _cdd/.meta/loop.config.yaml into session variables (see Config)
 4. Execute the protocols below in order
@@ -49,7 +52,8 @@ agent_timeout_seconds: 120
 agent_stuck_threshold_seconds: 30
 task_max_retries: 1
 review_enabled: true
-auto_done: true
+review_max_retries: 3
+auto_done: false
 ```
 
 event_counter = 0 (resets each new context window — measures current window consumption)
@@ -77,7 +81,7 @@ Detection chain (never ask):
 3. Read _cdd/[work-id]/CONTEXT.md — extract all unchecked tasks (- [ ])
 4. For each task: extract description, done-when criteria, Files: field (= file_scope)
 5. Run PARALLEL SAFETY to build task groups
-6. Write loop-status.json (schema at end of file)
+6. Write loop-status.json (fields: work_id, status, started, updated, event_counter, task_groups, tasks, review_results, current_group_index)
 7. If --dry-run: print planned groups, exit
 
 ---
@@ -209,31 +213,84 @@ After all groups complete: run REVIEW
 
 ## Protocol: REVIEW
 
-If config.review_enabled = false: skip directly to COMPLETION CHECK.
+If config.review_enabled = false or --skip flag set: skip directly to COMPLETION CHECK.
 
-Spawn review agent (Task, run_in_background=true, subagent=cdd-victor-reid):
-```
-Review implementation for CDD work item [work-id].
+review_attempt = 0
 
-Tasks completed this session: [list with descriptions]
-Files changed: [list from loop-log.md]
-Acceptance criteria: read done-when fields from _cdd/[work-id]/CONTEXT.md for each task.
+REVIEW_LOOP:
+  review_attempt += 1
 
-End your output with exactly one of:
-LOOP_REVIEW_COMPLETE: PASS
-LOOP_REVIEW_COMPLETE: ISSUES_FOUND | [itemized issues, one per line]
-```
+  Spawn review agent (Task, run_in_background=true, subagent=cdd-victor-reid):
+  ```
+  Review implementation for CDD work item [work-id].
 
-Apply same HEALTH CHECK as task agents (agent_timeout_seconds).
-Wait for sentinel.
+  Tasks completed this session: [list with descriptions]
+  Files changed: [list from loop-log.md]
+  Acceptance criteria: read done-when fields from _cdd/[work-id]/CONTEXT.md for each task.
 
-If ISSUES_FOUND:
-  Append issues to loop-log.md under "## [timestamp] Review Issues"
-  Emit warning to user
-  Continue to COMPLETION CHECK — do not block on review issues
+  Classify each issue as BLOCKING (prevents other tasks/phases) or NON_BLOCKING (isolated).
 
-event_counter += 1 — run CHECK ROTATION
-Run COMPLETION CHECK
+  End your output with exactly one of:
+  LOOP_REVIEW_COMPLETE: PASS
+  LOOP_REVIEW_COMPLETE: ISSUES_FOUND | [BLOCKING|NON_BLOCKING] [issue description, one per line]
+  ```
+
+  Apply same HEALTH CHECK as task agents (agent_timeout_seconds).
+  Wait for sentinel.
+
+  If PASS:
+    event_counter += 1 — run CHECK ROTATION
+    Run COMPLETION CHECK
+
+  If ISSUES_FOUND:
+    Append to loop-log.md: "## [timestamp] Review Attempt [review_attempt] — ISSUES_FOUND"
+    Log each issue with its classification.
+
+    If review_attempt < config.review_max_retries:
+      Spawn fix agents (cdd-honest) per issue:
+        NON_BLOCKING issues → spawn in parallel (single message, multiple Tasks)
+        BLOCKING issues → spawn sequentially (must resolve before others)
+        Prompt per fix:
+        ```
+        Fix this review issue for CDD work item [work-id].
+        Issue: [description]
+        Files: [file_scope from original task]
+        Context: Read _cdd/[work-id]/CONTEXT.md for full context.
+        Do not ask questions. End with: FIX_[N]_COMPLETE
+        ```
+      Wait for all FIX_[N]_COMPLETE sentinels.
+      Loop back to REVIEW_LOOP
+
+    If review_attempt >= config.review_max_retries:
+      Separate remaining issues by classification:
+
+      If only NON_BLOCKING issues remain → SOFT STOP:
+        Append to loop-log.md: "SOFT STOP | unresolved after [review_attempt] attempts | [issue list]"
+        Write checkpoint.md
+        Do NOT write .resume — preserves human choice; any auto-resume hook must remain idle until user runs a command
+        Emit to user:
+          [LOOP] SOFT STOP — [N] non-blocking issues unresolved after [review_max_retries] attempts.
+          Issues: [list]
+          Options:
+            A) Accept and continue  →  /cdd:loop [work-id] --accept
+            B) Fix manually, re-run →  /cdd:loop [work-id] --resume
+            C) Skip review entirely →  /cdd:loop [work-id] --skip
+          Waiting for human input. STOP.
+
+      If any BLOCKING issues remain → HARD STOP:
+        Append to loop-log.md: "HARD STOP | blocking issues unresolved after [review_attempt] attempts | [issue list]"
+        Write checkpoint.md
+        Do NOT write .resume — prevents Stop hook auto-resume of broken state
+        Emit to user:
+          [LOOP] HARD STOP — blocking issues unresolved after [review_max_retries] attempts.
+          Issues: [full list with classifications]
+          Options:
+            A) Fix manually, re-run  →  /cdd:loop [work-id] --resume
+            B) Reset to checkpoint   →  /cdd:loop [work-id] --rollback
+          Nothing can continue. Human must resolve. FULL STOP.
+
+If --accept flag set: skip remaining review issues, proceed directly to COMPLETION CHECK.
+If --rollback flag set: restore loop-status.json and checkpoint.md to last saved state, re-run from current_group_index.
 
 ---
 
@@ -289,67 +346,18 @@ If 0 unchecked and config.auto_done = true:
   Append: "COMPLETE | [ISO timestamp]" to loop-log.md
   Emit: LOOP_DONE — [work-id] complete.
 
+If 0 unchecked and config.auto_done = false:
+  Emit: [LOOP] All tasks complete. Run /cdd:done to close [work-id].
+  STOP — human decides.
+
 If unchecked tasks remain:
   Emit: [LOOP] [N] tasks remain unchecked. Review _cdd/[work-id]/CONTEXT.md.
   STOP — human decides. Never auto-done with unchecked tasks.
 
----
-
-## loop-status.json Schema
-
-```json
-{
-  "work_id": "XXXX-work-name",
-  "loop_version": "1.0",
-  "status": "running",
-  "started": "ISO timestamp",
-  "updated": "ISO timestamp",
-  "event_counter": 0,
-  "rotation_threshold": 4,
-  "task_groups": [
-    {
-      "group": 1,
-      "parallel": true,
-      "tasks": ["1.1", "1.2"],
-      "status": "pending"
-    }
-  ],
-  "tasks": {
-    "1.1": {
-      "description": "Task description",
-      "status": "pending",
-      "file_scope": ["src/auth/oauth.ts"],
-      "started": null,
-      "completed": null,
-      "retry_count": 0
-    }
-  },
-  "review_results": [],
-  "current_group_index": 0
-}
-```
-
-status values — task: pending | running | done | error | skipped
-status values — top-level: running | rotating | complete | error
-
----
-
 ## Stop Hook Setup
 
-For automatic resume after context rotation, add to .claude/settings.json:
-
-```json
-{
-  "hooks": {
-    "Stop": [{"matcher": "", "hooks": [{"type": "command",
-      "command": "bash .claude/hooks/cdd-loop-resume.sh"}]}]
-  }
-}
-```
-
-Stop hook reads .resume, outputs the command, Claude Code treats stdout as next user turn.
-If no hook configured: loop prints the resume command — paste it manually to continue.
-State is never lost either way.
+Register in .claude/settings.json hooks.Stop: `bash .claude/hooks/cdd-loop-resume.sh`
+If no hook: paste the resume command manually. State is never lost.
 
 ---
 
@@ -357,21 +365,7 @@ State is never lost either way.
 
 ```
 /cdd:loop 0003-add-oauth
-
-Detecting work item... 0003-add-oauth (5 tasks)
-Reading _cdd/.meta/loop.config.yaml... rotation_threshold=4
-Planning task groups...
-  Group 1 (parallel):    Task 1.1 [src/auth/oauth.ts], Task 1.2 [src/auth/types.ts]
-  Group 2 (sequential):  Task 1.3 [src/auth/oauth.ts, src/auth/session.ts]
-  Group 3 (parallel):    Task 2.1 [src/ui/LoginButton.tsx], Task 2.2 [src/ui/OAuthCallback.tsx]
-
-[LOOP] event=0/4 | group=1 | done=0 | pending=5
-  Starting: Task 1.1, Task 1.2 (parallel)
-[LOOP] event=1/4 | group=1 complete | done=2 | pending=3
-[LOOP] event=2/4 | session logged | progress 0%→40%
-[LOOP] event=3/4 | group=2 complete | done=3 | pending=2
-[LOOP] event=4/4 | session logged → ROTATION TRIGGERED
-[LOOP] Context rotation at event 4. State saved.
+[LOOP] event=0/4 | group=1 | done=0 | pending=5  →  event=4/4 | ROTATION
 Resume: /cdd:loop 0003-add-oauth --resume
 ```
 

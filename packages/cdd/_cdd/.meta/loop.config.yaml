@@ -18,8 +18,13 @@ task_max_retries: 1
 # Review: run cdd-victor-reid after each full pass of task groups
 review_enabled: true
 
+# Max fix-and-review iterations before escalating to SOFT/HARD STOP
+review_max_retries: 3
+
 # Auto-done: spawn /cdd:done when all tasks are checked off
-auto_done: true
+# false = loop stops and tells you to run /cdd:done manually (recommended)
+# true  = loop auto-closes the work item (opt-in for full automation)
+auto_done: false
 
 # Dry run default (overridden by --dry-run flag)
 dry_run: false

@@ -11,6 +11,7 @@ version: 1.0.0
 ```bash
 /cdd:log
 /cdd:log [work-id]
+/cdd:log --force
 ```
 
 ## Process

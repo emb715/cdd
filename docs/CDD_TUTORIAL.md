@@ -531,52 +531,17 @@ Each work item has its own folder, context, and session log. No conflicts.
 
 ---
 
-## Troubleshooting
+## Code Search with jcodemunch-mcp (Optional)
 
-### "Work item not found"
+> **Full setup guide:** [JCODEMUNCH.md](JCODEMUNCH.md)
 
-**Problem:** `/cdd:log` can't find work item
+https://github.com/jgravelle/jcodemunch-mcp
 
-**Solution:**
+jcodemunch-mcp is an MCP server that indexes your codebase using AST parsing and exposes structured retrieval tools in your Claude session. Install it in one command:
+
 ```bash
-# Specify explicitly
-/cdd:log 0001
-
-# Or check folder name
-ls _cdd/
+claude mcp add jcodemunch uvx jcodemunch-mcp
 ```
-
-**Root cause:** Usually happens when working directory doesn't match git changes, or you have multiple work items.
-
----
-
-### "No file changes detected"
-
-**Problem:** You worked but git shows no changes
-
-**Solution:**
-```bash
-# Check git status
-git status
-
-# Or specify work manually
-/cdd:log 0001
-# Then describe what you did
-```
-
-**Root cause:** Files not saved, or changes not in git working directory.
-
----
-
-### "Agent failed to complete"
-
-**Problem:** Multi-agent decision had errors
-
-**Solution:**
-- Retry: `/cdd:decide [topic]` again
-- Or simplify: Research manually, document in CONTEXT.md
-
-**Root cause:** Network issues, API rate limits, or complex topics requiring more context.
 
 ---
 
@@ -745,5 +710,6 @@ _cdd/
 1. **Start your first session:** Run `/cdd:start` in Claude Code
 2. **Use /cdd:decide for complex decisions:** Get multi-agent expert input
 3. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
+4. **Add code search (optional):** [jcodemunch-mcp setup](JCODEMUNCH.md) — richer codebase analysis in decisions [jcodemunch official docs](https://github.com/jgravelle/jcodemunch-mcp)
 
 **Feedback and discussions:** https://github.com/emb715/cdd/discussions

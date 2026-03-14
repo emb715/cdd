@@ -21,13 +21,13 @@ version: 1.0.0
 
 ### Step 1: Parse Decision Topic
 
-Extract topic and options from user input. When multiple options are provided (either via natural language like "X, Y, Z" or via `--options="A,B,C"`), treat each comma‑separated item as a distinct option to be evaluated by its own advocate agent in later steps, and ensure the final analysis compares all provided options (not just a binary A/B).
+Extract topic and options from user input.
 
 Recognized patterns:
 - "X or Y?" → Binary choice
 - "X vs Y for Z" → Binary with context
 - "Best approach for X" → Ask for options
-- "X, Y, Z" → Multi-option (N options, one advocate per option, all compared in final analysis)
+- "X, Y, Z" → Multi-option
 
 If unclear, ask user to specify options.
 
@@ -71,33 +71,35 @@ Parse decision topic for keywords to determine advocate depth:
 **Default:** If uncertain, use `cdd-sage-balanced` (efficient, still domain-aware)
 
 **Agent Selection:**
-- **Advocate Agents (one per option)**: Specialist if complexity keywords detected, else Balanced
+- **Advocate A/B**: Specialist if complexity keywords detected, else Balanced
 - **Codebase Context**: Always Balanced (efficient analysis)
 - **Analysis**: Always Specialist (deep tradeoff comparison)
 
 ### Step 3: Launch Parallel Sage Agents
 
-Spawn a set of specialized Sage agents in parallel using Task tool:
-- One **Advocate Agent** per decision option
-- One **Codebase Context Agent**
-- One **Analysis Agent**
+Spawn 4 specialized Sage agents in parallel using Task tool:
 
-**1. Advocate Agents (per option):**
+**1. Advocate Agent A (Option A):**
 - **Agent**: `cdd-sage-specialist` or `cdd-sage-balanced` (based on complexity from Step 2.5)
-- **Prompt**: "You are advocating for [Option X]. Research pros, cons, use cases, and examples. Domain context: [detected domain from Step 2.5]. Be thorough but balanced - present honest trade-offs, not just positives. Focus on domain-specific considerations."
-- **Output**: Strengths, drawbacks, use cases, domain-specific considerations for that option
+- **Prompt**: "You are advocating for [Option A]. Research pros, cons, use cases, and examples. Domain context: [detected domain from Step 2.5]. Be thorough but balanced - present honest trade-offs, not just positives. Focus on domain-specific considerations."
+- **Output**: Strengths, drawbacks, use cases, domain-specific considerations
 
-**2. Codebase Context Agent:**
+**2. Advocate Agent B (Option B):**
+- **Agent**: Same selection as Advocate A
+- **Prompt**: Same structure as Advocate A, but advocating for Option B
+- **Output**: Same structure as Advocate A
+
+**3. Codebase Context Agent:**
 - **Agent**: Always `cdd-sage-balanced`
 - **Prompt**: "Analyze codebase for patterns, dependencies, and migration complexity. Domain: [detected domain]. Focus on: existing patterns that align with options, architectural fit, implementation effort estimate."
 - **Output**: Existing patterns, dependencies, migration complexity
 
-**3. Analysis Agent:**
+**4. Analysis Agent:**
 - **Agent**: Always `cdd-sage-specialist`
-- **Prompt**: "Compare all provided options objectively. Domain: [detected domain]. Synthesize findings from all Advocate Agents and the Codebase Context Agent. Provide an AI suggestion with confidence level (High/Medium/Low), rationale, and trade-offs. Consider: technical fit, maintainability, team expertise, scalability. Remember: human decides, you assist."
-- **Output**: Comparison table across all options, AI suggestion with confidence, key trade-offs
+- **Prompt**: "Compare [Option A] vs [Option B] objectively. Domain: [detected domain]. Provide AI suggestion with confidence level (High/Medium/Low), rationale, and trade-offs. Consider: technical fit, maintainability, team expertise, scalability. Remember: human decides, you assist."
+- **Output**: Comparison table, AI suggestion with confidence, key trade-offs
 
-**Execution:** Parallel (single message with Task tool calls for each advocate, plus codebase and analysis agents). Estimated time scales with number of options (e.g., ~2–3 min for 2 options, ~3–4+ min for 3+ options).
+**Execution:** Parallel (single message with 4 Task tool calls). Estimated time: 2-3 min (binary), 3-4 min (3+ options).
 
 ### Step 4: Collect Results
 
@@ -129,14 +131,7 @@ Capture:
 
 Create `decisions/YYYY-MM-DD-[topic].md` using template.
 
-Populate frontmatter:
-- `decision_id`: filename without extension (e.g., `2024-01-16-rest-vs-graphql`)
-- `work_id`: active work item folder name (e.g., `0001-user-auth`)
-- `topic`: decision topic as entered by user
-- `decided`: today's date (YYYY-MM-DD)
-- `status`: `decided` (or `revisit_later` / `deferred` if user chose those)
-
-Populate body:
+Populate:
 - Context, Options analysis, Codebase findings, AI suggestion, Human decision with rationale
 
 Update `CONTEXT.md` Decisions section with summary and link.

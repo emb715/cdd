@@ -6,27 +6,6 @@ CDD is an npm package that provides AI workflow commands for solo developers. Op
 
 **Core Philosophy:** Humans decide, AI assists. No boilerplate, no ceremony, just work.
 
-## Package Structure
-
-```
-packages/cdd/
-├── .claude/
-│   ├── commands/             # 5 AI command wrappers (optimized for LLMs)
-│   │   ├── cdd:scope.md     # Scope large workloads (greenfield, epics)
-│   │   ├── cdd:start.md     # Create work item
-│   │   ├── cdd:log.md       # Save session
-│   │   ├── cdd:decide.md    # Multi-agent decision
-│   │   └── cdd:done.md      # Complete work
-│   └── agents/              # Bundled CDD agents
-│       └── cdd-honest.md    # Pre-configured with git read permissions
-├── bin/cdd.js               # CLI installer
-├── _cdd/.meta/              # CDD infrastructure (templates + instructions)
-│   ├── templates/           # Templates (CONTEXT.md, SESSIONS.md, SCOPE_PLAN.md)
-│   └── instructions/        # Agent workflow definitions (start, log, done, scope)
-├── package.json             # NPM package config
-└── README.md                # User documentation
-```
-
 ## Key Files
 
 **Commands (LLM-optimized):**
@@ -34,14 +13,17 @@ packages/cdd/
 - Each command has: Usage, Process steps, One example, Error handling
 
 **CLI:**
-- `bin/cdd.js` - Installs templates and commands to user projects
-- Copies `.meta/` to `_cdd/` and commands to `.claude/commands/`
+- `bin/cdd.js` - Installs templates, commands, agents, hooks, and config to user projects
+- Copies `_cdd/.meta/` → user's `_cdd/.meta/`, commands → `.claude/commands/`, agents → `.claude/agents/`, hook → `.claude/hooks/`
 
 **Templates:**
 - `_cdd/.meta/templates/CONTEXT.md` - Progressive work item template
 - `_cdd/.meta/templates/SESSIONS.md` - Minimal session log
 - `_cdd/.meta/templates/SCOPE_PLAN.md` - Scope plan for large workloads
 - `_cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
+
+**Orchestrator config (user-editable):**
+- `_cdd/.meta/loop.config.yaml` - Controls `/cdd:loop` behavior: `rotation_threshold`, `agent_timeout_seconds`, `agent_stuck_threshold_seconds`, `task_max_retries`, `review_enabled`, `auto_done`
 
 ## Philosophy
 
@@ -53,8 +35,8 @@ packages/cdd/
 ## Working with This Codebase
 
 **Command naming:**
-- Files: `cdd:log.md`, `cdd:decide.md` (NOT `cdd:save.md` or `cdd:plan.md`)
-- CLI must reference correct filenames in `bin/cdd.js` lines 88-92
+- Files: `cdd:log.md`, `cdd:decide.md`, `cdd:loop.md` (NOT `cdd:save.md` or `cdd:plan.md`)
+- CLI references filenames in `bin/cdd.js` `v2Commands` array and `essentialFiles` array
 
 **LLM optimization rules:**
 - No emojis in command files (no semantic value for LLMs)
@@ -71,7 +53,14 @@ npm link
 cd ~/test-project
 npm link @emb715/cdd
 npx @emb715/cdd init
-# Verify all 5 commands: ls .claude/commands/cdd:*.md
+# Verify all 5 commands:
+ls .claude/commands/cdd:*.md
+# Verify hook, agent, and config:
+ls .claude/hooks/cdd-loop-resume.sh
+ls .claude/agents/cdd-victor-reid.md
+ls _cdd/.meta/loop.config.yaml
+# Test orchestrator dry-run:
+/cdd:loop --dry-run
 ```
 
 ## Critical Conventions
@@ -96,12 +85,20 @@ npx @emb715/cdd init
 1. `npx @emb715/cdd init` - Install CDD
 2. `/cdd:scope [brief]` - Scope large workloads first
 3. `/cdd:start my-feature` - Create work item
-4. Code...
+4. Code... or `/cdd:loop` to let the orchestrator run the full cycle
 5. `/cdd:log` - Save session
 6. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
 7. `/cdd:done` - Complete work
 
-**Key decision:** Humans decide, AI researches. This is embodied in `/cdd:decide` which launches 4 agents in parallel to research options, but the human makes the final call.
+**`/cdd:loop` orchestrator:**
+- Reads tasks from `_cdd/[work-id]/CONTEXT.md`, groups them by file overlap (parallel safety), spawns sub-agents, auto-logs, reviews with `cdd-victor-reid`, auto-completes
+- Survives context limits: writes `checkpoint.md` + `.resume` at `rotation_threshold` events, Stop hook auto-resumes
+- Config: edit `_cdd/.meta/loop.config.yaml` to tune rotation threshold, timeouts, review, auto-done
+
+**Key decision:** Humans decide, AI researches. Embodied in `/cdd:decide` (4 parallel research agents, human chooses) and `/cdd:loop` (orchestrator implements, human reviews issues).
+
+## Workspace Notes
+- `.claude/hooks/cdd-loop-resume.sh` — Stop hook for `/cdd:loop` auto-resume. Must be registered in `.claude/settings.json` under `hooks.Stop` to activate.
 
 ## Context Window Optimization
 

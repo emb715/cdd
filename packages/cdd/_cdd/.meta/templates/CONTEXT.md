@@ -1,7 +1,7 @@
 ---
 id: XXXX
 title: [Work Title]
-type: feature|bug|refactor|spike|epic
+type: feature  # allowed: feature|bug|refactor|spike|epic
 status: draft
 created: YYYY-MM-DD
 updated: YYYY-MM-DD

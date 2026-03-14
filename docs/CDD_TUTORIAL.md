@@ -600,6 +600,51 @@ git status
 - Retry: `/cdd:decide [topic]` again
 - Or simplify: Research manually, document in CONTEXT.md
 
+## Troubleshooting
+
+### "Work item not found"
+
+**Problem:** `/cdd:log` can't find work item
+
+**Solution:**
+```bash
+# Specify explicitly
+/cdd:log 0001
+
+# Or check folder name
+ls _cdd/
+```
+
+**Root cause:** Usually happens when working directory doesn't match git changes, or you have multiple work items.
+
+---
+
+### "No file changes detected"
+
+**Problem:** You worked but git shows no changes
+
+**Solution:**
+```bash
+# Check git status
+git status
+
+# Or specify work manually
+/cdd:log 0001
+# Then describe what you did
+```
+
+**Root cause:** Files not saved, or changes not in git working directory.
+
+---
+
+### "Agent failed to complete"
+
+**Problem:** Multi-agent decision had errors
+
+**Solution:**
+- Retry: `/cdd:decide [topic]` again
+- Or simplify: Research manually, document in CONTEXT.md
+
 **Root cause:** Network issues, API rate limits, or complex topics requiring more context.
 
 ---

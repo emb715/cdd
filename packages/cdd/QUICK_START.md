@@ -145,7 +145,6 @@ your-project/
 ```bash
 /cdd:log                    # Auto-detect work item
 /cdd:log 0001               # Specific work item
-/cdd:log --force            # Skip confirmations
 ```
 
 ### `/cdd:decide` flags

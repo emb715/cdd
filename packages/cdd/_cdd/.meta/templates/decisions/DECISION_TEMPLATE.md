@@ -1,8 +1,17 @@
+---
+decision_id: DECISION-ID
+work_id: "0001"
+work_slug: 0001-work-name
+topic: Topic
+decided: YYYY-MM-DD
+status: decided # allowed: decided, implemented, superseded, revisit_later, deferred
+---
+
 # Decision: [Topic]
 
 **Date:** YYYY-MM-DD
-**Work Item:** [XXXX-work-name](../CONTEXT.md)
-**Status:** ✅ Decided | 🔄 Revisit Later | ⏸️ Deferred
+**Work Item:** [0001-work-name](../CONTEXT.md)
+**Status:** ✅ Decided | 🚀 Implemented | 🔁 Superseded | 🔄 Revisit Later | ⏸️ Deferred
 **Decision:** [Final choice in one sentence]
 
 ---

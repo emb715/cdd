@@ -2,12 +2,11 @@
 
 Execute CDD session logging workflow autonomously. Auto-detect work item, changes, and completions.
 
-**Efficiency:** Minimal git calls (diff + untracked), read CONTEXT.md once, batch file operations.
+**Efficiency:** Two git calls (diff + untracked), read CONTEXT.md once, batch file operations.
 
 ## Input
 
 - `work_id`: Optional (e.g., "0001" or "0001-user-auth")
-- `flags`: --force (skip confirmations)
 
 ## Steps
 
@@ -83,7 +82,7 @@ Update `updated:` date (YYYY-MM-DD).
 
 ### 7. Append to SESSIONS.md
 
-Insert after frontmatter, before template. Add `---` separator. Newest first.
+Insert after the initial header and first `---` separator, before the "Template (Copy for New Sessions)" section. Add `---` separator. Newest first.
 
 ### 8. Output
 

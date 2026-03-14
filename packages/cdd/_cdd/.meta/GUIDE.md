@@ -117,7 +117,7 @@ _cdd/XXXX-work-name/
 
 **What it does:**
 1. Checks all tasks marked complete
-2. Prompts for final session entry
+2. Generates final session entry autonomously
 3. Updates status to "complete"
 4. Optionally generates summary
 
@@ -288,4 +288,4 @@ A: CDD is methodology-first. Commands are for Claude Code, but principles apply 
 **Resources:**
 - [Quick Start](../../QUICK_START.md) - Installation and first steps
 - [README](../../README.md) - Philosophy and overview
-- [GitHub Discussion](https://github.com/emb715/_cdd/discussions) - Discussions and questions
+- [GitHub Discussion](https://github.com/emb715/cdd/discussions) - Discussions and questions

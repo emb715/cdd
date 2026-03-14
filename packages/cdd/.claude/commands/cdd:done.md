@@ -36,7 +36,7 @@ The instruction file contains:
 - Work item auto-detection strategies
 - Completion verification (task counting)
 - Final session log generation
-- CONTEXT.md status update (completed date)
+- CONTEXT.md status update (complete date)
 - Optional IMPLEMENTATION_SUMMARY.md generation
 - Output format
 
@@ -57,7 +57,7 @@ The Honest agent will:
 - Auto-detect work item
 - Verify completion state (note incomplete tasks)
 - Add final session entry (unless --skip-log)
-- Update CONTEXT.md status to completed
+- Update CONTEXT.md status to complete
 - Generate IMPLEMENTATION_SUMMARY.md (if --summary)
 - Return completion confirmation with stats
 

@@ -104,7 +104,7 @@ Users reporting forced logouts after ~5 minutes on mobile browsers (iOS Safari, 
 - Heartbeat detects actual user activity (better than arbitrary timeout)
 - Works around iOS timer suspension
 
-**AI Suggested:** Long-lived refresh tokens (rejected due to security policy)
+**AI Suggested:** Heartbeat ping service (Option 2) with a 60s interval
 
 **Trade-offs:**
 - Extra network calls: +1 request/min (acceptable, <100 bytes)

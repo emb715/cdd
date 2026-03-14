@@ -110,15 +110,18 @@ async function initCDD(args) {
       recursive: true,
     });
     fs.mkdirSync(path.join(metaDir, "instructions"), { recursive: true });
+    fs.mkdirSync(path.join(metaDir, "scope"), { recursive: true });
 
     // Copy ONLY the essential v2 templates (zero ceremony)
     const essentialFiles = [
       "templates/CONTEXT.md",
       "templates/SESSIONS.md",
+      "templates/SCOPE_PLAN.md",
       "templates/decisions/DECISION_TEMPLATE.md",
       "instructions/start.md",
       "instructions/log.md",
       "instructions/done.md",
+      "instructions/scope.md",
     ];
 
     for (const file of essentialFiles) {
@@ -132,8 +135,9 @@ async function initCDD(args) {
 
     console.log("   ✓ CONTEXT.md template (progressive, single file)");
     console.log("   ✓ SESSIONS.md template (minimal logging)");
+    console.log("   ✓ SCOPE_PLAN.md template (for /cdd:scope)");
     console.log("   ✓ DECISION_TEMPLATE.md (for /cdd:decide)");
-    console.log("   ✓ Agent instruction files (start, log, done)");
+    console.log("   ✓ Agent instruction files (start, log, done, scope)");
 
     // Install Claude commands
     console.log("\n Installing Claude commands...");
@@ -148,6 +152,7 @@ async function initCDD(args) {
       "cdd:log.md",
       "cdd:decide.md",
       "cdd:done.md",
+      "cdd:scope.md",
     ];
 
     for (const cmdFile of v2Commands) {
@@ -210,6 +215,9 @@ async function initCDD(args) {
 
     console.log("\n CDD initialized (Zero Ceremony)\n");
     console.log("Zero Ceremony Workflow:");
+    console.log(
+      "  /cdd:scope [brief]        - Scope large work (greenfield, epics, sprints)",
+    );
     console.log(
       "  /cdd:start [description]  - Create work item (30 sec, not 10 min)",
     );

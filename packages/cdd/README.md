@@ -28,6 +28,18 @@ npm install -g @emb715/cdd
 npx @emb715/cdd init
 ```
 
+### Scope a Large Body of Work (greenfield, epics, sprints)
+
+```bash
+# When you have a big initiative and need to break it down first
+/cdd:scope greenfield SaaS: auth, billing, API, admin dashboard
+
+# AI drafts a scope plan (~2 min):
+# _cdd/.meta/scope/2026-03-14-greenfield-saas.md
+# Review and edit it, then start each item:
+# /cdd:start auth (scoped)
+```
+
 ### Your First Work Item (30 seconds)
 
 ```bash
@@ -98,6 +110,7 @@ project/
 │       └── SESSIONS.md
 ├── .claude/                       # AI commands
 │   └── commands/
+│       ├── cdd:scope.md           # Scope large workloads (greenfield, epics)
 │       ├── cdd:start.md           # Create work item
 │       ├── cdd:log.md             # Log session
 │       ├── cdd:decide.md          # Multi-agent decision planning

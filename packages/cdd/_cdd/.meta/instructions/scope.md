@@ -1,0 +1,133 @@
+# Sage Specialist Instructions: /cdd:scope
+
+Draft a scope plan for a large body of work. No work item folders are created here — this produces a single plan document for human review.
+
+**Efficiency:** Scan project once. Produce a lean, editable plan file.
+
+## Input
+
+- `brief`: User-provided description of the workload
+- `domain`: Pre-detected domain (from command step)
+- `max_sequence`: Current max XXXX in _cdd/ (from command step)
+
+## Steps
+
+### 1. Analyze the Brief
+
+Parse the brief to identify:
+- Core problem or initiative
+- Distinct areas of work (each becomes a work item candidate)
+- Implied dependencies between areas
+- Natural phase groupings (foundation → feature → polish, or similar)
+
+**Item count heuristics:**
+- 2-4 items: Small epic or scoped migration
+- 5-8 items: Standard sprint or medium greenfield
+- 9-10 items: Large greenfield (suggest splitting if >10)
+
+If brief implies >10 distinct areas, note: "This scope is large. Consider breaking into 2 separate /cdd:scope calls."
+
+### 2. Scan Project Structure
+
+Use Glob and Grep tools to:
+- Detect tech stack (package.json, go.mod, Cargo.toml, requirements.txt, etc.)
+- Find existing work item patterns in _cdd/ (if any)
+- Note any existing code areas that relate to the brief
+
+Use findings to:
+- Sharpen item names (match existing naming conventions)
+- Identify items that relate to existing work (note in purpose)
+- Detect if this is truly greenfield (no _cdd/ items, sparse project files)
+
+### 3. Draft Work Items
+
+For each identified area of work, define:
+
+| Field | Rules |
+|-------|-------|
+| **#** | Sequential row number (not folder sequence) |
+| **Folder Name** | `XXXX-kebab-case-name` starting from max_sequence+1 |
+| **Type** | feature\|bug\|refactor\|spike\|epic — infer from area description |
+| **Purpose** | One sentence: what this item delivers |
+| **Depends On** | Row numbers this item genuinely blocks on. Default: `-` |
+
+**Dependency rules:**
+- Only mark a dependency if the item cannot realistically start without the other
+- Auth/foundation items typically have no dependencies
+- Feature items often depend on foundation
+- Admin/ops items typically depend on core features
+- Do not chain everything — keep dependencies sparse
+
+**Type detection:**
+- New capability → feature
+- Fixing something broken → bug
+- Improving existing structure → refactor
+- Research/unknown outcome → spike
+- Multi-month initiative → epic
+
+### 4. Group into Phases
+
+Derive 2-4 phases from the dependency structure:
+- Phase 1: Items with no dependencies (foundation, infra, auth)
+- Phase 2: Items that depend only on Phase 1
+- Phase 3+: Items with deeper dependency chains
+
+Keep phase names descriptive but brief: "Foundation", "Core Features", "Operations", "Polish"
+
+If all items are independent (no dependencies), skip phase grouping.
+
+### 5. Save Scope Plan
+
+Generate slug: lowercase, spaces→hyphens, max 5 words from brief. Example: "greenfield-saas-auth-billing" → `greenfield-saas`
+
+File path: `_cdd/.meta/scope/YYYY-MM-DD-[slug].md`
+
+Create `_cdd/.meta/scope/` directory if it doesn't exist.
+
+Read template: `_cdd/.meta/templates/SCOPE_PLAN.md`
+
+Populate template:
+- `scope_id`: `YYYY-MM-DD-[slug]`
+- `brief`: raw user input (exact)
+- `created`: today's date (YYYY-MM-DD)
+- `status`: `draft`
+- Title: inferred from brief (title case, concise)
+- Brief section: 1-2 sentences expanding on the problem/initiative
+- Work items table: all rows
+- Phase grouping: if applicable
+- Review checklist: fill in "current max in _cdd/: XXXX" with actual value
+
+### 6. Output
+
+Return for display in the main conversation:
+
+```
+Scope plan drafted: _cdd/.meta/scope/[filename].md
+
+| # | Folder Name          | Type    | Purpose                        | Depends On |
+|---|----------------------|---------|--------------------------------|------------|
+| 1 | XXXX-[name]          | feature | [purpose]                      | -          |
+| 2 | XXXX-[name]          | feature | [purpose]                      | #1         |
+...
+
+Phase 1: [Name] — #1, #2
+Phase 2: [Name] — #3, #4
+
+Review the plan at _cdd/.meta/scope/[filename].md
+Edit as needed, then start your first work item:
+
+  /cdd:start [first-item-name] (scoped)
+```
+
+If greenfield (no existing _cdd/ items): note "Greenfield project — sequence starts at 0001."
+
+## Execution Rules
+
+Autonomous — no questions. Infer all defaults from brief and project scan.
+
+If brief is ambiguous (could be 1 item): produce the plan anyway with a note "If this is a single feature, use /cdd:start instead."
+
+Errors:
+- No brief → abort, show usage
+- _cdd/.meta/scope/ can't be created → abort with message
+- Template not found → create plan file without template (use inline structure)

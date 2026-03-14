@@ -1,3 +1,11 @@
+---
+decision_id: [DECISION-ID]
+work_id: [XXXX-work-name]
+topic: [Topic]
+decided: YYYY-MM-DD
+status: decided | revisit_later | deferred
+---
+
 # Decision: [Topic]
 
 **Date:** YYYY-MM-DD

@@ -2,7 +2,7 @@
 
 Execute CDD session logging workflow autonomously. Auto-detect work item, changes, and completions.
 
-**Efficiency:** Minimal git calls (diff + untracked), read CONTEXT.md once, batch file operations.
+**Efficiency:** Two git calls (diff + untracked), read CONTEXT.md once, batch file operations.
 
 ## Input
 

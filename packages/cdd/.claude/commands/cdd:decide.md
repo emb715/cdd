@@ -131,7 +131,14 @@ Capture:
 
 Create `decisions/YYYY-MM-DD-[topic].md` using template.
 
-Populate:
+Populate frontmatter:
+- `decision_id`: filename without extension (e.g., `2024-01-16-rest-vs-graphql`)
+- `work_id`: active work item folder name (e.g., `0001-user-auth`)
+- `topic`: decision topic as entered by user
+- `decided`: today's date (YYYY-MM-DD)
+- `status`: `decided` (or `revisit_later` / `deferred` if user chose those)
+
+Populate body:
 - Context, Options analysis, Codebase findings, AI suggestion, Human decision with rationale
 
 Update `CONTEXT.md` Decisions section with summary and link.

@@ -3,14 +3,14 @@ decision_id: [DECISION-ID]
 work_id: [XXXX-work-name]
 topic: [Topic]
 decided: YYYY-MM-DD
-status: decided | revisit_later | deferred
+status: decided | implemented | superseded | revisit_later | deferred
 ---
 
 # Decision: [Topic]
 
 **Date:** YYYY-MM-DD
 **Work Item:** [XXXX-work-name](../CONTEXT.md)
-**Status:** ✅ Decided | 🔄 Revisit Later | ⏸️ Deferred
+**Status:** ✅ Decided | 🚀 Implemented | 🔁 Superseded | 🔄 Revisit Later | ⏸️ Deferred
 **Decision:** [Final choice in one sentence]
 
 ---

@@ -29,15 +29,20 @@ If brief implies >10 distinct areas, note: "This scope is large. Consider breaki
 
 ### 2. Scan Project Structure
 
-Use Glob and Grep tools to:
-- Detect tech stack (package.json, go.mod, Cargo.toml, requirements.txt, etc.)
-- Find existing work item patterns in _cdd/ (if any)
-- Note any existing code areas that relate to the brief
+Scan once, use everywhere.
+Note primary language and framework.
+
+**Existing source code** — list top-level directories and key files. Note modules that are already built and relate to the brief — these inform item type (extending existing = refactor or feature, replacing = refactor, net-new = feature) and help avoid duplicating work.
+
+**Existing _cdd/ work items** — read titles from any active CONTEXT.md files (`status: draft` or `in-progress`). Note their scope to avoid overlap with new items.
+
+**No existing code or _cdd/ items** — project is greenfield. Start sequence at 0001, default all types to feature.
 
 Use findings to:
-- Sharpen item names (match existing naming conventions)
-- Identify items that relate to existing work (note in purpose)
-- Detect if this is truly greenfield (no _cdd/ items, sparse project files)
+- Set item type accurately (refactor if touching existing code, feature if net-new)
+- Name items to match existing module/folder conventions in the project
+- Note in item purpose if it extends or replaces something already built
+- Skip items the brief implies but that are already covered by active _cdd/ work
 
 ### 3. Draft Work Items
 
@@ -119,7 +124,7 @@ Edit as needed, then start your first work item:
   /cdd:start [first-item-name] (scoped)
 ```
 
-If greenfield (no existing _cdd/ items): note "Greenfield project — sequence starts at 0001."
+If no existing source code or _cdd/ items were found: note "No existing code detected — sequence starts at 0001."
 
 ## Execution Rules
 

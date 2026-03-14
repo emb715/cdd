@@ -32,7 +32,7 @@ Unless --skip-log:
 **Status:** draft → complete
 ```
 
-Insert into `SESSIONS.md` in the same location and format as `/cdd:log` entries (near the top, after the header/first `---`), preserving newest-first order.
+Append to SESSIONS.md.
 
 ### 4. Update CONTEXT.md
 

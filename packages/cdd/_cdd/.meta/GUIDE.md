@@ -117,7 +117,7 @@ _cdd/XXXX-work-name/
 
 **What it does:**
 1. Checks all tasks marked complete
-2. Generates final session entry autonomously
+2. Prompts for final session entry
 3. Updates status to "complete"
 4. Optionally generates summary
 

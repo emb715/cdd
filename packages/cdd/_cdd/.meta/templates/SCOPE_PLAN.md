@@ -23,6 +23,8 @@ status: draft
 Phase 1: [Name] — #1, #2
 Phase 2: [Name] — #3, #4
 
+<!-- If all items are independent: write "none — all items can start in parallel." and remove the phase lines above -->
+
 ## Review Checklist
 
 - [ ] Scope covers the full problem

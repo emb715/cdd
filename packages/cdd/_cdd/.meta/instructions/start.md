@@ -40,16 +40,14 @@ Example: "Fix Login Timeout" → `0002-fix-login-timeout`
 Before creating the work item, check if a scope plan exists:
 
 Scan `_cdd/.meta/scope/` for `.md` files. If any exist:
-- Sort them by last modified time (mtime) descending; if mtimes are equal, sort by filename descending
-- Select the first file in this sorted list as the **most recent** scope plan
+- Sort by mtime descending (filename descending as tiebreaker) — select the first as the active scope plan
 - Read its work items table
-- Let `generated_folder_name` be the folder name from Step 3 (e.g., `0002-fix-login-timeout`)
-- Find all rows where the folder-name column equals `generated_folder_name` (case-insensitive, exact match)
-  - If exactly one row matches, select that row as the scope row
-  - Otherwise, find all rows where the purpose column equals the current description (after stripping `(scoped)`) using a case-insensitive, exact match
-    - If exactly one row matches, select that row as the scope row
-- If and only if a single, unambiguous scope row is selected, note: `scope_match = true`, and extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`
-- If no unique row is found (zero or multiple candidates at each step), treat as `scope_match = false` and skip scope-based enrichment
+- Match the current description against scope rows using these passes in order, stopping at the first unique match:
+  1. **Name suffix match**: strip the XXXX- prefix from each row's folder name column, check if it equals the description (kebab-case, case-insensitive). Example: `0001-auth` → suffix `auth` matches description `auth`.
+  2. **Purpose substring match**: check if the description appears anywhere in the row's purpose column (case-insensitive substring). Example: description `auth` matches purpose `User registration, login, and session management for auth`.
+  3. **Folder name substring match**: check if the description appears anywhere in the row's folder name column (case-insensitive substring).
+- If exactly one row matches across all passes, set `scope_match = true`, extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`
+- If zero or multiple rows match, set `scope_match = false` and skip enrichment
 
 If `scope_match = true`:
 - Use `scope_folder_name` as the folder name (overrides Step 3 generation)
@@ -132,8 +130,8 @@ Start working. Use /cdd:log when you make progress.
 Input: `/cdd:start auth (scoped)`
 
 Step 1: Strip `(scoped)` → description = `auth`
-Step 3.5: Scope plan found, matched row `0001-auth` → scope_match = true
-Folder: `0001-auth` (from scope, overrides generated name)
+Step 3.5: Scope plan found. Name suffix match: `0001-auth` → suffix `auth` = description `auth` → unique match → scope_match = true
+Folder: `0001-auth` (from scope_folder_name, overrides generated name)
 
 Output:
 ```

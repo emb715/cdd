@@ -34,10 +34,10 @@ Use Glob tool to scan project files for domain patterns (same as /cdd:decide Ste
 
 | Pattern | Domain |
 |---------|--------|
-| `.tf`, `*.hcl`, `Dockerfile` | DevOps/Infrastructure |
-| `.tsx`, `*.jsx`, `*.vue`, `*.svelte` | Frontend |
-| `.py` + ML indicators | ML/Data Science |
-| `.rs`, `*.go` | Systems Programming |
+| `.tsx`, `*.jsx`, `*.vue`, `*.svelte`, `next.config.*`, `vite.config.*` | Frontend/React/Web |
+| `package.json` + `express`\|`fastify`\|`hono`\|`koa` | Node/Backend |
+| `Dockerfile`, `docker-compose.yml`, `.tf`, `*.hcl` | DevOps/Infrastructure |
+| `.go`, `*.rs` | Systems/Backend |
 | `.java`, `*.kt` | Enterprise/JVM |
 
 Detect current max sequence number: scan `_cdd/` for `XXXX-*`, use max + 1 as starting point.
@@ -80,13 +80,6 @@ Display the agent's output:
 - Next step: edit the plan, then `/cdd:start [item] (scoped)`
 
 Main conversation stays clean. All drafting happens in agent context.
-
-## Key Principles
-
-- **Draft only** - No work item folders created by this command
-- **Human edits** - Scope plan is a reference doc, not a locked artifact
-- **Sage drafts, cdd-honest creates** - /cdd:start picks up from the scope plan
-- **5-10 items max** - If scope is larger, suggest breaking into multiple scopes
 
 ## Tools & Timing
 

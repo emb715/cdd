@@ -79,11 +79,11 @@ Derive 2-4 phases from the dependency structure:
 
 Keep phase names descriptive but brief: "Foundation", "Core Features", "Operations", "Polish"
 
-If all items are independent (no dependencies), skip phase grouping.
+If all items are independent (no dependencies), write `Phase Grouping: none — all items can start in parallel.` instead of listing phases.
 
 ### 5. Save Scope Plan
 
-Generate slug: lowercase, spaces→hyphens, max 5 words from brief. Example: "greenfield-saas-auth-billing" → `greenfield-saas`
+Generate slug: take the first 2-3 meaningful words from the brief, lowercase, spaces→hyphens, drop filler words (a, the, to, for, with). Example: "migrate monolith to microservices: user service, order service" → `migrate-monolith`. Example: "greenfield SaaS: auth, billing, API" → `greenfield-saas`.
 
 File path: `_cdd/.meta/scope/YYYY-MM-DD-[slug].md`
 

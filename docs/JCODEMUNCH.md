@@ -16,9 +16,23 @@ jcodemunch-mcp is an MCP server that indexes your codebase using tree-sitter AST
 
 ## Installation
 
-Follow **Official repo:** https://github.com/jgravelle/jcodemunch-mcp
+To use jcodemunch-mcp inside **Claude Code**, you need to:
 
-Then index your project at the start of a session:
+1. **Install the MCP server**  
+   Follow the install instructions in the official repo README:  
+   https://github.com/jgravelle/jcodemunch-mcp
+
+2. **Add/configure the MCP server in Claude Code**  
+   Use the same `claude mcp add ...` flow described in the main CDD tutorial (see the
+   “Adding an MCP server” section) and in the jcodemunch-mcp README.  
+   This step wires the installed server into Claude Code so that tools like
+   `index_folder` and `index_repo` become available in your workspace.
+
+3. **Verify tools are available**  
+   Open Claude Code, start a session in your project, and confirm that the
+   jcodemunch-mcp tools appear in the tool list for that workspace.
+
+Once the MCP server is installed and configured, index your project at the start of a session:
 
 ```
 Ask Claude: "index this repo with jcodemunch"

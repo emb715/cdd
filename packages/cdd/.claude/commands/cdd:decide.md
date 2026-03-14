@@ -21,13 +21,13 @@ version: 1.0.0
 
 ### Step 1: Parse Decision Topic
 
-Extract topic and options from user input.
+Extract topic and options from user input. When multiple options are provided (either via natural language like "X, Y, Z" or via `--options="A,B,C"`), treat each comma‑separated item as a distinct option to be evaluated by its own advocate agent in later steps, and ensure the final analysis compares all provided options (not just a binary A/B).
 
 Recognized patterns:
 - "X or Y?" → Binary choice
 - "X vs Y for Z" → Binary with context
 - "Best approach for X" → Ask for options
-- "X, Y, Z" → Multi-option
+- "X, Y, Z" → Multi-option (N options, one advocate per option, all compared in final analysis)
 
 If unclear, ask user to specify options.
 

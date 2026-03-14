@@ -71,35 +71,33 @@ Parse decision topic for keywords to determine advocate depth:
 **Default:** If uncertain, use `cdd-sage-balanced` (efficient, still domain-aware)
 
 **Agent Selection:**
-- **Advocate A/B**: Specialist if complexity keywords detected, else Balanced
+- **Advocate Agents (one per option)**: Specialist if complexity keywords detected, else Balanced
 - **Codebase Context**: Always Balanced (efficient analysis)
 - **Analysis**: Always Specialist (deep tradeoff comparison)
 
 ### Step 3: Launch Parallel Sage Agents
 
-Spawn 4 specialized Sage agents in parallel using Task tool:
+Spawn a set of specialized Sage agents in parallel using Task tool:
+- One **Advocate Agent** per decision option
+- One **Codebase Context Agent**
+- One **Analysis Agent**
 
-**1. Advocate Agent A (Option A):**
+**1. Advocate Agents (per option):**
 - **Agent**: `cdd-sage-specialist` or `cdd-sage-balanced` (based on complexity from Step 2.5)
-- **Prompt**: "You are advocating for [Option A]. Research pros, cons, use cases, and examples. Domain context: [detected domain from Step 2.5]. Be thorough but balanced - present honest trade-offs, not just positives. Focus on domain-specific considerations."
-- **Output**: Strengths, drawbacks, use cases, domain-specific considerations
+- **Prompt**: "You are advocating for [Option X]. Research pros, cons, use cases, and examples. Domain context: [detected domain from Step 2.5]. Be thorough but balanced - present honest trade-offs, not just positives. Focus on domain-specific considerations."
+- **Output**: Strengths, drawbacks, use cases, domain-specific considerations for that option
 
-**2. Advocate Agent B (Option B):**
-- **Agent**: Same selection as Advocate A
-- **Prompt**: Same structure as Advocate A, but advocating for Option B
-- **Output**: Same structure as Advocate A
-
-**3. Codebase Context Agent:**
+**2. Codebase Context Agent:**
 - **Agent**: Always `cdd-sage-balanced`
 - **Prompt**: "Analyze codebase for patterns, dependencies, and migration complexity. Domain: [detected domain]. Focus on: existing patterns that align with options, architectural fit, implementation effort estimate."
 - **Output**: Existing patterns, dependencies, migration complexity
 
-**4. Analysis Agent:**
+**3. Analysis Agent:**
 - **Agent**: Always `cdd-sage-specialist`
-- **Prompt**: "Compare [Option A] vs [Option B] objectively. Domain: [detected domain]. Provide AI suggestion with confidence level (High/Medium/Low), rationale, and trade-offs. Consider: technical fit, maintainability, team expertise, scalability. Remember: human decides, you assist."
-- **Output**: Comparison table, AI suggestion with confidence, key trade-offs
+- **Prompt**: "Compare all provided options objectively. Domain: [detected domain]. Synthesize findings from all Advocate Agents and the Codebase Context Agent. Provide an AI suggestion with confidence level (High/Medium/Low), rationale, and trade-offs. Consider: technical fit, maintainability, team expertise, scalability. Remember: human decides, you assist."
+- **Output**: Comparison table across all options, AI suggestion with confidence, key trade-offs
 
-**Execution:** Parallel (single message with 4 Task tool calls). Estimated time: 2-3 min (binary), 3-4 min (3+ options).
+**Execution:** Parallel (single message with Task tool calls for each advocate, plus codebase and analysis agents). Estimated time scales with number of options (e.g., ~2–3 min for 2 options, ~3–4+ min for 3+ options).
 
 ### Step 4: Collect Results
 

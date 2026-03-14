@@ -292,6 +292,7 @@ When `/cdd:log` runs, it matches git changes to these files and auto-marks tasks
 - **Quick Start:** [2-minute introduction](packages/cdd/QUICK_START.md) - Get productive immediately
 - **Tutorial:** [Complete guide with examples](docs/CDD_TUTORIAL.md) - Deep dive into architecture and best practices
 - **Package Docs:** [Technical reference](packages/cdd/README.md) - Full feature documentation
+- **Code Search:** [jcodemunch-mcp setup](docs/JCODEMUNCH.md) - Optional: richer code analysis in decisions. [jcodemunch official docs](https://github.com/jgravelle/jcodemunch-mcp)
 - **Templates:** `_cdd/.meta/templates/` - See what gets generated
 - **Issues:** https://github.com/emb715/cdd/issues
 

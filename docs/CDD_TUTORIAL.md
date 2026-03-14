@@ -529,6 +529,32 @@ Each work item has its own folder, context, and session log. No conflicts.
 
 ---
 
+## Code Search with jcodemunch-mcp (Optional)
+
+> **Full setup guide:** [docs/JCODEMUNCH.md](JCODEMUNCH.md)
+
+https://github.com/jgravelle/jcodemunch-mcp
+
+jcodemunch-mcp is an MCP server that indexes your codebase using AST parsing and exposes structured retrieval tools in your Claude session. Install it in one command:
+
+```bash
+claude mcp add jcodemunch uvx jcodemunch-mcp
+```
+
+### How it enhances `/cdd:decide`
+
+The Codebase Context Agent (Agent 3 in the parallel research) normally uses grep to find file-level patterns. With jcodemunch indexed, it uses `search_symbols`, `find_references`, and `get_context_bundle` to analyze actual code structure — finding existing implementations, understanding usage patterns, and estimating migration complexity with precision. This translates to decision artifacts with more accurate codebase analysis.
+
+### How it enhances `/cdd:log`
+
+Task auto-matching works by comparing changed file paths to the `**Files:**` hints in your tasks. With jcodemunch available, Claude can use `find_importers` and `find_references` to catch completions semantically — useful after refactors or file renames where paths change but the work is the same.
+
+### When to add it
+
+Add it when your project reaches 20+ source files, or when `/cdd:decide`'s codebase analysis feels shallow. For small projects, built-in Grep is sufficient.
+
+---
+
 ## Troubleshooting
 
 ### "Work item not found"
@@ -741,5 +767,6 @@ _cdd/
 1. **Start your first session:** Run `/cdd:start` in Claude Code
 2. **Use /cdd:decide for complex decisions:** Get multi-agent expert input
 3. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
+4. **Add code search (optional):** [jcodemunch-mcp setup](JCODEMUNCH.md) — richer codebase analysis in decisions [jcodemunch official docs](https://github.com/jgravelle/jcodemunch-mcp)
 
 **Feedback and discussions:** https://github.com/emb715/cdd/discussions

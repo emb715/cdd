@@ -46,10 +46,11 @@ npx @emb715/cdd init
 
 This creates:
 ```
-cdd/
-├── CONTEXT.md       # Unified context (decisions + plan + progress)
-├── SESSIONS.md      # Minimal session log
-└── decisions/       # Optional separate decision docs
+_cdd/
+├── .meta/           # Templates and agent instructions
+└── 0000-example/    # Example work item (delete when ready)
+    ├── CONTEXT.md   # Problem, solution, tasks, decisions
+    └── SESSIONS.md  # Session log
 ```
 
 ### Verify Slash Commands
@@ -59,40 +60,6 @@ In Claude Code, type `/cdd:` and you should see autocomplete for:
 - `/cdd:log` - Auto-detect and log session activity
 - `/cdd:decide` - Multi-agent collaborative planning
 - `/cdd:done` - Mark work complete with evidence
-
----
-
-## Code Search with jcodemunch-mcp (Optional Enhancement)
-
-### When to Add Code Search
-
-**Threshold:** 10+ work items or when you need to find patterns across your codebase fast.
-
-### Setup
-
-```bash
-claude mcp add jcodemunch uvx jcodemunch-mcp
-```
-
-No Python, no ChromaDB, no requirements.txt. The MCP server uses tree-sitter AST parsing to index your code and provides structured retrieval tools directly in your Claude session.
-
-### Available Tools
-
-- `search_symbols` - Find functions, classes, methods by name or description
-- `search_text` - Full-text search across indexed files
-- `get_file_tree` - Browse indexed repository structure
-- `get_symbol` - Get full source of a specific symbol
-- `get_file_outline` - List all symbols in a file
-
-### Usage in Claude Code
-
-Once installed, tools are available automatically in your session. Ask Claude to search your codebase:
-
-```
-search for all authentication-related functions
-```
-
-Or use MCP tools directly for precise retrieval.
 
 ---
 
@@ -272,102 +239,26 @@ When you run `/cdd:done`, you provide evidence. Valid evidence:
 ### Step 1: Start Work
 
 ```bash
-/cdd:start
+/cdd:start build fernet branca price tracker with Convex backend and React frontend
 ```
 
-**Prompt:**
+**Agent creates:** `_cdd/0001-build-fernet-branca-price-tracker/`
+
 ```
-Building a price tracking app for Fernet Branca in Argentina.
+Work item created!
 
-Goal: Visualize inflation by tracking one product over time.
-Stack: Convex backend, React frontend.
-Need historical price data support, mobile-responsive UI.
+_cdd/0001-build-fernet-branca-price-tracker/
+ID: 0001
+Type: feature
 
-Data model:
-- Products table: name, category, brand, standard_size
-- Price snapshots: product_id, price_ars, observed_date, location
-```
+Files:
+  CONTEXT.md
+  SESSIONS.md
 
-**Generated:** `cdd/CONTEXT.md`
-
-```markdown
-# Project: Fernet Branca Inflation Tracker
-
-## Overview
-Track and visualize Fernet Branca prices in Argentina over time to demonstrate inflation impact on consumer goods.
-
-**User stories:**
-- As a user, I want to see historical price data for Fernet Branca
-- As a user, I want to add new price observations with date and location
-- As a user, I want to see a chart showing price trends over time
-
-## Stack Decisions
-
-**Backend:** Convex (serverless, real-time)
-**Frontend:** React + Recharts
-**Mobile:** Responsive down to 360px width
-**Data retention:** Indefinite (no auth required, public data)
-
-## Database Schema
-
-```typescript
-// products table
-{
-  name: string,
-  category: string,
-  brand: string,
-  standard_size: string  // e.g., "750ml"
-}
-
-// price_snapshots table
-{
-  product_id: Id<"products">,
-  price_ars: number,
-  observed_date: number,  // Unix timestamp
-  location_city: string,
-  location_store: string,
-  observer_notes?: string
-}
+Start working. Use /cdd:log when you make progress.
 ```
 
-## Implementation Plan
-
-### Phase 1: Backend Setup
-1. Define Convex schema (products, price_snapshots)
-2. Create product CRUD operations
-3. Create price snapshot mutations with validation
-
-### Phase 2: Frontend Components
-1. **PriceEntryForm**
-   - Fields: price, date, city, store, notes
-   - Validation: price > 0, date not future
-
-2. **PriceChart**
-   - Recharts LineChart
-   - X-axis: Date, Y-axis: Price (ARS)
-
-3. **HistoricalTable**
-   - Last 10 observations
-   - Sort by date descending
-
-### Phase 3: Integration
-1. Wire components in App.tsx
-2. Test responsive layout
-3. Deploy to Convex
-
-## Progress
-- [ ] Convex schema
-- [ ] Backend mutations
-- [ ] PriceEntryForm component
-- [ ] PriceChart component
-- [ ] HistoricalTable component
-- [ ] Mobile testing
-- [ ] Deployment
-
-## Open Questions
-- Should we add CSV import for bulk historical data?
-- Multi-product support or single-product MVP?
-```
+You then open `_cdd/0001-build-fernet-branca-price-tracker/CONTEXT.md` and fill in the problem, solution, and initial tasks:
 
 ### Step 2: Implementation Session 1
 
@@ -377,24 +268,26 @@ Work proceeds. After completing backend:
 /cdd:log
 ```
 
-**AI auto-detects changes and prompts:**
-```
-AI: Detected new files:
-- convex/schema.ts
-- convex/products.ts
-- convex/priceSnapshots.ts
+**Agent auto-detects changes and logs autonomously:**
 
-What did you work on this session?
+```
+Session logged!
+
+Work: 0001-build-fernet-branca-price-tracker
+Duration: 1h
+Completed: 3 tasks
+Progress: 0% → 43% (+43%)
+
+Updated:
+  CONTEXT.md (3 tasks marked complete)
+  SESSIONS.md (new entry)
+
+Next priorities:
+  1. PriceEntryForm component
+  2. PriceChart component
 ```
 
-**You respond:**
-```
-Set up Convex backend. Schema + CRUD operations.
-Had to delete .convex/ folder to fix migration error.
-Switched from Date objects to Unix timestamps.
-```
-
-**Appended to** `cdd/SESSIONS.md`:
+**Appended to** `_cdd/0001-.../SESSIONS.md`:
 
 ```markdown
 ## 2024-01-15 14:23 - Backend setup (2h 15m)
@@ -414,7 +307,7 @@ Switched from Date objects to Unix timestamps.
 - convex/priceSnapshots.ts
 ```
 
-**Updated** `cdd/CONTEXT.md` (Progress section):
+**Updated** `_cdd/0001-.../CONTEXT.md` (tasks marked complete):
 
 ```markdown
 ## Progress
@@ -432,16 +325,10 @@ Switched from Date objects to Unix timestamps.
 Before building the chart, you want expert input:
 
 ```bash
-/cdd:decide
+/cdd:decide best approach for PriceChart with Recharts time-series visualization
 ```
 
-**Prompt:**
-```
-Need to build PriceChart component using Recharts.
-Want best practices for time-series visualization.
-```
-
-**AI spawns specialist agents:**
+**Sage agents research in parallel:**
 
 **Agent 1 (Frontend Expert):**
 ```
@@ -488,7 +375,7 @@ Argentina-specific considerations:
 - Mobile: ensure touch targets for tooltips are ≥44px
 ```
 
-**Result written to** `cdd/decisions/002-chart-implementation.md`:
+**Result written to** `_cdd/0001-.../decisions/2024-01-16-chart-implementation.md`:
 
 ```markdown
 # Decision: Price Chart Implementation
@@ -511,11 +398,18 @@ Parent container needs explicit height for ResponsiveContainer.
 Use `toFixed(2)` for price display.
 ```
 
-**Updated** `cdd/CONTEXT.md` (links to decision):
+**You add to** `_cdd/0001-.../CONTEXT.md` (Decisions section):
 
 ```markdown
-## Recent Decisions
-- [Chart implementation strategy](decisions/002-chart-implementation.md) - Recharts with Argentina locale
+## 📝 Decisions
+
+<details>
+<summary><strong>2024-01-16: Recharts time-series approach</strong></summary>
+
+**Decision:** ResponsiveContainer + es-AR locale + logarithmic scale option
+
+**See full analysis:** [decisions/2024-01-16-chart-implementation.md](decisions/2024-01-16-chart-implementation.md)
+</details>
 ```
 
 ### Step 4: Implementation Session 2
@@ -555,103 +449,35 @@ After building frontend:
 /cdd:done
 ```
 
-**AI prompts:**
+**Agent runs autonomously and outputs:**
+
 ```
-AI: Provide evidence that work is complete.
+Work item completed!
+
+ID: 0001-build-fernet-branca-price-tracker
+Status: draft → complete
+Duration: 2h 45m (2 sessions)
+Tasks: 7/7 completed (100%)
+
+Updated:
+  CONTEXT.md (status: complete)
+  SESSIONS.md (final entry)
+
+Ready to ship. Use /cdd:start for next work item.
 ```
 
-**You provide:**
-```
-[Screenshot attached: working app]
+For a richer summary, use `/cdd:done --summary`. Agent generates `IMPLEMENTATION_SUMMARY.md` from your CONTEXT.md and SESSIONS.md history — no questions asked.
 
-Manual testing:
-✅ Add price observation → appears in chart
-✅ Multiple observations → chronological sorting
-✅ Negative price → error shown
-✅ Future date → error shown
-✅ Mobile viewport (375px) → layout responsive
-✅ Chart loads <2s with 20 data points
-
-Deployed: https://fernet-tracker.convex.site
-```
-
-**AI asks:**
-```
-AI: Any differences from original plan?
-```
-
-**You respond:**
-```
-Added:
-- Currency formatting (toFixed(2))
-- Seed data script (convex/seedData.ts)
-- Argentina locale formatting
-
-No major deviations. All additions were UX improvements.
-```
-
-**AI asks:**
-```
-AI: Key learnings?
-```
-
-**You respond:**
-```
-- Convex schema changes need clean dev environment
-- ResponsiveContainer parent must have explicit height
-- Date handling: use Unix timestamps, convert at display layer
-- Locale formatting matters for target audience
-```
-
-**Appended to** `cdd/CONTEXT.md`:
+**Final entry appended to** `_cdd/0001-.../SESSIONS.md`:
 
 ```markdown
-## Completion Evidence (2024-01-16)
+## 2024-01-16 18:30 (0h) - COMPLETED
 
-**Deployed URL:** https://fernet-tracker.convex.site
-
-**Manual testing results:**
+**Work Summary:** Fernet price tracker with Convex backend and React frontend, mobile-responsive.
+**Final Stats:** Tasks 7/7 (100%), Sessions 2, Time 2h 45m
+**Key Learnings:** Convex schema migrations need clean env; ResponsiveContainer needs explicit parent height
+**Status:** draft → complete
 ```
-✅ Add price observation → appears in chart
-✅ Multiple observations → chronological sorting
-✅ Negative price → error shown
-✅ Future date → error shown
-✅ Mobile viewport (375px) → responsive
-✅ Chart loads <2s with 20 points
-```
-
-**Lessons Learned:**
-- Convex schema migrations require clean dev environment
-- ResponsiveContainer needs explicit parent height
-- Unix timestamps better than Date objects in Convex
-- Locale formatting ('es-AR') improves UX for target audience
-
-**Additions beyond plan:**
-- Currency formatting (toFixed(2))
-- Seed data script
-- Argentina locale for dates
-```
-
----
-
-## Working with jcodemunch-mcp
-
-### Searching Your Codebase
-
-Use the `search_text` or `search_symbols` tools directly in your Claude session after installing `jcodemunch-mcp`.
-
-**Finding past patterns:**
-Ask Claude: "search for how we handle rate limiting in this codebase"
-
-**Locating implementation patterns:**
-Ask Claude: "find all error handling in API routes"
-
-**Understanding architecture:**
-Ask Claude: "get the file tree for the auth module"
-
-### Integration with /cdd:decide
-
-When running `/cdd:decide`, you can ask Claude to use jcodemunch tools to search for existing patterns before making a recommendation. This happens naturally in the same session — no separate setup.
 
 ---
 
@@ -701,30 +527,6 @@ Build a decision library over time. Future decisions benefit from past research.
 
 Each work item has its own folder, context, and session log. No conflicts.
 
-### Enable Metrics (Optional)
-
-Track time and task completion metrics:
-
-```bash
-/cdd:start my-feature --track-metrics
-```
-
-Metrics tracked in CONTEXT.md frontmatter:
-```yaml
-metrics:
-  sessions: 3
-  hours: 5.5
-  tasks_completed: 8
-  tasks_planned: 12
-```
-
-View aggregate metrics:
-```bash
-node cdd/.meta/metrics/scripts/collect-metrics.js
-```
-
-**Note:** Metrics are optional. Only use when you need data for retrospectives or reporting.
-
 ---
 
 ## Troubleshooting
@@ -739,7 +541,7 @@ node cdd/.meta/metrics/scripts/collect-metrics.js
 /cdd:log 0001
 
 # Or check folder name
-ls cdd/
+ls _cdd/
 ```
 
 **Root cause:** Usually happens when working directory doesn't match git changes, or you have multiple work items.
@@ -892,9 +694,7 @@ Session notes include:
 - Check Nginx config for CORS headers
 ```
 
-Developer B starts next day: asks Claude to search for "CORS webhook issues" using jcodemunch-mcp tools.
-
-Gets context immediately, continues work.
+Developer B starts next day: reads last 2-3 SESSIONS.md entries and CONTEXT.md to get up to speed immediately, continues work.
 
 **Parallel work:**
 
@@ -906,15 +706,7 @@ Minimal merge conflicts because CONTEXT.md is organized by feature area.
 
 **Code review integration:**
 
-Reviewer asks Claude to search for "recent authentication changes" using jcodemunch-mcp tools.
-
-Gets complete context:
-- Original requirements (CONTEXT.md)
-- Implementation approach (decisions/ if complex)
-- Problems encountered (SESSIONS.md)
-- Final evidence (CONTEXT.md completion section)
-
-Reviews code with full context, catches divergence from requirements.
+Reviewer reads CONTEXT.md for original requirements, decisions/ for approach, SESSIONS.md for problems encountered. Reviews code with full context, catches divergence from requirements.
 
 ---
 
@@ -929,16 +721,17 @@ Reviews code with full context, catches divergence from requirements.
 
 **Installation commands:**
 ```bash
-npx @emb715/cdd init                                    # Install CDD core
-claude mcp add jcodemunch uvx jcodemunch-mcp            # Add code search (optional)
+npx @emb715/cdd init
 ```
 
 **File structure:**
 ```
-cdd/
-├── CONTEXT.md        # Unified context (decisions + plan + progress)
-├── SESSIONS.md       # Minimal session log
-└── decisions/        # Optional complex decision docs
+_cdd/
+├── .meta/            # Templates and agent instructions
+└── XXXX-work-name/   # One folder per work item
+    ├── CONTEXT.md    # Problem, solution, tasks, decisions
+    ├── SESSIONS.md   # Session log
+    └── decisions/    # Optional multi-agent decision artifacts
 ```
 
 ---
@@ -946,8 +739,7 @@ cdd/
 ## Next Steps
 
 1. **Start your first session:** Run `/cdd:start` in Claude Code
-2. **Add code search when you hit 10+ files:** `claude mcp add jcodemunch uvx jcodemunch-mcp`
-3. **Use /cdd:decide for complex decisions:** Get multi-agent expert input
-4. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
+2. **Use /cdd:decide for complex decisions:** Get multi-agent expert input
+3. **Provide evidence when completing work:** Screenshots, test output, deployment URLs
 
 **Feedback and discussions:** https://github.com/emb715/cdd/discussions

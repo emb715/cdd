@@ -26,7 +26,7 @@ Create a new work item.
 /cdd:start add user authentication
 ```
 
-**What it does:** Creates `cdd/0001-.../` with CONTEXT.md and SESSIONS.md (30 sec)
+**What it does:** Creates `_cdd/0001-.../` with CONTEXT.md and SESSIONS.md (30 sec)
 
 → *See [Tutorial: Complete Walkthrough](../../docs/CDD_TUTORIAL.md#complete-mock-session-fernet-branca-inflation-tracker) for detailed example*
 
@@ -121,7 +121,7 @@ Beyond the 4 CDD commands, you can invoke specialized agents directly:
 
 ```
 your-project/
-├── cdd/
+├── _cdd/
 │   └── 0001-caching-layer/
 │       ├── CONTEXT.md          # Problem, solution, tasks, decisions
 │       ├── SESSIONS.md         # Session log
@@ -209,11 +209,11 @@ your-project/
 
 ## Next Steps
 
-1. ✅ **Try it:** `/cdd:start your-first-feature`
-2. ✅ **Code:** Build something!
-3. ✅ **Log:** `/cdd:log` after working
-4. ✅ **Complete:** `/cdd:done`
-5. 📖 **Learn more:** Read the [Complete Tutorial](../../docs/CDD_TUTORIAL.md)
+1. **Try it:** `/cdd:start your-first-feature`
+2. **Code:** Build something!
+3. **Log:** `/cdd:log` after working
+4. **Complete:** `/cdd:done`
+5. **Learn more:** Read the [Complete Tutorial](../../docs/CDD_TUTORIAL.md)
 
 ---
 
@@ -222,7 +222,6 @@ your-project/
 - **Tutorial:** [Complete guide with examples](../../docs/CDD_TUTORIAL.md)
 - **Troubleshooting:** [Tutorial: Troubleshooting](../../docs/CDD_TUTORIAL.md#troubleshooting)
 - **Best Practices:** [Tutorial: Best Practices](../../docs/CDD_TUTORIAL.md#best-practices)
-- **Code Search:** Add jcodemunch-mcp MCP server: `claude mcp add jcodemunch uvx jcodemunch-mcp`
 - **Issues:** https://github.com/emb715/cdd/issues
 
 ---

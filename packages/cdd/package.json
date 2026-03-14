@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/emb715/cdd#readme",
   "files": [
-    "cdd/",
+    "_cdd/",
     ".claude/",
     "bin/",
     "README.md",

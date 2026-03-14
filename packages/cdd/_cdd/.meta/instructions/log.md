@@ -14,9 +14,9 @@ Execute CDD session logging workflow autonomously. Auto-detect work item, change
 ### 1. Detect Work Item
 
 If work_id provided, use it. Otherwise try in order:
-1. Git changes: `git diff --name-only HEAD` → match `cdd/XXXX-*/` (most frequent if multiple)
+1. Git changes: `git diff --name-only HEAD` → match `_cdd/XXXX-*/` (most frequent if multiple)
 2. Conversation context: Recent file paths → extract ID
-3. Latest: Highest sequence in `cdd/`
+3. Latest: Highest sequence in `_cdd/`
 
 Never ask user.
 
@@ -32,7 +32,7 @@ Ignore: `node_modules/`, `.git/`, `dist/`, `build/`, lock files (unless package.
 
 ### 3. Match to Tasks
 
-Read `cdd/XXXX-work-name/CONTEXT.md` tasks. Match changes to task file hints:
+Read `_cdd/XXXX-work-name/CONTEXT.md` tasks. Match changes to task file hints:
 
 - Exact: Path matches exactly → auto-complete
 - Glob: Matches pattern (`src/auth/*.ts`) → auto-complete

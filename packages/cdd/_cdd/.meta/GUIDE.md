@@ -58,7 +58,7 @@
 
 **What it creates:**
 ```
-cdd/XXXX-work-name/
+_cdd/XXXX-work-name/
 ├── CONTEXT.md      # Progressive template (expand as needed)
 └── SESSIONS.md     # Session log (append as you work)
 ```
@@ -103,7 +103,7 @@ cdd/XXXX-work-name/
 - Library/framework selection
 - Performance vs complexity trade-offs
 
-**What you get:** `cdd/XXXX-work-name/decisions/YYYY-MM-DD-topic.md` with problem statement, options researched, codebase analysis, recommendation, and trade-off matrix.
+**What you get:** `_cdd/XXXX-work-name/decisions/YYYY-MM-DD-topic.md` with problem statement, options researched, codebase analysis, recommendation, and trade-off matrix.
 
 **Best practices:**
 - Use for non-trivial decisions (not "what to name this variable")
@@ -183,7 +183,7 @@ Start minimal (problem + solution in 2-3 sentences). Expand as you learn:
 - Add `**Done when:**` for clear completion criteria
 - Update as you discover new tasks mid-work
 
-See `cdd/.meta/templates/CONTEXT.md` for the full task structure.
+See `_cdd/.meta/templates/CONTEXT.md` for the full task structure.
 
 ---
 
@@ -267,7 +267,7 @@ A: No, but it's highly recommended. Helps you and helps AI understand your workf
 A: Yes! `/cdd:start fix login timeout` works great. Use type=bug in frontmatter.
 
 **Q: How do I archive completed work?**
-A: Keep it in `cdd/`. It's valuable reference. If you must, move to `cdd/.archive/YYYY/`.
+A: Keep it in `_cdd/`. It's valuable reference. If you must, move to `_cdd/.archive/YYYY/`.
 
 **Q: What if my work item grows too big?**
 A: Split it! Create new work items, link them in CONTEXT.md. Epics = multiple work items.
@@ -276,7 +276,7 @@ A: Split it! Create new work items, link them in CONTEXT.md. Epics = multiple wo
 A: Yes! It's part of your codebase. Session logs too (shows work history).
 
 **Q: Can I customize templates?**
-A: Yes, edit `cdd/.meta/templates/CONTEXT.md` in your project. Don't edit the package files.
+A: Yes, edit `_cdd/.meta/templates/CONTEXT.md` in your project. Don't edit the package files.
 
 **Q: Does this work outside Claude Code?**
 A: CDD is methodology-first. Commands are for Claude Code, but principles apply anywhere.
@@ -288,4 +288,4 @@ A: CDD is methodology-first. Commands are for Claude Code, but principles apply 
 **Resources:**
 - [Quick Start](../../QUICK_START.md) - Installation and first steps
 - [README](../../README.md) - Philosophy and overview
-- [GitHub Discussion](https://github.com/emb715/cdd/discussions) - Discussions and questions
+- [GitHub Discussion](https://github.com/emb715/_cdd/discussions) - Discussions and questions

@@ -35,7 +35,7 @@ npx @emb715/cdd init
 /cdd:start add user authentication with OAuth
 
 # AI creates:
-# cdd/0001-add-user-authentication-with-oauth/
+# _cdd/0001-add-user-authentication-with-oauth/
 #   ├── CONTEXT.md   (problem, solution, tasks)
 #   └── SESSIONS.md  (empty, ready to log)
 
@@ -87,7 +87,7 @@ npx @emb715/cdd init
 
 ```
 project/
-├── cdd/                           # Your work items
+├── _cdd/                          # Your work items
 │   ├── 0001-user-authentication/
 │   │   ├── CONTEXT.md             # Problem + Solution + Tasks + Decisions
 │   │   ├── SESSIONS.md            # Simple session log
@@ -102,7 +102,7 @@ project/
 │       ├── cdd:log.md             # Log session
 │       ├── cdd:decide.md          # Multi-agent decision planning
 │       └── cdd:done.md            # Mark complete
-└── cdd/.meta/                     # Templates and tools
+└── _cdd/.meta/                    # Templates and tools
     └── templates/                 # Progressive templates
 ```
 
@@ -282,7 +282,7 @@ If ambiguous, it asks. If still unclear, defaults to "feature".
 
 CDD uses 3 strategies in order:
 
-1. **Git diff analysis** - Matches changed files to `cdd/XXXX-*/` folders
+1. **Git diff analysis** - Matches changed files to `_cdd/XXXX-*/` folders
 2. **Conversation history** - Looks for CONTEXT.md reads, work item IDs mentioned
 3. **Ask user** - Shows list if uncertain
 
@@ -647,7 +647,7 @@ done
 Build a decision database:
 
 ```bash
-cdd/
+_cdd/
 └── .meta/
     └── decisions-library/
         ├── database-choices.md
@@ -672,10 +672,6 @@ See previous analysis: [.meta/decisions-library/database-choices.md]
 - Teams that value speed over process
 
 For large teams or compliance-heavy environments, you may need additional tooling.
-
-### Can I still use CDD-RAG?
-
-Yes! The RAG extension searches across CONTEXT.md and decision files.
 
 ---
 

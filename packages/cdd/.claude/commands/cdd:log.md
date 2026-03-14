@@ -29,7 +29,7 @@ Use Task tool to spawn Honest agent:
 Execute CDD session logging workflow autonomously.
 
 User Input: [WORK_ID_AND_FLAGS]
-Instructions: Read and follow cdd/.meta/instructions/log.md
+Instructions: Read and follow _cdd/.meta/instructions/log.md
 
 The instruction file contains:
 - Work item auto-detection strategies (git, conversation, latest)

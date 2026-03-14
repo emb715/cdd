@@ -51,8 +51,8 @@ async function initCDD(args) {
   const packageRoot = path.join(__dirname, "..");
 
   try {
-    // Check if cdd/ already exists
-    if (fs.existsSync(path.join(cwd, "cdd"))) {
+    // Check if _cdd/ already exists
+    if (fs.existsSync(path.join(cwd, "_cdd"))) {
       console.log("⚠️  CDD directory already exists.");
       console.log("   This will overwrite existing CDD installation.\n");
 
@@ -70,10 +70,10 @@ async function initCDD(args) {
         ".claude/commands/cdd:save-session.md",
         ".claude/commands/cdd:complete-work.md",
         ".claude/commands/cdd:list-work.md",
-        "cdd/.meta/metrics",
-        "cdd/.meta/metrics-summary.json",
-        "cdd/.meta/metrics-summary.md",
-        "cdd/.meta/QUICK_REFERENCE.md",
+        "_cdd/.meta/metrics",
+        "_cdd/.meta/metrics-summary.json",
+        "_cdd/.meta/metrics-summary.md",
+        "_cdd/.meta/QUICK_REFERENCE.md",
       ];
 
       for (const file of legacyFiles) {
@@ -90,9 +90,9 @@ async function initCDD(args) {
       }
     }
 
-    // Create cdd/ structure
+    // Create _cdd/ structure
     console.log("Creating CDD workspace structure...");
-    const cddDir = path.join(cwd, "cdd");
+    const cddDir = path.join(cwd, "_cdd");
     const metaDir = path.join(cddDir, ".meta");
 
     if (!fs.existsSync(cddDir)) {
@@ -101,7 +101,7 @@ async function initCDD(args) {
 
     // Copy .meta/ folder (templates and instructions only - zero ceremony)
     console.log("Installing templates and instructions...");
-    const sourceMetaDir = path.join(packageRoot, "cdd", ".meta");
+    const sourceMetaDir = path.join(packageRoot, "_cdd", ".meta");
 
     // Create .meta structure
     fs.mkdirSync(metaDir, { recursive: true });
@@ -221,7 +221,7 @@ async function initCDD(args) {
     console.log(
       "\nPhilosophy: Speed over perfection. Humans decide, AI assists.",
     );
-    console.log("\nNext: Check cdd/0000-example/CONTEXT.md");
+    console.log("\nNext: Check _cdd/0000-example/CONTEXT.md");
     console.log("Docs: https://github.com/emb715/cdd\n");
   } catch (error) {
     console.error("\n❌ Error during initialization:", error.message);

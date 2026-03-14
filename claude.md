@@ -19,7 +19,7 @@ packages/cdd/
 │   └── agents/              # Bundled CDD agent
 │       └── cdd-honest.md    # Pre-configured with git read permissions
 ├── bin/cdd.js               # CLI installer
-├── cdd/.meta/               # Templates and metadata
+├── _cdd/.meta/              # Templates and metadata
 │   ├── templates/           # Templates (CONTEXT.md, SESSIONS.md)
 │   └── instructions/        # Agent instruction files (start.md, log.md, done.md)
 ├── package.json             # NPM package config
@@ -30,22 +30,21 @@ packages/cdd/
 
 **Commands (LLM-optimized):**
 - All commands in `.claude/commands/` are optimized for LLM parsing (no emojis, minimal boilerplate)
-- Total: 353 lines (reduced from 1997 lines - 82% reduction)
 - Each command has: Usage, Process steps, One example, Error handling
 
 **CLI:**
 - `bin/cdd.js` - Installs templates and commands to user projects
-- Copies `.meta/` to `cdd/` and commands to `.claude/commands/`
+- Copies `.meta/` to `_cdd/` and commands to `.claude/commands/`
 
 **Templates:**
-- `cdd/.meta/templates/CONTEXT.md` - Progressive work item template
-- `cdd/.meta/templates/SESSIONS.md` - Minimal session log
-- `cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
+- `_cdd/.meta/templates/CONTEXT.md` - Progressive work item template
+- `_cdd/.meta/templates/SESSIONS.md` - Minimal session log
+- `_cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
 
 ## Philosophy
 
 - Speed over perfection (30 sec to start vs 10 min)
-- Zero ceremony (no mandatory tracking or metrics)
+- Zero ceremony
 - Progressive disclosure (start minimal, expand as needed)
 - Human-in-the-loop (YOU decide, AI researches)
 

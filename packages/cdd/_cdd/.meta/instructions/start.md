@@ -20,13 +20,13 @@ Extract description. Detect type (case-insensitive):
 - research|explore|spike|investigate → spike
 - epic|initiative|large → epic
 
-**Smart defaults:** Scan cdd/ for recent work items. If >70% are same type, default to that type for ambiguous descriptions.
+**Smart defaults:** Scan _cdd/ for recent work items. If >70% are same type, default to that type for ambiguous descriptions.
 
 Flags: `--type=X` overrides detection. Default: feature
 
 ### 2. Determine Sequence Number
 
-Scan `cdd/` for `XXXX-*`. Use max + 1, start at 0001. Increment on collision.
+Scan `_cdd/` for `XXXX-*`. Use max + 1, start at 0001. Increment on collision.
 
 ### 3. Generate Folder Name
 
@@ -37,27 +37,27 @@ Example: "Fix Login Timeout" → `0002-fix-login-timeout`
 
 Create folder:
 ```
-cdd/XXXX-work-name/
+_cdd/XXXX-work-name/
 ```
 
 Copy and populate templates:
 
 **CONTEXT.md:**
-1. Read template: `cdd/.meta/templates/CONTEXT.md`
+1. Read template: `_cdd/.meta/templates/CONTEXT.md`
 2. Fill frontmatter: `id`, `title`, `type`, `status: draft`, `created`, `updated` (YYYY-MM-DD)
 3. Fill "Original Prompt" with raw user input (preserve exactly as entered)
 4. Fill "Why (Problem)" with description
-5. Infer 3-5 starter tasks (check similar work items in cdd/ for patterns), leave Solution/Context/Decisions empty
+5. Infer 3-5 starter tasks (check similar work items in _cdd/ for patterns), leave Solution/Context/Decisions empty
 
 **SESSIONS.md:**
-Copy template from `cdd/.meta/templates/SESSIONS.md` as-is.
+Copy template from `_cdd/.meta/templates/SESSIONS.md` as-is.
 
 ### 5. Output
 
 ```
 Work item created!
 
-cdd/XXXX-work-name/
+_cdd/XXXX-work-name/
 ID: XXXX
 Type: [type]
 
@@ -74,7 +74,7 @@ Exclude: Verbose next steps, example commands, process details, warnings.
 
 Execute autonomously. No questions, confirmations, or blocks. Infer defaults.
 
-Errors: Missing description → abort with usage. Missing cdd/ or templates → abort, suggest init. Collision → use next number. Missing git → use "Unknown".
+Errors: Missing description → abort with usage. Missing _cdd/ or templates → abort, suggest init. Collision → use next number. Missing git → use "Unknown".
 
 ## Example
 
@@ -86,7 +86,7 @@ Output:
 ```
 Work item created!
 
-cdd/0003-add-user-authentication-with-oauth/
+_cdd/0003-add-user-authentication-with-oauth/
 ID: 0003
 Type: feature
 

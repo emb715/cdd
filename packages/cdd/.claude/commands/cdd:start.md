@@ -28,7 +28,7 @@ Use Task tool to spawn Honest agent:
 Execute CDD start workflow autonomously.
 
 User Input: [USER_DESCRIPTION_AND_FLAGS]
-Instructions: Read and follow cdd/.meta/instructions/start.md
+Instructions: Read and follow _cdd/.meta/instructions/start.md
 
 The instruction file contains:
 - Input parsing rules (type detection, flag handling)

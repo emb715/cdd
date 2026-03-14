@@ -25,7 +25,7 @@ npx @emb715/cdd init
 ```
 
 That's it! You now have:
-- `cdd/` folder for work items
+- `_cdd/` folder for work items
 - `.claude/commands/` with 4 AI commands
 - Templates ready to use
 
@@ -38,7 +38,7 @@ That's it! You now have:
 /cdd:start add user authentication
 ```
 
-Creates `cdd/0001-add-user-authentication/` with CONTEXT.md and SESSIONS.md (30 seconds).
+Creates `_cdd/0001-add-user-authentication/` with CONTEXT.md and SESSIONS.md (30 seconds).
 
 ### 2. Log Progress
 ```bash
@@ -67,7 +67,7 @@ Marks work complete, adds final session log, optionally generates summary (30 se
 
 ```
 your-project/
-├── cdd/
+├── _cdd/
 │   ├── 0001-user-auth/
 │   │   ├── CONTEXT.md          # Single source of truth
 │   │   ├── SESSIONS.md         # Session log
@@ -290,9 +290,9 @@ When `/cdd:log` runs, it matches git changes to these files and auto-marks tasks
 ## Documentation
 
 - **Quick Start:** [2-minute introduction](packages/cdd/QUICK_START.md) - Get productive immediately
-- **Tutorial:** [Complete guide with examples](docs/CDD_TUTORIAL.md) - Deep dive into architecture, RAG, and best practices
+- **Tutorial:** [Complete guide with examples](docs/CDD_TUTORIAL.md) - Deep dive into architecture and best practices
 - **Package Docs:** [Technical reference](packages/cdd/README.md) - Full feature documentation
-- **Templates:** `cdd/.meta/templates/` - See what gets generated
+- **Templates:** `_cdd/.meta/templates/` - See what gets generated
 - **Issues:** https://github.com/emb715/cdd/issues
 
 ---

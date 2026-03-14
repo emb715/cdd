@@ -30,7 +30,7 @@ Use Task tool to spawn Honest agent:
 Execute CDD completion workflow autonomously.
 
 User Input: [WORK_ID_AND_FLAGS]
-Instructions: Read and follow cdd/.meta/instructions/done.md
+Instructions: Read and follow _cdd/.meta/instructions/done.md
 
 The instruction file contains:
 - Work item auto-detection strategies

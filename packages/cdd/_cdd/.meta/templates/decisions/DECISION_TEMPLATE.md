@@ -4,7 +4,7 @@ work_id: [0001]
 work_slug: [0001-work-name]
 topic: [Topic]
 decided: YYYY-MM-DD
-status: decided | implemented | superseded | revisit_later | deferred
+status: decided # allowed: decided, implemented, superseded, revisit_later, deferred
 ---
 
 # Decision: [Topic]

@@ -1,6 +1,6 @@
 {
   "name": "@emb715/cdd",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Context-Driven Development - AI-native productivity workflow with human-centered decision making",
   "bin": {
     "cdd": "bin/cdd.js"

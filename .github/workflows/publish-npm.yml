@@ -27,13 +27,14 @@ jobs:
 
       - name: Publish @emb715/cdd
         run: |
-          npm publish --workspace=packages/cdd --access public --provenance || {
+          OUTPUT=$(npm publish --workspace=packages/cdd --access public --provenance 2>&1) && echo "$OUTPUT" || {
             EXIT_CODE=$?
-            if [ $EXIT_CODE -eq 1 ]; then
-              echo "Package already published or version exists, skipping..."
+            echo "$OUTPUT"
+            if echo "$OUTPUT" | grep -q "EPUBLISHCONFLICT\|E403\|already exists\|previously published"; then
+              echo "Version already published, skipping."
               exit 0
             else
-              echo "Publish failed with unexpected error"
+              echo "Publish failed with unexpected error (exit $EXIT_CODE)"
               exit $EXIT_CODE
             fi
           }

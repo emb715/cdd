@@ -1,6 +1,6 @@
 # Sessions: XXXX-[work-name]
 
-> Chronological log of work sessions. Each entry = what you did + what's next.
+> Reverse-chronological log of work sessions (newest first). Each entry = what you did + what's next.
 
 ---
 

@@ -1,6 +1,7 @@
 ---
 scope_id: YYYY-MM-DD-[slug]
-brief: [original user input]
+brief: |
+  [original user input]
 created: YYYY-MM-DD
 status: draft
 ---

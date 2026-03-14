@@ -93,7 +93,7 @@ Read template: `_cdd/.meta/templates/SCOPE_PLAN.md`
 
 Populate template:
 - `scope_id`: `YYYY-MM-DD-[slug]`
-- `brief`: raw user input (exact)
+- `brief`: user-provided description, written into the YAML frontmatter using a YAML-safe representation (e.g., quoted string or block scalar) so arbitrary characters and newlines remain valid
 - `created`: today's date (YYYY-MM-DD)
 - `status`: `draft`
 - Title: inferred from brief (title case, concise)

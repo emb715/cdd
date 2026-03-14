@@ -82,7 +82,7 @@ Update `updated:` date (YYYY-MM-DD).
 
 ### 7. Append to SESSIONS.md
 
-Insert after frontmatter, before template. Add `---` separator. Newest first.
+Insert after the initial header and first `---` separator, before the "Template (Copy for New Sessions)" section. Add `---` separator. Newest first.
 
 ### 8. Output
 

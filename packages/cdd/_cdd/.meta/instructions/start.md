@@ -20,7 +20,7 @@ Extract description. Detect type (case-insensitive):
 - research|explore|spike|investigate → spike
 - epic|initiative|large → epic
 
-**Smart defaults:** Scan _cdd/ for recent work items. If >70% are same type, automatically use that type for ambiguous descriptions.
+**Smart defaults:** Scan _cdd/ for recent work items. If >70% are same type, default to that type for ambiguous descriptions.
 
 Flags: `--type=X` overrides detection. Default: feature
 
@@ -74,7 +74,7 @@ Exclude: Verbose next steps, example commands, process details, warnings.
 
 Execute autonomously. No questions, confirmations, or blocks. Infer defaults.
 
-Errors: Missing description → abort with usage. Missing _cdd/ or templates → abort, suggest init. Collision → use next number.
+Errors: Missing description → abort with usage. Missing _cdd/ or templates → abort, suggest init. Collision → use next number. Missing git → use "Unknown".
 
 ## Example
 

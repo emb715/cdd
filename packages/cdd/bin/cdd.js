@@ -119,6 +119,7 @@ async function initCDD(args) {
       "instructions/start.md",
       "instructions/log.md",
       "instructions/done.md",
+      "loop.config.yaml",
     ];
 
     for (const file of essentialFiles) {
@@ -134,6 +135,7 @@ async function initCDD(args) {
     console.log("   ✓ SESSIONS.md template (minimal logging)");
     console.log("   ✓ DECISION_TEMPLATE.md (for /cdd:decide)");
     console.log("   ✓ Agent instruction files (start, log, done)");
+    console.log("   ✓ loop.config.yaml (orchestrator config for /cdd:loop)");
 
     // Install Claude commands
     console.log("\n Installing Claude commands...");
@@ -148,6 +150,7 @@ async function initCDD(args) {
       "cdd:log.md",
       "cdd:decide.md",
       "cdd:done.md",
+      "cdd:loop.md",
     ];
 
     for (const cmdFile of v2Commands) {
@@ -172,6 +175,21 @@ async function initCDD(args) {
       copyDir(agentsSource, claudeAgentsDir);
       console.log("   ✓ cdd-honest (autonomous execution)");
       console.log("   ✓ cdd-sage family (domain-aware decisions)");
+      console.log("   ✓ cdd-victor-reid (rigorous code review for /cdd:loop)");
+    }
+
+    // Install loop resume hook
+    console.log("\n Installing CDD hooks...");
+    const hooksDir = path.join(cwd, ".claude", "hooks");
+    if (!fs.existsSync(hooksDir)) {
+      fs.mkdirSync(hooksDir, { recursive: true });
+    }
+    const hookSrc = path.join(packageRoot, ".claude", "hooks", "cdd-loop-resume.sh");
+    const hookDst = path.join(hooksDir, "cdd-loop-resume.sh");
+    if (fs.existsSync(hookSrc)) {
+      fs.copyFileSync(hookSrc, hookDst);
+      fs.chmodSync(hookDst, "755");
+      console.log("   ✓ cdd-loop-resume.sh (Stop hook for /cdd:loop auto-resume)");
     }
 
     // Create example structure (optional)

@@ -1,6 +1,6 @@
 # Sessions: 0001-login-timeout-fix
 
-> Reverse-chronological (newest first) log of work sessions. Each entry = what you did + what's next.
+> Chronological log of work sessions. Each entry = what you did + what's next.
 
 ---
 

@@ -30,7 +30,7 @@ jobs:
           OUTPUT=$(npm publish --workspace=packages/cdd --access public --provenance 2>&1) && echo "$OUTPUT" || {
             EXIT_CODE=$?
             echo "$OUTPUT"
-            if echo "$OUTPUT" | grep -q "EPUBLISHCONFLICT\|E403\|already exists\|previously published"; then
+            if echo "$OUTPUT" | grep -q "EPUBLISHCONFLICT\|already exists\|previously published"; then
               echo "Version already published, skipping."
               exit 0
             else

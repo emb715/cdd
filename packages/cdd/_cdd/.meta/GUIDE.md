@@ -288,4 +288,4 @@ A: CDD is methodology-first. Commands are for Claude Code, but principles apply 
 **Resources:**
 - [Quick Start](../../QUICK_START.md) - Installation and first steps
 - [README](../../README.md) - Philosophy and overview
-- [GitHub Discussion](https://github.com/emb715/_cdd/discussions) - Discussions and questions
+- [GitHub Discussion](https://github.com/emb715/cdd/discussions) - Discussions and questions

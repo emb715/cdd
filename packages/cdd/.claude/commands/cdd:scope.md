@@ -85,6 +85,6 @@ Main conversation stays clean. All drafting happens in agent context.
 
 Tools: Task (spawn Sage agent), Glob (domain detection)
 
-Files created: `_cdd/.meta/scope/YYYY-MM-DD-[slug].md`
+Files created: `_cdd/scope/YYYY-MM-DD-[slug].md`
 
 Timing: 2-3 min

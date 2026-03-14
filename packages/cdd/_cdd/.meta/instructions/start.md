@@ -39,7 +39,7 @@ Example: "Fix Login Timeout" → `0002-fix-login-timeout`
 
 Before creating the work item, check if a scope plan exists:
 
-Scan `_cdd/.meta/scope/` for `.md` files. If any exist:
+Scan `_cdd/scope/` for `.md` files. If any exist:
 - Sort by mtime descending (filename descending as tiebreaker) — select the first as the active scope plan
 - Read its work items table
 - Match the current description against scope rows using these passes in order, stopping at the first unique match:
@@ -69,7 +69,7 @@ Copy and populate templates:
 4. Fill "Why (Problem)" with description
 5. If `scope_match = true`:
    - Fill "Solution" with `scope_purpose` (one-sentence purpose from the scope plan)
-   - Add to "Context for AI" Notes: `Scope: _cdd/.meta/scope/[scope_file]`, `Phase: [scope_phase]`, and if depends_on is not `-`: `Depends on: [scope_depends_on]`
+   - Add to "Context for AI" Notes: `Scope: _cdd/scope/[scope_file]`, `Phase: [scope_phase]`, and if depends_on is not `-`: `Depends on: [scope_depends_on]`
    - Infer 2-3 starter tasks specific to this item (use scope purpose as guide)
 6. If `scope_match = false`:
    - Infer 3-5 starter tasks (check similar work items in _cdd/ for patterns), leave Solution/Context/Decisions empty
@@ -85,7 +85,7 @@ Work item created!
 _cdd/XXXX-work-name/
 ID: XXXX
 Type: [type]
-[Scoped: _cdd/.meta/scope/[scope_file] — if scope_match = true]
+[Scoped: _cdd/scope/[scope_file] — if scope_match = true]
 
 Files:
   CONTEXT.md
@@ -140,7 +140,7 @@ Work item created!
 _cdd/0001-auth/
 ID: 0001
 Type: feature
-Scoped: _cdd/.meta/scope/2026-03-14-greenfield-todo-app.md
+Scoped: _cdd/scope/2026-03-14-greenfield-todo-app.md
 
 Files:
   CONTEXT.md

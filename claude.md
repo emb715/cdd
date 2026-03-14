@@ -11,17 +11,18 @@ CDD is an npm package that provides AI workflow commands for solo developers. Op
 ```
 packages/cdd/
 ├── .claude/
-│   ├── commands/             # 4 AI command wrappers (optimized for LLMs)
-│   │   ├── cdd:start.md     # Create work item (55 lines)
-│   │   ├── cdd:log.md       # Save session (65 lines)
-│   │   ├── cdd:decide.md    # Multi-agent decision (167 lines)
-│   │   └── cdd:done.md      # Complete work (66 lines)
-│   └── agents/              # Bundled CDD agent
+│   ├── commands/             # 5 AI command wrappers (optimized for LLMs)
+│   │   ├── cdd:scope.md     # Scope large workloads (greenfield, epics)
+│   │   ├── cdd:start.md     # Create work item
+│   │   ├── cdd:log.md       # Save session
+│   │   ├── cdd:decide.md    # Multi-agent decision
+│   │   └── cdd:done.md      # Complete work
+│   └── agents/              # Bundled CDD agents
 │       └── cdd-honest.md    # Pre-configured with git read permissions
 ├── bin/cdd.js               # CLI installer
-├── _cdd/.meta/              # Templates and metadata
-│   ├── templates/           # Templates (CONTEXT.md, SESSIONS.md)
-│   └── instructions/        # Agent instruction files (start.md, log.md, done.md)
+├── _cdd/.meta/              # CDD infrastructure (templates + instructions)
+│   ├── templates/           # Templates (CONTEXT.md, SESSIONS.md, SCOPE_PLAN.md)
+│   └── instructions/        # Agent workflow definitions (start, log, done, scope)
 ├── package.json             # NPM package config
 └── README.md                # User documentation
 ```
@@ -39,6 +40,7 @@ packages/cdd/
 **Templates:**
 - `_cdd/.meta/templates/CONTEXT.md` - Progressive work item template
 - `_cdd/.meta/templates/SESSIONS.md` - Minimal session log
+- `_cdd/.meta/templates/SCOPE_PLAN.md` - Scope plan for large workloads
 - `_cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
 
 ## Philosophy
@@ -69,7 +71,7 @@ npm link
 cd ~/test-project
 npm link @emb715/cdd
 npx @emb715/cdd init
-# Verify all 4 commands: ls .claude/commands/cdd:*.md
+# Verify all 5 commands: ls .claude/commands/cdd:*.md
 ```
 
 ## Critical Conventions
@@ -92,11 +94,12 @@ npx @emb715/cdd init
 
 **User workflow:**
 1. `npx @emb715/cdd init` - Install CDD
-2. `/cdd:start my-feature` - Create work item
-3. Code...
-4. `/cdd:log` - Save session
-5. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
-6. `/cdd:done` - Complete work
+2. `/cdd:scope [brief]` - Scope large workloads first
+3. `/cdd:start my-feature` - Create work item
+4. Code...
+5. `/cdd:log` - Save session
+6. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
+7. `/cdd:done` - Complete work
 
 **Key decision:** Humans decide, AI researches. This is embodied in `/cdd:decide` which launches 4 agents in parallel to research options, but the human makes the final call.
 

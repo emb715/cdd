@@ -16,7 +16,21 @@ You now have CDD commands available in Claude Code!
 
 ---
 
-## The 4-Command Workflow
+## The 5-Command Workflow
+
+### `/cdd:scope [brief]`
+
+Scope a large body of work before starting.
+
+```bash
+/cdd:scope greenfield SaaS: auth, billing, API, admin dashboard
+```
+
+**What it does:** AI drafts a scope plan at `_cdd/scope/YYYY-MM-DD-[slug].md` with work items, phases, and dependencies (~2 min). You review and edit it, then start each item with `/cdd:start [item] (scoped)`.
+
+→ Use when the work breakdown itself is the first problem to solve (greenfield, big epics, sprints)
+
+---
 
 ### `/cdd:start [description]`
 
@@ -122,11 +136,12 @@ Beyond the 4 CDD commands, you can invoke specialized agents directly:
 ```
 your-project/
 ├── _cdd/
+│   ├── scope/                  # Scope plans (from /cdd:scope)
 │   └── 0001-caching-layer/
 │       ├── CONTEXT.md          # Problem, solution, tasks, decisions
 │       ├── SESSIONS.md         # Session log
 │       └── decisions/          # Multi-agent decision artifacts
-└── .claude/commands/           # The 4 commands
+└── .claude/commands/           # The 5 commands
 ```
 
 → *See [Tutorial: Core Concepts](../../docs/CDD_TUTORIAL.md#core-concepts) for detailed file structure*

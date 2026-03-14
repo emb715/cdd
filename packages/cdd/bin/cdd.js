@@ -110,7 +110,7 @@ async function initCDD(args) {
       recursive: true,
     });
     fs.mkdirSync(path.join(metaDir, "instructions"), { recursive: true });
-    fs.mkdirSync(path.join(metaDir, "scope"), { recursive: true });
+    fs.mkdirSync(path.join(cddDir, "scope"), { recursive: true });
 
     // Copy ONLY the essential v2 templates (zero ceremony)
     const essentialFiles = [

@@ -47,7 +47,8 @@ npx @emb715/cdd init
 This creates:
 ```
 _cdd/
-├── .meta/           # Templates and agent instructions
+├── scope/           # Scope plans (from /cdd:scope)
+├── .meta/           # CDD infrastructure (templates + instructions)
 └── 0000-example/    # Example work item (delete when ready)
     ├── CONTEXT.md   # Problem, solution, tasks, decisions
     └── SESSIONS.md  # Session log
@@ -56,6 +57,7 @@ _cdd/
 ### Verify Slash Commands
 
 In Claude Code, type `/cdd:` and you should see autocomplete for:
+- `/cdd:scope` - Scope large workloads (greenfield, epics, sprints)
 - `/cdd:start` - Start new work session
 - `/cdd:log` - Auto-detect and log session activity
 - `/cdd:decide` - Multi-agent collaborative planning
@@ -714,9 +716,10 @@ Reviewer reads CONTEXT.md for original requirements, decisions/ for approach, SE
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| `/cdd:start` | Start new work session | `/cdd:start` |
+| `/cdd:scope` | Scope large workloads (greenfield, epics) | `/cdd:scope greenfield SaaS: auth, billing` |
+| `/cdd:start` | Start new work session | `/cdd:start add user auth` |
 | `/cdd:log` | Auto-detect and log session | `/cdd:log` |
-| `/cdd:decide` | Multi-agent collaborative planning | `/cdd:decide` |
+| `/cdd:decide` | Multi-agent collaborative planning | `/cdd:decide REST vs GraphQL` |
 | `/cdd:done` | Mark complete with evidence | `/cdd:done` |
 
 **Installation commands:**
@@ -727,7 +730,8 @@ npx @emb715/cdd init
 **File structure:**
 ```
 _cdd/
-├── .meta/            # Templates and agent instructions
+├── scope/            # Scope plans (from /cdd:scope)
+├── .meta/            # CDD infrastructure (templates + instructions)
 └── XXXX-work-name/   # One folder per work item
     ├── CONTEXT.md    # Problem, solution, tasks, decisions
     ├── SESSIONS.md   # Session log

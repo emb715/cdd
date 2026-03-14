@@ -35,7 +35,7 @@ npx @emb715/cdd init
 /cdd:scope greenfield SaaS: auth, billing, API, admin dashboard
 
 # AI drafts a scope plan (~2 min):
-# _cdd/.meta/scope/2026-03-14-greenfield-saas.md
+# _cdd/scope/2026-03-14-greenfield-saas.md
 # Review and edit it, then start each item:
 # /cdd:start auth (scoped)
 ```
@@ -100,6 +100,7 @@ npx @emb715/cdd init
 ```
 project/
 ├── _cdd/                          # Your work items
+│   ├── scope/                     # Scope plans (from /cdd:scope)
 │   ├── 0001-user-authentication/
 │   │   ├── CONTEXT.md             # Problem + Solution + Tasks + Decisions
 │   │   ├── SESSIONS.md            # Simple session log
@@ -108,15 +109,17 @@ project/
 │   └── 0002-dark-mode-toggle/
 │       ├── CONTEXT.md
 │       └── SESSIONS.md
-├── .claude/                       # AI commands
-│   └── commands/
-│       ├── cdd:scope.md           # Scope large workloads (greenfield, epics)
-│       ├── cdd:start.md           # Create work item
-│       ├── cdd:log.md             # Log session
-│       ├── cdd:decide.md          # Multi-agent decision planning
-│       └── cdd:done.md            # Mark complete
-└── _cdd/.meta/                    # Templates and tools
-    └── templates/                 # Progressive templates
+├── .claude/                       # AI commands and agents
+│   ├── commands/
+│   │   ├── cdd:scope.md           # Scope large workloads (greenfield, epics)
+│   │   ├── cdd:start.md           # Create work item
+│   │   ├── cdd:log.md             # Log session
+│   │   ├── cdd:decide.md          # Multi-agent decision planning
+│   │   └── cdd:done.md            # Mark complete
+│   └── agents/                    # cdd-honest, cdd-sage family
+└── _cdd/.meta/                    # CDD infrastructure
+    ├── templates/                 # CONTEXT.md, SESSIONS.md, SCOPE_PLAN.md
+    └── instructions/              # Agent workflow definitions
 ```
 
 ### CONTEXT.md - The Heart of CDD

@@ -85,9 +85,9 @@ If all items are independent (no dependencies), write `Phase Grouping: none — 
 
 Generate slug: take the first 2-3 meaningful words from the brief, lowercase, spaces→hyphens, drop filler words (a, the, to, for, with). Example: "migrate monolith to microservices: user service, order service" → `migrate-monolith`. Example: "greenfield SaaS: auth, billing, API" → `greenfield-saas`.
 
-File path: `_cdd/.meta/scope/YYYY-MM-DD-[slug].md`
+File path: `_cdd/scope/YYYY-MM-DD-[slug].md`
 
-Create `_cdd/.meta/scope/` directory if it doesn't exist.
+Create `_cdd/scope/` directory if it doesn't exist.
 
 Read template: `_cdd/.meta/templates/SCOPE_PLAN.md`
 
@@ -107,7 +107,7 @@ Populate template:
 Return for display in the main conversation:
 
 ```
-Scope plan drafted: _cdd/.meta/scope/[filename].md
+Scope plan drafted: _cdd/scope/[filename].md
 
 | # | Folder Name          | Type    | Purpose                        | Depends On |
 |---|----------------------|---------|--------------------------------|------------|
@@ -118,7 +118,7 @@ Scope plan drafted: _cdd/.meta/scope/[filename].md
 Phase 1: [Name] — #1, #2
 Phase 2: [Name] — #3, #4
 
-Review the plan at _cdd/.meta/scope/[filename].md
+Review the plan at _cdd/scope/[filename].md
 Edit as needed, then start your first work item:
 
   /cdd:start [first-item-name] (scoped)
@@ -134,5 +134,5 @@ If brief is ambiguous (could be 1 item): produce the plan anyway with a note "If
 
 Errors:
 - No brief → abort, show usage
-- _cdd/.meta/scope/ can't be created → abort with message
+- _cdd/scope/ can't be created → abort with message
 - Template not found → create plan file without template (use inline structure)

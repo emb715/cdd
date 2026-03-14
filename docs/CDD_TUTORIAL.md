@@ -541,18 +541,6 @@ jcodemunch-mcp is an MCP server that indexes your codebase using AST parsing and
 claude mcp add jcodemunch uvx jcodemunch-mcp
 ```
 
-### How it enhances `/cdd:decide`
-
-The Codebase Context Agent (Agent 3 in the parallel research) normally uses grep to find file-level patterns. With jcodemunch indexed, it uses `search_symbols`, `find_references`, and `get_context_bundle` to analyze actual code structure — finding existing implementations, understanding usage patterns, and estimating migration complexity with precision. This translates to decision artifacts with more accurate codebase analysis.
-
-### How it enhances `/cdd:log`
-
-Task auto-matching works by comparing changed file paths to the `**Files:**` hints in your tasks. With jcodemunch available, Claude can use `find_importers` and `find_references` to catch completions semantically — useful after refactors or file renames where paths change but the work is the same.
-
-### When to add it
-
-Add it when your project reaches 20+ source files, or when `/cdd:decide`'s codebase analysis feels shallow. For small projects, built-in Grep is sufficient.
-
 ---
 
 ## Troubleshooting

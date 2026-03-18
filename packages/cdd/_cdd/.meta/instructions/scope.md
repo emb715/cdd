@@ -53,7 +53,7 @@ For each identified area of work, define:
 | **#** | Sequential row number (not folder sequence) |
 | **Folder Name** | `XXXX-kebab-case-name` starting from max_sequence+1 |
 | **Type** | feature\|bug\|refactor\|spike\|epic — infer from area description |
-| **Purpose** | One sentence: what this item delivers |
+| **Purpose** | One sentence: what done looks like for this item from the outside. Testable, not descriptive. ("Users can X" / "Y is eliminated" / "Z passes all tests") |
 | **Depends On** | Row numbers this item genuinely blocks on. Default: `-` |
 
 **Dependency rules:**
@@ -98,7 +98,8 @@ Populate template:
 - `status`: `draft`
 - Title: inferred from brief (title case, concise)
 - Brief section: 1-2 sentences expanding on the problem/initiative
-- Work items table: all rows
+- Purpose section: the initiative-level success statement from the interview (one sentence, testable, observable)
+- Work items table: all rows — Purpose column must be testable/observable ("Users can X", not "Implements X")
 - Phase grouping: if applicable
 - Review checklist: fill in "current max in _cdd/: XXXX" with actual value
 
@@ -111,8 +112,8 @@ Scope plan drafted: _cdd/scope/[filename].md
 
 | # | Folder Name          | Type    | Purpose                        | Depends On |
 |---|----------------------|---------|--------------------------------|------------|
-| 1 | XXXX-[name]          | feature | [purpose]                      | -          |
-| 2 | XXXX-[name]          | feature | [purpose]                      | #1         |
+| 1 | XXXX-[name]          | feature | [observable, testable outcome] | -          |
+| 2 | XXXX-[name]          | feature | [observable, testable outcome] | #1         |
 ...
 
 Phase 1: [Name] — #1, #2
@@ -138,15 +139,17 @@ Before producing any output, run a structured interview to resolve ambiguity in 
 
 Ask one question at a time. Do not dump a list. Each answer may inform or close the next question — adapt.
 
-Probe until these dimensions are resolved:
+**Start here, always:** What does success look like when this is done? Answer in one concrete sentence — what can a user do, what system state exists, what is observable? This becomes the initiative Purpose and anchors every work item breakdown that follows.
 
-1. **Outcome** — What does "done" look like in concrete terms? (User-facing change? API contract? Infrastructure state?)
+Then probe until these dimensions are resolved:
+
+1. **Purpose (first question)** — One sentence: what does done look like from the outside? (User-facing change? API contract? Infrastructure state?) This is load-bearing — it anchors the whole plan.
 2. **Boundaries** — What is explicitly out of scope? What existing systems must not be touched?
 3. **Constraints** — Hard deadlines, tech stack locks, performance requirements, team/solo context?
 4. **Dependencies** — Anything that must exist before this work can start? External APIs, third-party services, pending work items?
 5. **Risk areas** — Where is the most uncertainty? What is most likely to block?
 
-Stop interviewing when you have enough to produce a non-ambiguous scope plan. Do not over-interview simple briefs — if the brief is already specific, ask at most 1-2 clarifying questions before proceeding.
+Stop interviewing when you have enough to produce a non-ambiguous scope plan. Do not over-interview simple briefs — if the brief is already specific and the Purpose is obvious, confirm it ("I'll treat the purpose as X — correct?") and ask at most 1-2 clarifying questions before proceeding.
 
 ### Design principle
 

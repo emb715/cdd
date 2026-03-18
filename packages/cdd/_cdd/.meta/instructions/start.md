@@ -37,21 +37,11 @@ Example: "Fix Login Timeout" → `0002-fix-login-timeout`
 
 ### 3.5. Check for Active Scope Plan (optional enrichment)
 
-Before creating the work item, check if a scope plan exists:
+Only applies when the user passes `(scoped)` in the description (e.g. `/cdd:start auth (scoped)`).
 
-Scan `_cdd/scope/` for `.md` files. If any exist:
-- Sort by mtime descending (filename descending as tiebreaker) — select the first as the active scope plan
-- Read its work items table
-- Match the current description against scope rows using these passes in order, stopping at the first unique match:
-  1. **Name suffix match**: strip the XXXX- prefix from each row's folder name column, check if it equals the description (kebab-case, case-insensitive). Example: `0001-auth` → suffix `auth` matches description `auth`.
-  2. **Purpose substring match**: check if the description appears anywhere in the row's purpose column (case-insensitive substring). Example: description `auth` matches purpose `User registration, login, and session management for auth`.
-  3. **Folder name substring match**: check if the description appears anywhere in the row's folder name column (case-insensitive substring).
-- If exactly one row matches across all passes, set `scope_match = true`, extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`
-- If zero or multiple rows match, set `scope_match = false` and skip enrichment
+Find the most recent `.md` file in `_cdd/scope/`. Read its work items table and find the row matching the description. If a unique match is found (`scope_match = true`), extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`. Use `scope_folder_name` as the folder name and the scope's type if no `--type` flag was given.
 
-If `scope_match = true`:
-- Use `scope_folder_name` as the folder name (overrides Step 3 generation)
-- Use the scope's detected type if no `--type` flag was given
+If no match or ambiguous match: `scope_match = false`, proceed without enrichment.
 
 ### 4. Create Work Item Structure
 
@@ -67,12 +57,17 @@ Copy and populate templates:
 2. Fill frontmatter: `id`, `title`, `type`, `status: draft`, `created`, `updated` (YYYY-MM-DD)
 3. Fill "Original Prompt" with raw user input (preserve exactly as entered)
 4. Fill "Why (Problem)" with description
-5. If `scope_match = true`:
-   - Fill "Solution" with `scope_purpose` (one-sentence purpose from the scope plan)
+5. Fill "Purpose" — one sentence stating what this item exists to deliver. Observable and testable. Derive from the description:
+   - feature → what the user/system can do when it's working ("Users can X")
+   - bug → what condition is gone ("The Y error no longer occurs under Z conditions")
+   - refactor → what structural property is achieved ("Module X has no external dependencies and all tests pass")
+   - spike → what is known ("Decision on X is made with documented tradeoffs")
+   If `scope_match = true`, use `scope_purpose` instead.
+6. If `scope_match = true`:
    - Add to "Context for AI" Notes: `Scope: _cdd/scope/[scope_file]`, `Phase: [scope_phase]`, and if depends_on is not `-`: `Depends on: [scope_depends_on]`
-   - Infer 2-3 starter tasks specific to this item (use scope purpose as guide)
-6. If `scope_match = false`:
-   - Infer 3-5 starter tasks (check similar work items in _cdd/ for patterns), leave Solution/Context/Decisions empty
+   - Infer 2-3 starter tasks using scope_purpose as guide
+7. If `scope_match = false`:
+   - Infer 3-5 starter tasks from description and similar work items in _cdd/
 
 **SESSIONS.md:**
 Copy template from `_cdd/.meta/templates/SESSIONS.md` as-is.
@@ -143,10 +138,6 @@ Start working. Use /cdd:log when you make progress.
 **Scoped (active scope plan present):**
 
 Input: `/cdd:start auth (scoped)`
-
-Step 1: Strip `(scoped)` → description = `auth`
-Step 3.5: Scope plan found. Name suffix match: `0001-auth` → suffix `auth` = description `auth` → unique match → scope_match = true
-Folder: `0001-auth` (from scope_folder_name, overrides generated name)
 
 Output:
 ```

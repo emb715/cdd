@@ -12,12 +12,16 @@ status: draft
 
 [1-2 sentences describing the initiative or problem being scoped]
 
+## Purpose
+
+> One sentence. What does this initiative exist to deliver?
+
 ## Proposed Work Items
 
 | # | Folder Name | Type | Purpose | Depends On |
 |---|-------------|------|---------|------------|
-| 1 | XXXX-[name] | feature | [one sentence] | - |
-| 2 | XXXX-[name] | feature | [one sentence] | #1 |
+| 1 | XXXX-[name] | feature | [observable, testable outcome for this item] | - |
+| 2 | XXXX-[name] | feature | [observable, testable outcome for this item] | #1 |
 
 ## Phase Grouping
 

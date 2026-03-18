@@ -21,6 +21,11 @@ Use this to iterate on the problem definition or refine your PRD.
 
 [Describe the problem this work addresses]
 
+## 🏁 Purpose
+
+> One sentence. What does this work item exist to deliver? Observable and testable.
+
+
 ## 💡 Solution
 
 > How will you solve it? High-level approach only.

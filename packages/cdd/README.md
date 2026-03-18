@@ -13,13 +13,15 @@ CDD (Context-Driven Development) is a methodology for working with AI assistants
 
 You describe the work once in a `CONTEXT.md` file. Commands handle session logging, parallel research, code review, and completion — so you stay focused on the actual work.
 
-### Core Philosophy
+Best for features and bugs that span multiple sessions. For quick one-off fixes, no need to create a work item.
 
-1. **Speed over perfection** — Start working in 30 seconds, refine as you go
-2. **AI-native decisions** — Let multiple agents research in parallel, you make the call
+### Philosophy
+
+1. **Context as infrastructure** — Single source of truth persists across sessions
+2. **Humans decide, AI researches** — Final decision always human-made
 3. **Zero ceremony** — No mandatory tracking, no overhead, just work
-
-Best for features and bugs that span multiple sessions. For quick fixes under 30 minutes, skip CDD and commit with a good message.
+4. **Progressive disclosure** — Start minimal, expand as needed
+5. **Start in 30 seconds, refine as you go** — no upfront planning required
 
 ---
 
@@ -188,7 +190,14 @@ File hints let `/cdd:log` auto-mark tasks complete when matching files are modif
 | `cdd-sage-balanced` | Efficient general development (recommended default) |
 | `cdd-sage-mentor` | Teaching mode — explains principles and reasoning |
 
-See [AGENTS.md](AGENTS.md) for the full guide.
+
+---
+
+## Documentation
+
+- [Quick Start](https://github.com/emb715/cdd/blob/main/packages/cdd/QUICK_START.md) — 2-minute intro
+- [Tutorial](https://github.com/emb715/cdd/blob/main/docs/CDD_TUTORIAL.md) — complete guide with examples
+- [Agents Guide](https://github.com/emb715/cdd/blob/main/packages/cdd/AGENTS.md) — agent reference
 
 ---
 

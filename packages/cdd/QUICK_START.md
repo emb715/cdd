@@ -98,16 +98,16 @@ Verifies tasks, adds final session log, updates status. ~30 seconds.
 
 ---
 
-## Agents (Direct Use)
+## Agents
 
-Beyond CDD commands, invoke Sage agents directly for general work:
+CDD commands use agents automatically. You can also invoke them directly by name:
 
-```bash
-/cdd-sage                # Adaptive — auto-selects mode based on context
-/cdd-sage-balanced       # Efficient development (recommended default)
-/cdd-sage-specialist     # Deep technical: architecture, edge cases, optimization
-/cdd-sage-mentor         # Learning mode: explains principles and reasoning
-```
+- `cdd-honest` — Used by all workflow commands. Direct executor, no ceremony.
+- `cdd-victor-reid` — Code review outside of `/cdd:loop`. Use when you implemented manually and want a review before `/cdd:done`.
+- `cdd-sage-balanced` — Efficient general development (recommended default)
+- `cdd-sage-specialist` — Deep technical: architecture, edge cases, optimization
+- `cdd-sage-mentor` — Learning mode: explains principles and reasoning
+- `cdd-sage` — Adaptive: auto-selects mode based on context
 
 See [AGENTS.md](AGENTS.md) for the full guide.
 
@@ -195,4 +195,4 @@ Without it: paste the resume command manually when context rotates. State is nev
 3. `/cdd:log` after each session
 4. `/cdd:done` when done
 
-Issues: https://github.com/emb715/cdd/issues
+Discussions: https://github.com/emb715/cdd/discussions

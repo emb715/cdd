@@ -42,7 +42,7 @@ You don't invoke this directly — `/cdd:loop` spawns it automatically after exe
 
 Adaptive expert that auto-selects operating mode based on your interaction patterns.
 
-**Usage:** `/cdd-sage`
+**Usage:** `cdd-sage`
 
 **When to use:**
 - General work where you want adaptive expertise
@@ -65,7 +65,7 @@ Adaptive expert that auto-selects operating mode based on your interaction patte
 
 Deep domain expert for advanced technical work.
 
-**Usage:** `/cdd-sage-specialist`
+**Usage:** `cdd-sage-specialist`
 
 **When to use:**
 - Edge cases and failure modes
@@ -93,7 +93,7 @@ Deep domain expert for advanced technical work.
 
 Honest Agent efficiency with domain expertise. Recommended default for general development.
 
-**Usage:** `/cdd-sage-balanced`
+**Usage:** `cdd-sage-balanced`
 
 **When to use:**
 - Getting work done efficiently
@@ -118,7 +118,7 @@ Honest Agent efficiency with domain expertise. Recommended default for general d
 
 Teaching-focused expert that explains principles and reasoning.
 
-**Usage:** `/cdd-sage-mentor`
+**Usage:** `cdd-sage-mentor`
 
 **When to use:**
 - Learning new concepts
@@ -146,6 +146,8 @@ Teaching-focused expert that explains principles and reasoning.
 | Need | Agent | Why |
 |------|-------|-----|
 | Work item tracking | Use CDD commands | `/cdd:start`, `/cdd:log`, `/cdd:done`, `/cdd:loop` |
+| Direct execution, no frills | `cdd-honest` | Same agent commands use internally |
+| Code review (manual) | `cdd-victor-reid` | Review before `/cdd:done` when implementing manually |
 | General dev work | `cdd-sage-balanced` | Efficient + domain aware |
 | Deep technical | `cdd-sage-specialist` | Architecture, optimization, edge cases |
 | Learning | `cdd-sage-mentor` | Understand principles |

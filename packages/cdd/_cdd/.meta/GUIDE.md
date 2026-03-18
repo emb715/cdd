@@ -54,6 +54,28 @@
 
 ## The Workflow
 
+### Scope Large Work (`/cdd:scope`)
+
+Use before `/cdd:start` when the work breakdown itself is the first problem to solve — greenfield projects, big epics, multi-phase sprints.
+
+```bash
+/cdd:scope greenfield SaaS: auth, billing, API, admin dashboard
+/cdd:scope migrate monolith to microservices
+```
+
+**What it produces:** `_cdd/scope/YYYY-MM-DD-[slug].md` — a scope plan with a work items table, phase grouping, and dependency map. You review and edit it, then start each item:
+
+```bash
+/cdd:start auth (scoped)
+```
+
+The `(scoped)` hint tells the agent to look up the matching row in the scope plan and pre-fill CONTEXT.md with purpose, phase, and dependencies.
+
+**When to use:** Work breakdown is unclear, multiple phases exist, or you're starting from zero.
+**When to skip:** Single feature or bug with a clear scope — use `/cdd:start` directly.
+
+---
+
 ### Create Work Item (`/cdd:start`)
 
 **What it creates:**
@@ -268,6 +290,9 @@ A: Yes! `/cdd:start fix login timeout` works great. Use type=bug in frontmatter.
 
 **Q: How do I archive completed work?**
 A: Keep it in `_cdd/`. It's valuable reference. If you must, move to `_cdd/.archive/YYYY/`.
+
+**Q: What if I don't know how to break down a large project?**
+A: Use `/cdd:scope [brief]`. It drafts a work items table with phases and dependencies for you to review. Then start each item with `/cdd:start [name] (scoped)`.
 
 **Q: What if my work item grows too big?**
 A: Split it! Create new work items, link them in CONTEXT.md. Epics = multiple work items.

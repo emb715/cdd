@@ -2,27 +2,39 @@
 
 CDD includes specialized AI agents for different workflows. Agents handle autonomous execution while you focus on decisions.
 
+---
+
 ## Workflow Agents (Used by Commands)
 
 ### cdd-honest
 
-Direct agent without the BS. Used internally by most CDD commands.
+Direct executor used internally by most CDD commands and by `/cdd:loop` for task implementation and fix agents.
 
-**Used by:**
-- `/cdd:start` - Create work items
-- `/cdd:log` - Log session progress
-- `/cdd:done` - Complete work items
-
-**Not used by:**
-- `/cdd:decide` - Decision command uses domain-aware Sage agents instead for specialized research
+**Used by:** `/cdd:start`, `/cdd:log`, `/cdd:done`, `/cdd:loop`
 
 **Behavior:**
-- Direct and ruthlessly honest
-- No pleasantries or ceremony
+- Direct and ruthlessly honest — no pleasantries, no ceremony
 - Autonomous execution
 - Pre-configured git read permissions
 
-**You don't invoke this directly** - CDD commands use it automatically.
+You don't invoke this directly — CDD commands use it automatically.
+
+---
+
+### cdd-victor-reid
+
+Rigorous code reviewer. Spawned by `/cdd:loop` after all tasks complete. Evaluates implementation against `Done when:` criteria in `CONTEXT.md`. Classifies issues as BLOCKING or NON_BLOCKING.
+
+**Used by:** `/cdd:loop` (REVIEW protocol)
+
+**Behavior:**
+- Treats every implementation as failing until it demonstrably satisfies acceptance criteria
+- Demands testable evidence, not working-at-a-glance code
+- Default stance: skeptical. Approval must be earned.
+
+You don't invoke this directly — `/cdd:loop` spawns it automatically after execution.
+
+---
 
 ## Direct-Use Agents (Manual Invocation)
 
@@ -34,19 +46,20 @@ Adaptive expert that auto-selects operating mode based on your interaction patte
 
 **When to use:**
 - General work where you want adaptive expertise
-- Let the agent choose depth based on your signals
-- You're unsure which variant to use
+- You're unsure which variant fits
 
 **Behavior:**
 - Detects context from file types and conversation (3-5 interactions)
 - Silently switches between Specialist, Balanced, or Mentor mode
 - Adapts to domain (DevOps, Frontend, Blockchain, ML, etc.)
-- No announcements, just demonstrates expertise
+- No announcements — just demonstrates expertise
 
 **Mode selection:**
-- **Specialist mode**: You ask about edge cases, optimization, or advanced patterns
-- **Balanced mode**: You want to "implement X" or "fix Y" (default)
-- **Mentor mode**: You ask "why", "how does this work", "explain"
+- **Specialist mode**: edge cases, optimization, advanced patterns
+- **Balanced mode**: "implement X", "fix Y" (default)
+- **Mentor mode**: "why", "how does this work", "explain"
+
+---
 
 ### cdd-sage-specialist
 
@@ -74,28 +87,32 @@ Deep domain expert for advanced technical work.
 - Blockchain: Gas optimization, reentrancy guards, MEV
 - Backend: Connection pooling, caching strategies, distributed systems
 
+---
+
 ### cdd-sage-balanced
 
-Honest Agent efficiency with domain expertise.
+Honest Agent efficiency with domain expertise. Recommended default for general development.
 
 **Usage:** `/cdd-sage-balanced`
 
 **When to use:**
-- Getting work done efficiently (recommended default)
-- You want domain-aware help without deep dives
+- Getting work done efficiently
+- Domain-aware help without deep dives
 - General development tasks
 
 **Behavior:**
-- Direct and ruthlessly efficient (like cdd-honest)
+- Direct and ruthlessly efficient
 - Uses domain-specific terminology naturally
 - Applies relevant conventions and patterns
 - Concise, actionable responses
 - No explanations unless you ask "why"
 
 **Example domains:**
-- DevOps: Uses Terraform/K8s terminology, references 12-factor
+- DevOps: Terraform/K8s terminology, 12-factor references
 - Frontend: React/Vue patterns, accessibility/performance
 - Blockchain: Gas optimization language, security patterns
+
+---
 
 ### cdd-sage-mentor
 
@@ -114,7 +131,7 @@ Teaching-focused expert that explains principles and reasoning.
 - Builds first-principles understanding
 - Provides context on when/why things matter
 - Uses analogies when helpful
-- Direct but not terse (unlike cdd-honest)
+- Direct but not terse
 
 **Structure:**
 1. Answer your question directly
@@ -122,78 +139,63 @@ Teaching-focused expert that explains principles and reasoning.
 3. Provide context on when/why it matters
 4. Mention alternatives if relevant
 
+---
+
 ## Quick Selection Guide
 
 | Need | Agent | Why |
 |------|-------|-----|
-| Work item tracking | Use CDD commands | `/cdd:start`, `/cdd:log`, `/cdd:done` |
+| Work item tracking | Use CDD commands | `/cdd:start`, `/cdd:log`, `/cdd:done`, `/cdd:loop` |
 | General dev work | `cdd-sage-balanced` | Efficient + domain aware |
-| Deep technical | `cdd-sage-specialist` | Architecture, optimization |
+| Deep technical | `cdd-sage-specialist` | Architecture, optimization, edge cases |
 | Learning | `cdd-sage-mentor` | Understand principles |
 | Adaptive | `cdd-sage` | Auto-selects mode based on context |
 
-## Common Agent Behavior
+---
 
-All Sage agents share these characteristics:
+## Common Behavior Across Sage Agents
 
 **Silent role detection:**
-- Analyze file types (`.tf` → DevOps, `.sol` → Blockchain, `.tsx` → Frontend, etc.)
-- Observe conversation patterns
-- Review project structure
-- Adopt expert role after 3-5 interactions
-- No announcements, just demonstrate expertise
+- Analyzes file types (`.tf` → DevOps, `.sol` → Blockchain, `.tsx` → Frontend, etc.)
+- Observes conversation patterns and project structure
+- Adopts expert role after 3-5 interactions — no announcements
 
 **Fluid domain switching:**
-- If context shifts (e.g., frontend → backend), adapt immediately
-- No announcements needed
+- Context shifts (frontend → backend) → expertise shifts immediately, no announcement
 
 **Honest Agent foundation:**
 - Direct and ruthlessly honest
 - No pleasantries or emotional cushioning
-- Challenge wrong assumptions
-- Prioritize accuracy and efficiency
+- Challenges wrong assumptions
 - Skeptical, questioning approach
+- Prioritizes accuracy and efficiency
 
 **Context window efficiency:**
 - Minimal tokens, maximum value
-- Progressive disclosure (start minimal, expand if needed)
-- Never repeat what you already know
+- Progressive disclosure: start minimal, expand if needed
 
-## Supported Domains
-
-- DevOps/Infrastructure
-- Frontend (React, Vue, Svelte)
-- Blockchain/Smart Contracts
-- Backend/API
-- ML/Data Science
-- Systems Programming (Rust, Go)
-- Enterprise/JVM
+---
 
 ## Examples
 
-**Using meta-agent for adaptive work:**
+**Specialist for architecture:**
 ```
-You: "I need to optimize this React component"
-[After 3 interactions, cdd-sage silently enters Balanced mode]
-cdd-sage: [Uses React terminology, suggests useMemo, keeps it brief]
+/cdd-sage-specialist
+"Should I use WebSockets or Server-Sent Events?"
+
+→ WebSockets if bidirectional needed. SSE for server→client only.
+  Tradeoffs: SSE simpler (HTTP), auto-reconnect, better browser support.
+  WebSockets: lower latency, true bidirectional, requires connection management.
+  Failure modes: SSE fails behind some proxies. WebSockets needs heartbeat logic.
 ```
 
-**Using specialist for architecture:**
+**Mentor for learning:**
 ```
-You: "/cdd-sage-specialist"
-You: "Should I use WebSockets or Server-Sent Events?"
-cdd-sage-specialist: WebSockets if bidirectional needed. SSE for server→client only.
-Tradeoffs: SSE simpler (HTTP), auto-reconnect, better browser support.
-WebSockets: lower latency, true bidirectional, requires connection management.
-Failure modes: SSE fails behind some proxies. WebSockets needs heartbeat logic.
-```
+/cdd-sage-mentor
+"Why do we need virtual DOM?"
 
-**Using mentor for learning:**
-```
-You: "/cdd-sage-mentor"
-You: "Why do we need virtual DOM?"
-cdd-sage-mentor: Direct manipulation of real DOM is slow - browser reflows on every change.
-Virtual DOM solves this by batching changes in memory first, then applying minimal updates.
-This matters for apps with frequent UI updates (think dashboards, live feeds).
-Alternative: Fine-grained reactivity (Svelte, Solid) - no VDOM, compile-time optimization.
+→ Direct DOM manipulation is slow — browser reflows on every change.
+  Virtual DOM batches changes in memory, then applies minimal diffs.
+  This matters for apps with frequent UI updates (dashboards, live feeds).
+  Alternative: Fine-grained reactivity (Svelte, Solid) — no VDOM, compile-time optimization.
 ```

@@ -13,7 +13,9 @@ Execute CDD start workflow autonomously. No questions, no confirmation prompts.
 
 ### 1. Parse Input
 
-Extract description. Detect type (case-insensitive):
+Extract description. Strip trailing `(scoped)` token if present (case-insensitive) — it is a user hint for scope detection, not part of the description. Example: `auth (scoped)` → description = `auth`.
+
+Detect type (case-insensitive):
 - fix|bug|issue|broken → bug
 - add|create|new|build → feature
 - refactor|cleanup|improve|optimize → refactor
@@ -33,6 +35,24 @@ Scan `_cdd/` for `XXXX-*`. Use max + 1, start at 0001. Increment on collision.
 Format: `XXXX-kebab-case-description`. Lowercase, spaces→hyphens, no special chars.
 Example: "Fix Login Timeout" → `0002-fix-login-timeout`
 
+### 3.5. Check for Active Scope Plan (optional enrichment)
+
+Before creating the work item, check if a scope plan exists:
+
+Scan `_cdd/scope/` for `.md` files. If any exist:
+- Sort by mtime descending (filename descending as tiebreaker) — select the first as the active scope plan
+- Read its work items table
+- Match the current description against scope rows using these passes in order, stopping at the first unique match:
+  1. **Name suffix match**: strip the XXXX- prefix from each row's folder name column, check if it equals the description (kebab-case, case-insensitive). Example: `0001-auth` → suffix `auth` matches description `auth`.
+  2. **Purpose substring match**: check if the description appears anywhere in the row's purpose column (case-insensitive substring). Example: description `auth` matches purpose `User registration, login, and session management for auth`.
+  3. **Folder name substring match**: check if the description appears anywhere in the row's folder name column (case-insensitive substring).
+- If exactly one row matches across all passes, set `scope_match = true`, extract: `scope_purpose`, `scope_phase`, `scope_depends_on`, `scope_folder_name`
+- If zero or multiple rows match, set `scope_match = false` and skip enrichment
+
+If `scope_match = true`:
+- Use `scope_folder_name` as the folder name (overrides Step 3 generation)
+- Use the scope's detected type if no `--type` flag was given
+
 ### 4. Create Work Item Structure
 
 Create folder:
@@ -47,10 +67,28 @@ Copy and populate templates:
 2. Fill frontmatter: `id`, `title`, `type`, `status: draft`, `created`, `updated` (YYYY-MM-DD)
 3. Fill "Original Prompt" with raw user input (preserve exactly as entered)
 4. Fill "Why (Problem)" with description
-5. Infer 3-5 starter tasks (check similar work items in _cdd/ for patterns), leave Solution/Context/Decisions empty
+5. If `scope_match = true`:
+   - Fill "Solution" with `scope_purpose` (one-sentence purpose from the scope plan)
+   - Add to "Context for AI" Notes: `Scope: _cdd/scope/[scope_file]`, `Phase: [scope_phase]`, and if depends_on is not `-`: `Depends on: [scope_depends_on]`
+   - Infer 2-3 starter tasks specific to this item (use scope purpose as guide)
+6. If `scope_match = false`:
+   - Infer 3-5 starter tasks (check similar work items in _cdd/ for patterns), leave Solution/Context/Decisions empty
 
 **SESSIONS.md:**
 Copy template from `_cdd/.meta/templates/SESSIONS.md` as-is.
+
+### 4.5. Create STATUS.md
+
+Read `_cdd/.meta/templates/STATUS.md`. Populate and write to `_cdd/XXXX-work-name/STATUS.md`:
+- `work_id`: folder name (e.g., `0003-add-user-authentication-with-oauth`)
+- `phase`: 1
+- `phase_label`: Phase 1 name from CONTEXT.md (or `Phase 1` if not yet defined)
+- `phase_progress`: `0/N` where N = count of tasks in Phase 1 (count `- [ ]` lines in Phase 1 block)
+- `last_completed`: none
+- `active_task`: description of first unchecked task in Phase 1 (one line), or `none` if tasks are empty stubs
+- `next_pending`: description of second unchecked task (one line), or `none`
+- `blockers`: none
+- `updated`: current date and time (YYYY-MM-DD HH:MM)
 
 ### 5. Output
 
@@ -60,10 +98,12 @@ Work item created!
 _cdd/XXXX-work-name/
 ID: XXXX
 Type: [type]
+[Scoped: _cdd/scope/[scope_file] — if scope_match = true]
 
 Files:
   CONTEXT.md
   SESSIONS.md
+  STATUS.md
 
 Start working. Use /cdd:log when you make progress.
 ```
@@ -76,7 +116,9 @@ Execute autonomously. No questions, confirmations, or blocks. Infer defaults.
 
 Errors: Missing description → abort with usage. Missing _cdd/ or templates → abort, suggest init. Collision → use next number. Missing git → use "Unknown".
 
-## Example
+## Examples
+
+**Standard:**
 
 Input: `/cdd:start add user authentication with OAuth`
 
@@ -93,6 +135,32 @@ Type: feature
 Files:
   CONTEXT.md
   SESSIONS.md
+  STATUS.md
+
+Start working. Use /cdd:log when you make progress.
+```
+
+**Scoped (active scope plan present):**
+
+Input: `/cdd:start auth (scoped)`
+
+Step 1: Strip `(scoped)` → description = `auth`
+Step 3.5: Scope plan found. Name suffix match: `0001-auth` → suffix `auth` = description `auth` → unique match → scope_match = true
+Folder: `0001-auth` (from scope_folder_name, overrides generated name)
+
+Output:
+```
+Work item created!
+
+_cdd/0001-auth/
+ID: 0001
+Type: feature
+Scoped: _cdd/scope/2026-03-14-greenfield-todo-app.md
+
+Files:
+  CONTEXT.md
+  SESSIONS.md
+  STATUS.md
 
 Start working. Use /cdd:log when you make progress.
 ```

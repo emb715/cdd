@@ -110,15 +110,19 @@ async function initCDD(args) {
       recursive: true,
     });
     fs.mkdirSync(path.join(metaDir, "instructions"), { recursive: true });
+    fs.mkdirSync(path.join(cddDir, "scope"), { recursive: true });
 
     // Copy ONLY the essential v2 templates (zero ceremony)
     const essentialFiles = [
       "templates/CONTEXT.md",
       "templates/SESSIONS.md",
+      "templates/SCOPE_PLAN.md",
+      "templates/STATUS.md",
       "templates/decisions/DECISION_TEMPLATE.md",
       "instructions/start.md",
       "instructions/log.md",
       "instructions/done.md",
+      "instructions/scope.md",
       "loop.config.yaml",
     ];
 
@@ -133,8 +137,10 @@ async function initCDD(args) {
 
     console.log("   ✓ CONTEXT.md template (progressive, single file)");
     console.log("   ✓ SESSIONS.md template (minimal logging)");
+    console.log("   ✓ SCOPE_PLAN.md template (for /cdd:scope)");
+    console.log("   ✓ STATUS.md template (lean runtime state for /cdd:loop)");
     console.log("   ✓ DECISION_TEMPLATE.md (for /cdd:decide)");
-    console.log("   ✓ Agent instruction files (start, log, done)");
+    console.log("   ✓ Agent instruction files (start, log, done, scope)");
     console.log("   ✓ loop.config.yaml (orchestrator config for /cdd:loop)");
 
     // Install Claude commands
@@ -150,6 +156,7 @@ async function initCDD(args) {
       "cdd:log.md",
       "cdd:decide.md",
       "cdd:done.md",
+      "cdd:scope.md",
       "cdd:loop.md",
     ];
 
@@ -178,6 +185,19 @@ async function initCDD(args) {
       console.log("   ✓ cdd-victor-reid (rigorous code review for /cdd:loop)");
     }
 
+    // Install CDD skill
+    console.log("\n Installing CDD skill...");
+    const skillsDir = path.join(cwd, ".claude", "skills", "cdd-workflow");
+    if (!fs.existsSync(skillsDir)) {
+      fs.mkdirSync(skillsDir, { recursive: true });
+    }
+    const skillSrc = path.join(packageRoot, ".claude", "skills", "cdd-workflow", "SKILL.md");
+    const skillDst = path.join(skillsDir, "SKILL.md");
+    if (fs.existsSync(skillSrc)) {
+      fs.copyFileSync(skillSrc, skillDst);
+      console.log("   ✓ cdd-workflow skill (CDD workflow awareness for Claude)");
+    }
+
     // Install loop resume hook
     console.log("\n Installing CDD hooks...");
     const hooksDir = path.join(cwd, ".claude", "hooks");
@@ -190,6 +210,22 @@ async function initCDD(args) {
       fs.copyFileSync(hookSrc, hookDst);
       fs.chmodSync(hookDst, "755");
       console.log("   ✓ cdd-loop-resume.sh (Stop hook for /cdd:loop auto-resume)");
+    }
+
+    // Write CDD section into project CLAUDE.md
+    const claudeMdPath = path.join(cwd, "CLAUDE.md");
+    const cddSection = `\n## CDD (Context-Driven Development)\n\nInstalled. Work items in \`_cdd/\`. Commands: \`/cdd:start\`, \`/cdd:loop\`, \`/cdd:log\`, \`/cdd:decide\`, \`/cdd:scope\`, \`/cdd:done\`.\n\nActive work: check \`_cdd/*/STATUS.md\` for current state.\n`;
+    if (!fs.existsSync(claudeMdPath)) {
+      fs.writeFileSync(claudeMdPath, `# Project\n${cddSection}`, "utf8");
+      console.log("\n   ✓ CLAUDE.md created with CDD section");
+    } else {
+      const existing = fs.readFileSync(claudeMdPath, "utf8");
+      if (!existing.includes("CDD (Context-Driven Development)")) {
+        fs.appendFileSync(claudeMdPath, cddSection);
+        console.log("\n   ✓ CLAUDE.md updated with CDD section");
+      } else {
+        console.log("\n   ✓ CLAUDE.md already has CDD section (skipped)");
+      }
     }
 
     // Create example structure (optional)
@@ -223,14 +259,33 @@ async function initCDD(args) {
         fs.writeFileSync(destSessions, content, "utf8");
       }
 
+      // Create example STATUS.md
+      const exampleStatus = path.join(metaDir, "templates", "STATUS.md");
+      const destStatus = path.join(exampleDir, "STATUS.md");
+
+      if (fs.existsSync(exampleStatus)) {
+        let content = fs.readFileSync(exampleStatus, "utf8");
+        const today = new Date();
+        const dateStr = today.toISOString().split("T")[0];
+        const timeStr = today.toTimeString().slice(0, 5);
+        content = content
+          .replace("XXXX-work-name", "0000-example")
+          .replace("YYYY-MM-DD HH:MM", `${dateStr} ${timeStr}`);
+        fs.writeFileSync(destStatus, content, "utf8");
+      }
+
       console.log("   ✓ 0000-example/ created (you can delete this)");
     }
 
     console.log("\n CDD initialized (Zero Ceremony)\n");
     console.log("Zero Ceremony Workflow:");
     console.log(
+      "  /cdd:scope [brief]        - Scope large work (greenfield, epics, sprints)",
+    );
+    console.log(
       "  /cdd:start [description]  - Create work item (30 sec, not 10 min)",
     );
+    console.log("  /cdd:loop [work-id]       - Full-cycle orchestration with auto-review");
     console.log("  /cdd:log                  - Save session (minimal logging)");
     console.log(
       "  /cdd:decide [topic]       - Multi-agent decision (you decide, AI researches)",

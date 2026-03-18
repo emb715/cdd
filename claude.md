@@ -6,32 +6,6 @@ CDD is an npm package that provides AI workflow commands for solo developers. Op
 
 **Core Philosophy:** Humans decide, AI assists. No boilerplate, no ceremony, just work.
 
-## Package Structure
-
-```
-packages/cdd/
-├── .claude/
-│   ├── commands/             # 5 AI command wrappers (optimized for LLMs)
-│   │   ├── cdd:start.md     # Create work item
-│   │   ├── cdd:log.md       # Save session
-│   │   ├── cdd:decide.md    # Multi-agent decision
-│   │   ├── cdd:done.md      # Complete work
-│   │   └── cdd:loop.md      # Full-cycle orchestrator (~280 lines)
-│   ├── agents/              # Bundled CDD agents
-│   │   ├── cdd-honest.md    # Autonomous executor (git read permissions)
-│   │   ├── cdd-victor-reid.md  # Rigorous code reviewer (for /cdd:loop review)
-│   │   └── sage/            # Multi-agent decision family (for /cdd:decide)
-│   └── hooks/
-│       └── cdd-loop-resume.sh  # Stop hook: auto-resumes /cdd:loop after rotation
-├── bin/cdd.js               # CLI installer
-├── _cdd/.meta/              # Templates and metadata
-│   ├── templates/           # Templates (CONTEXT.md, SESSIONS.md)
-│   ├── instructions/        # Agent instruction files (start.md, log.md, done.md)
-│   └── loop.config.yaml     # User-editable orchestrator config
-├── package.json             # NPM package config
-└── README.md                # User documentation
-```
-
 ## Key Files
 
 **Commands (LLM-optimized):**
@@ -45,6 +19,7 @@ packages/cdd/
 **Templates:**
 - `_cdd/.meta/templates/CONTEXT.md` - Progressive work item template
 - `_cdd/.meta/templates/SESSIONS.md` - Minimal session log
+- `_cdd/.meta/templates/SCOPE_PLAN.md` - Scope plan for large workloads
 - `_cdd/.meta/templates/decisions/DECISION_TEMPLATE.md` - Multi-agent decision artifacts
 
 **Orchestrator config (user-editable):**
@@ -108,11 +83,12 @@ ls _cdd/.meta/loop.config.yaml
 
 **User workflow:**
 1. `npx @emb715/cdd init` - Install CDD
-2. `/cdd:start my-feature` - Create work item
-3. Code... or `/cdd:loop` to let the orchestrator run the full cycle
-4. `/cdd:log` - Save session
-5. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
-6. `/cdd:done` - Complete work
+2. `/cdd:scope [brief]` - Scope large workloads first
+3. `/cdd:start my-feature` - Create work item
+4. Code... or `/cdd:loop` to let the orchestrator run the full cycle
+5. `/cdd:log` - Save session
+6. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
+7. `/cdd:done` - Complete work
 
 **`/cdd:loop` orchestrator:**
 - Reads tasks from `_cdd/[work-id]/CONTEXT.md`, groups them by file overlap (parallel safety), spawns sub-agents, auto-logs, reviews with `cdd-victor-reid`, auto-completes

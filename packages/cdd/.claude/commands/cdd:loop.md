@@ -78,10 +78,16 @@ Detection chain (never ask):
    Started: [ISO timestamp]
    ---
    ```
-3. Read _cdd/[work-id]/CONTEXT.md — extract all unchecked tasks (- [ ])
-4. For each task: extract description, done-when criteria, Files: field (= file_scope)
-5. Run PARALLEL SAFETY to build task groups
-6. Write loop-status.json (fields: work_id, status, started, updated, event_counter, task_groups, tasks, review_results, current_group_index)
+3. Read _cdd/[work-id]/CONTEXT.md — extract unchecked tasks (- [ ]), but load only:
+   - task ID (derive from checkbox position: T1, T2, ... sequential across all phases)
+   - Files: field (= file_scope, for parallel safety grouping)
+   - Do NOT load task descriptions or done-when criteria — agents pull those at dispatch time
+4. Run PARALLEL SAFETY to build task groups (file_scope is sufficient)
+5. Write loop-status.json:
+   Fields: work_id, status, started, updated, event_counter, current_group_index, review_results
+   task_groups: array of groups, each with { parallel: bool, tasks: [{id, file_scope}] }
+   tasks: flat map of task_id → { status, retry_count, started, completed }
+   Descriptions and done-when are NOT stored — agents read them from CONTEXT.md at dispatch time
 7. If --dry-run: print planned groups, exit
 
 ---
@@ -148,19 +154,20 @@ If group.parallel = true:
 
   Prompt per task:
   ```
-  Implement this task for CDD work item [work-id].
+  Implement task [task-id] for CDD work item [work-id].
 
-  Task: [description]
-  Done when: [criteria]
+  Task ID: [task-id]
   Files: [file_scope list]
-  Context: Read _cdd/[work-id]/CONTEXT.md for full work item context.
+
+  Read _cdd/[work-id]/CONTEXT.md — find this task's checkbox block by its position ([task-id] = Nth unchecked task). Load only that block: description, Files, Done when. Do not load the full file.
+  Read _cdd/[work-id]/STATUS.md for current phase and progress context.
 
   Do not ask questions. Auto-detect patterns from existing codebase.
-  End your output with exactly: TASK_[ID]_COMPLETE
+  End your output with exactly: TASK_[task-id]_COMPLETE
   ```
 
 If group.parallel = false:
-  Spawn single Task (same prompt), wait for completion before proceeding.
+  Spawn single Task (same prompt), subagent=cdd-honest, run_in_background=false. Wait for completion before proceeding.
 
 Record spawn timestamp in loop-status.json per task: "started": "[ISO timestamp]"
 
@@ -255,7 +262,8 @@ REVIEW_LOOP:
         Fix this review issue for CDD work item [work-id].
         Issue: [description]
         Files: [file_scope from original task]
-        Context: Read _cdd/[work-id]/CONTEXT.md for full context.
+        Current state: Read _cdd/[work-id]/STATUS.md for phase/progress context.
+        Acceptance criteria: Read the done-when field for the relevant task in _cdd/[work-id]/CONTEXT.md.
         Do not ask questions. End with: FIX_[N]_COMPLETE
         ```
       Wait for all FIX_[N]_COMPLETE sentinels.
@@ -333,7 +341,9 @@ If event_counter >= rotation_threshold:
 
 ## Protocol: COMPLETION CHECK
 
-Read _cdd/[work-id]/CONTEXT.md — count unchecked (- [ ]) tasks.
+Read _cdd/[work-id]/STATUS.md — check `phase_progress` field.
+If STATUS.md is missing or stale (updated > 5 min before last task completed): fall back to reading _cdd/[work-id]/CONTEXT.md and counting unchecked (- [ ]) tasks.
+Otherwise derive completion state from STATUS.md: if `active_task: none` and `next_pending: none`, treat as complete.
 
 If 0 unchecked and config.auto_done = true:
   Spawn done agent (Task, run_in_background=false, subagent=cdd-honest):

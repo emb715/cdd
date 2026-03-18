@@ -81,6 +81,23 @@ If metrics enabled:
 
 Update `updated:` date (YYYY-MM-DD).
 
+### 6b. Write STATUS.md
+
+After updating CONTEXT.md, overwrite `_cdd/XXXX-work-name/STATUS.md` with current state.
+Derive all fields from the just-updated CONTEXT.md (you already have the data):
+
+- `work_id`: folder name
+- `phase`: current active phase number (lowest phase with unchecked tasks)
+- `phase_label`: that phase's label from CONTEXT.md
+- `phase_progress`: `X/Y` — checked tasks / total tasks in current phase
+- `last_completed`: description of the most recently checked task (one line), or `none`
+- `active_task`: first unchecked task in current phase (one line), or `none` if all done
+- `next_pending`: second unchecked task in current phase (one line), or `none`
+- `blockers`: any issue logged in this session as unresolved, or `none`
+- `updated`: current date and time (YYYY-MM-DD HH:MM)
+
+If STATUS.md does not exist (existing work item pre-dates this feature): create it.
+
 ### 7. Append to SESSIONS.md
 
 Insert after frontmatter, before template. Add `---` separator. Newest first.
@@ -98,6 +115,7 @@ Progress: XX% → YY% (+ZZ%)
 Updated:
   CONTEXT.md (N tasks marked complete)
   SESSIONS.md (new entry)
+  STATUS.md (current state)
 
 Next priorities:
   1. [Task from CONTEXT.md]

@@ -17,6 +17,8 @@ version: 1.0.0
 
 Use this when the work breakdown itself is the first problem to solve — greenfield projects, big epics, multi-phase sprints. For single features or bugs, use `/cdd:start` directly.
 
+The agent will interview you before drafting — one question at a time, walking down each branch of the design tree and resolving dependencies between decisions one-by-one. If a question can be answered by exploring the codebase, the agent explores instead of asking. Answer until the scope is unambiguous, then the plan is produced automatically.
+
 ## Process
 
 ### Step 1: Parse Input
@@ -87,4 +89,4 @@ Tools: Task (spawn Sage agent), Glob (domain detection)
 
 Files created: `_cdd/scope/YYYY-MM-DD-[slug].md`
 
-Timing: 2-3 min
+Timing: 5-15 min (includes design interview)

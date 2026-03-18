@@ -77,6 +77,19 @@ Copy and populate templates:
 **SESSIONS.md:**
 Copy template from `_cdd/.meta/templates/SESSIONS.md` as-is.
 
+### 4.5. Create STATUS.md
+
+Read `_cdd/.meta/templates/STATUS.md`. Populate and write to `_cdd/XXXX-work-name/STATUS.md`:
+- `work_id`: folder name (e.g., `0003-add-user-authentication-with-oauth`)
+- `phase`: 1
+- `phase_label`: Phase 1 name from CONTEXT.md (or `Phase 1` if not yet defined)
+- `phase_progress`: `0/N` where N = count of tasks in Phase 1 (count `- [ ]` lines in Phase 1 block)
+- `last_completed`: none
+- `active_task`: description of first unchecked task in Phase 1 (one line), or `none` if tasks are empty stubs
+- `next_pending`: description of second unchecked task (one line), or `none`
+- `blockers`: none
+- `updated`: current date and time (YYYY-MM-DD HH:MM)
+
 ### 5. Output
 
 ```
@@ -90,6 +103,7 @@ Type: [type]
 Files:
   CONTEXT.md
   SESSIONS.md
+  STATUS.md
 
 Start working. Use /cdd:log when you make progress.
 ```
@@ -121,6 +135,7 @@ Type: feature
 Files:
   CONTEXT.md
   SESSIONS.md
+  STATUS.md
 
 Start working. Use /cdd:log when you make progress.
 ```
@@ -145,6 +160,7 @@ Scoped: _cdd/scope/2026-03-14-greenfield-todo-app.md
 Files:
   CONTEXT.md
   SESSIONS.md
+  STATUS.md
 
 Start working. Use /cdd:log when you make progress.
 ```

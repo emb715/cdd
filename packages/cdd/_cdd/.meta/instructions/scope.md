@@ -126,9 +126,35 @@ Edit as needed, then start your first work item:
 
 If no existing source code or _cdd/ items were found: note "No existing code detected — sequence starts at 0001."
 
+## Design Interview (before drafting)
+
+Before producing any output, run a structured interview to resolve ambiguity in the brief.
+
+**Goal:** Reach shared understanding of what is being built before committing to a work item breakdown. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
+
+**If a question can be answered by exploring the codebase, explore the codebase instead of asking.**
+
+### Interview protocol
+
+Ask one question at a time. Do not dump a list. Each answer may inform or close the next question — adapt.
+
+Probe until these dimensions are resolved:
+
+1. **Outcome** — What does "done" look like in concrete terms? (User-facing change? API contract? Infrastructure state?)
+2. **Boundaries** — What is explicitly out of scope? What existing systems must not be touched?
+3. **Constraints** — Hard deadlines, tech stack locks, performance requirements, team/solo context?
+4. **Dependencies** — Anything that must exist before this work can start? External APIs, third-party services, pending work items?
+5. **Risk areas** — Where is the most uncertainty? What is most likely to block?
+
+Stop interviewing when you have enough to produce a non-ambiguous scope plan. Do not over-interview simple briefs — if the brief is already specific, ask at most 1-2 clarifying questions before proceeding.
+
+### Design principle
+
+The interview front-loads cost to reduce total cost. Ambiguous scope produces bad work item breakdowns, which produce bad loop agent output, which requires retries and human intervention. One good question now is worth avoiding three broken tasks later.
+
 ## Execution Rules
 
-Autonomous — no questions. Infer all defaults from brief and project scan.
+Autonomous after interview. Infer remaining defaults from brief and project scan.
 
 If the brief clearly describes a single work item (one feature, no distinct areas of work or phases): abort scope planning and respond with a short message redirecting the user to `/cdd:start` using that brief as the first work item.
 If the brief is ambiguous (could be 1 item or multiple): produce the scope plan anyway, but include a note: "If this is a single feature, use /cdd:start instead."

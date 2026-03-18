@@ -38,6 +38,22 @@ Append to SESSIONS.md.
 
 Frontmatter: `status: complete`, `completed: YYYY-MM-DD`, `updated: YYYY-MM-DD`
 
+Also overwrite `_cdd/XXXX-work-name/STATUS.md` with final state:
+```yaml
+---
+work_id: XXXX-work-name
+phase: [last phase number]
+phase_label: [last phase label]
+phase_progress: [X/X — all complete]
+last_completed: [last completed task description]
+active_task: none
+next_pending: none
+blockers: none
+updated: YYYY-MM-DD HH:MM
+status: complete
+---
+```
+
 ### 5. Implementation Summary
 
 If --summary: Create `IMPLEMENTATION_SUMMARY.md`:
@@ -74,6 +90,7 @@ Tasks: X/Y completed (ZZ%)
 Updated:
   CONTEXT.md (status: complete)
   SESSIONS.md (final entry)
+  STATUS.md (status: complete, active_task: none)
   [IMPLEMENTATION_SUMMARY.md (generated)]
 
 [If <100%: Note: X tasks remain open]

@@ -87,8 +87,9 @@ ls _cdd/.meta/loop.config.yaml
 3. `/cdd:start my-feature` - Create work item
 4. Code... or `/cdd:loop` to let the orchestrator run the full cycle
 5. `/cdd:log` - Save session
-6. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
-7. `/cdd:done` - Complete work
+6. `/cdd:catch` - Extract gotchas from session into `_cdd/gotchas/`
+7. `/cdd:decide "REST or GraphQL?"` - Hard decisions (multi-agent)
+8. `/cdd:done` - Complete work
 
 **`/cdd:loop` orchestrator:**
 - Reads tasks from `_cdd/[work-id]/CONTEXT.md`, groups them by file overlap (parallel safety), spawns sub-agents, auto-logs, reviews with `cdd-victor-reid`, auto-completes
@@ -99,6 +100,7 @@ ls _cdd/.meta/loop.config.yaml
 
 ## Workspace Notes
 - `.claude/hooks/cdd-loop-resume.sh` — Stop hook for `/cdd:loop` auto-resume. Must be registered in `.claude/settings.json` under `hooks.Stop` to activate.
+- `_cdd/gotchas/` — project-scoped gotcha library. Written by `/cdd:catch`, injected into `/cdd:loop` task agent prompts automatically.
 
 ## Context Window Optimization
 

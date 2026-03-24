@@ -54,6 +54,9 @@ task_max_retries: 1
 review_enabled: true
 review_max_retries: 3
 auto_done: false
+catch_inject_enabled: true
+catch_max_inject: 5
+catch_always_include_severity: critical
 ```
 
 event_counter = 0 (resets each new context window — measures current window consumption)
@@ -88,7 +91,14 @@ Detection chain (never ask):
    task_groups: array of groups, each with { parallel: bool, tasks: [{id, file_scope}] }
    tasks: flat map of task_id → { status, retry_count, started, completed }
    Descriptions and done-when are NOT stored — agents read them from CONTEXT.md at dispatch time
-7. If --dry-run: print planned groups, exit
+6. Load gotchas (if catch_inject_enabled: true):
+   - If _cdd/gotchas/ exists and contains *.md files, read all frontmatter + Rule + Why fields
+   - Infer tech stack from CONTEXT.md Files fields (file extensions and paths)
+   - Filter: always include severity=critical or blocking; include gotcha if tags overlap inferred stack
+   - Sort: blocking → critical → gotcha, then times_avoided desc
+   - Cap at catch_max_inject entries
+   - Store as session var: known_gotchas (list of "Rule — Why" strings, empty list if none)
+7. If --dry-run: print planned groups + known_gotchas list, exit
 
 ---
 
@@ -161,6 +171,10 @@ If group.parallel = true:
 
   Read _cdd/[work-id]/CONTEXT.md — find this task's checkbox block by its position ([task-id] = Nth unchecked task). Load only that block: description, Files, Done when. Do not load the full file.
   Read _cdd/[work-id]/STATUS.md for current phase and progress context.
+
+  [if known_gotchas is non-empty, append:]
+  KNOWN GOTCHAS:
+  [for each entry: "- Rule — Why"]
 
   Do not ask questions. Auto-detect patterns from existing codebase.
   End your output with exactly: TASK_[task-id]_COMPLETE

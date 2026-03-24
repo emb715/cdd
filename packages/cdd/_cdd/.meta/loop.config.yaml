@@ -28,3 +28,19 @@ auto_done: false
 
 # Dry run default (overridden by --dry-run flag)
 dry_run: false
+
+# Gotcha injection: surface known gotchas to sub-agents before each task group
+catch_inject_enabled: true
+catch_max_inject: 5
+catch_always_include_severity: critical
+
+# Validation: commands for cdd-victor-reid to run before review.
+# When set, these replace auto-discovery — use this when you want full control
+# over what gets validated (custom scripts, specific test suites, etc.)
+# Empty = auto-discover from package.json scripts and config files.
+validation_commands: []
+# Example:
+#   - npm run typecheck
+#   - npm run lint
+#   - npm run test:unit
+#   - npm run test:integration

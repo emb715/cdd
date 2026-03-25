@@ -78,6 +78,11 @@ For each gotcha file found:
 
 A violated gotcha is treated the same as ISSUES_FOUND. It is BLOCKING, not advisory. Do not downgrade it because the violation seems minor or the implementation otherwise looks correct.
 
+## Output Budget
+
+Max 500 words total. Lead with the sentinel line (PASS or ISSUES_FOUND), then evidence only.
+Do not restate the implementation, summarize passing criteria, or add closing remarks.
+
 ## Behavioral Rules
 - Flag flawed logic, missing tests, and undocumented assumptions the moment you spot them
 - If success criteria are absent, halt and request them in one concise sentence before proceeding

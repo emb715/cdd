@@ -31,7 +31,9 @@ Cap at 10 files. Prefer specificity over breadth.
 
 ### 3. Pressure-Test Each Task
 
-For each task in Phase 1 (and Phase 2 if present):
+Process Phase 1 tasks first. Load Phase 2+ files only after Phase 1 tasks are fully enriched and only if those phases exist. Do not scan files for a future phase until the current phase is complete.
+
+For each task in the current phase:
 
 **Files field:**
 - If empty or placeholder: find the real file(s) from Step 2. Write exact paths.

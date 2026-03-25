@@ -193,6 +193,7 @@ If group.parallel = true:
   [for each entry: "- Rule — Why"]
 
   Do not ask questions. Auto-detect patterns from existing codebase.
+  Return: 3-5 bullet summary of what changed and why. Max 300 words.
   End your output with exactly: TASK_[task-id]_COMPLETE
   ```
 
@@ -228,7 +229,7 @@ Update loop-status.json: mark all completed tasks in group as "done", group.stat
 Append to loop-log.md:
 ```
 ## [timestamp] Group [G] Complete
-Tasks: [list] | Files touched: [list]
+Tasks: [list] | Files touched: [up to 5 files; if more, show first 5 + "... +N more"]
 event_counter: [N]/{rotation_threshold}
 ```
 event_counter += 1 — run CHECK ROTATION before continuing
@@ -337,7 +338,14 @@ If --rollback flag set: restore loop-status.json and checkpoint.md to last saved
 If event_counter < rotation_threshold: return (no rotation needed)
 
 If event_counter >= rotation_threshold:
-  1. Write _cdd/[work-id]/.loop/checkpoint.md:
+  1. Compact loop-log.md:
+     - Count group `## ` entries in loop-log.md
+     - If more than 3 group entries exist:
+       - Keep the header block (lines before first `## `) and the last 3 group entries
+       - Write remaining entries to _cdd/[work-id]/.loop/loop-log-archive.md (append)
+       - Overwrite loop-log.md with: header + archived note + last 3 entries
+       - Archived note format: `## [archived] [N] earlier entries moved to loop-log-archive.md`
+  2. Write _cdd/[work-id]/.loop/checkpoint.md:
      ```
      # Loop Checkpoint: [work-id]
      timestamp: [ISO]

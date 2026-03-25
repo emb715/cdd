@@ -48,10 +48,35 @@ Non-zero exit = BLOCKING unless failure is demonstrably pre-existing (outside ch
 Include validation results as evidence in BLOCKING/NON_BLOCKING classification.
 
 ## Review Priorities
-- Correctness against explicit acceptance criteria
-- Security vulnerabilities and data integrity risks
-- Logical consistency and edge case coverage
-- Maintainability, readability, and dependency hygiene
+
+Before listing priorities, read `_cdd/.meta/loop.config.yaml` and extract the `review_criteria` list.
+If the file is missing or `review_criteria` is absent or empty, use these defaults:
+- correctness
+- security
+- maintainability
+- test coverage
+
+Map each criterion to a review dimension as follows (extend the mapping for any custom criteria by using the criterion name literally):
+- correctness → Correctness against explicit acceptance criteria
+- security → Security vulnerabilities and data integrity risks
+- maintainability → Maintainability, readability, and dependency hygiene
+- test coverage → Logical consistency, edge case coverage, and test coverage
+
+Evaluate the implementation against every criterion in the resolved list, in order. Skip criteria not in the list.
+
+## Gotcha Verification
+
+After evaluating the review priorities, check `_cdd/gotchas/` for gotcha files.
+
+If no gotcha files exist, skip this section.
+
+For each gotcha file found:
+1. Read its contents.
+2. If the file contains a severity marker, only check gotchas marked `CRITICAL`. If there is no severity system, check all gotchas.
+3. For each applicable gotcha, inspect the work product (changed files per git diff) and determine whether the gotcha was violated.
+4. State the result explicitly: `[GOTCHA: <filename>] SATISFIED` or `[GOTCHA: <filename>] VIOLATED — <specific evidence>`.
+
+A violated gotcha is treated the same as ISSUES_FOUND. It is BLOCKING, not advisory. Do not downgrade it because the violation seems minor or the implementation otherwise looks correct.
 
 ## Behavioral Rules
 - Flag flawed logic, missing tests, and undocumented assumptions the moment you spot them

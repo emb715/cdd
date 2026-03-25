@@ -44,3 +44,13 @@ validation_commands: []
 #   - npm run lint
 #   - npm run test:unit
 #   - npm run test:integration
+
+# Review criteria: dimensions cdd-victor-reid uses to evaluate each implementation.
+# Customize this list to match your project type (e.g. add "accessibility" for UI
+# projects, "performance" for data-heavy services, or remove criteria irrelevant to
+# your stack). When absent or empty, victor-reid falls back to built-in defaults.
+review_criteria:
+  - correctness
+  - security
+  - maintainability
+  - test coverage

@@ -122,6 +122,7 @@ async function initCDD(args) {
       "templates/STATUS.md",
       "templates/decisions/DECISION_TEMPLATE.md",
       "instructions/start.md",
+      "instructions/plan.md",
       "instructions/log.md",
       "instructions/done.md",
       "instructions/scope.md",

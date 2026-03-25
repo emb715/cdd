@@ -156,7 +156,23 @@ For each group (starting from current_group_index):
   Starting: [task descriptions]
 ```
 
-### Step 2 — Spawn
+### Step 2 — Done-When Validation
+
+For each task in the group, read its "Done when:" field from _cdd/[work-id]/CONTEXT.md.
+
+Flag as WEAK if any of the following:
+- Word count < 10
+- Entire criteria is a single vague word/phrase: "works", "is done", "complete", "done"
+- No observable condition (no noun + verb describing a verifiable outcome)
+
+For each weak task, append to loop-log.md:
+```
+WEAK_DONE_WHEN | Task [ID] | "[done-when text]"
+```
+
+Do NOT block dispatch. This is informational only.
+
+### Step 3 — Spawn
 
 If group.parallel = true:
   Spawn ALL tasks in ONE message (multiple Task calls — required for true parallelism):
@@ -185,7 +201,7 @@ If group.parallel = false:
 
 Record spawn timestamp in loop-status.json per task: "started": "[ISO timestamp]"
 
-### Step 3 — Wait, health-check, collect
+### Step 4 — Wait, health-check, collect
 
 While waiting for TASK_[ID]_COMPLETE sentinels:
 
@@ -206,7 +222,7 @@ While waiting for TASK_[ID]_COMPLETE sentinels:
 
 When sentinel received: mark task "done", record completed timestamp in loop-status.json.
 
-### Step 4 — Update state
+### Step 5 — Update state
 
 Update loop-status.json: mark all completed tasks in group as "done", group.status = "done"
 Append to loop-log.md:
@@ -217,7 +233,7 @@ event_counter: [N]/{rotation_threshold}
 ```
 event_counter += 1 — run CHECK ROTATION before continuing
 
-### Step 5 — Auto-log
+### Step 6 — Auto-log
 
 Spawn log agent (Task, run_in_background=false, subagent=cdd-honest):
 ```

@@ -224,18 +224,28 @@ function installCommands(platform, cwd, packageRoot) {
     fs.mkdirSync(destDir, { recursive: true });
   }
 
+  // Source files use dash (Windows-safe). Output files use colon (platform convention).
+  // e.g. cdd-start.md (source) → cdd:start.md (installed)
   const commandFiles = [
-    "cdd:start.md",
-    "cdd:log.md",
-    "cdd:decide.md",
-    "cdd:done.md",
-    "cdd:scope.md",
-    "cdd:loop.md",
-    "cdd:catch.md",
+    "cdd-start.md",
+    "cdd-log.md",
+    "cdd-decide.md",
+    "cdd-done.md",
+    "cdd-scope.md",
+    "cdd-loop.md",
+    "cdd-catch.md",
   ];
 
+  // Validate no source file contains ':' — catches regressions on Windows-hostile names
   for (const cmdFile of commandFiles) {
-    const commandName = cmdFile.replace(/\.md$/, "");
+    if (cmdFile.includes(":")) {
+      console.warn(`   WARNING: source file "${cmdFile}" contains ':' — will fail on Windows`);
+    }
+  }
+
+  for (const cmdFile of commandFiles) {
+    // Derive the slash-command name: cdd-start.md → cdd:start
+    const commandName = cmdFile.replace(/\.md$/, "").replace(/^cdd-/, "cdd:");
     const isLoop = commandName === "cdd:loop";
     const destExt = platform.commandFormat === "prompt.md" ? "prompt.md" : "md";
     const destName = `${commandName}.${destExt}`;

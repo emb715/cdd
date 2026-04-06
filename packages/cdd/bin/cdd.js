@@ -18,6 +18,7 @@ const path = require("path");
 
 const PLATFORMS = {
   "claude-code": {
+    key: "claude-code",
     name: "Claude Code",
     commandsDir: ".claude/commands",
     agentsDir: ".claude/agents",
@@ -31,19 +32,23 @@ const PLATFORMS = {
     supportsTaskTool: true,  // Claude Code Task tool + subagent protocol
   },
   opencode: {
+    key: "opencode",
     name: "OpenCode",
     commandsDir: ".opencode/commands",
     agentsDir: ".opencode/agents",
     hooksDir: null,
+    pluginsDir: ".opencode/plugins",
     skillsDir: null,
     instructionsFile: "AGENTS.md",
     commandFormat: "md",
     supportsAgents: true,    // has agent directory
     supportsHooks: false,
+    supportsPlugins: true,   // OpenCode plugin system (replaces hooks)
     supportsSkills: false,
-    supportsTaskTool: false, // no Task tool / subagent protocol
+    supportsTaskTool: true,  // OpenCode Task tool + subagent protocol
   },
   copilot: {
+    key: "copilot",
     name: "GitHub Copilot",
     commandsDir: ".github/prompts",
     agentsDir: null,
@@ -57,6 +62,7 @@ const PLATFORMS = {
     supportsTaskTool: false,
   },
   vscode: {
+    key: "vscode",
     name: "VSCode Extension",
     commandsDir: ".github/prompts",
     agentsDir: null,
@@ -192,6 +198,66 @@ Manual equivalent:
 }
 
 /**
+ * Strip the Stop Hook Setup section and .resume file writes from cdd:loop
+ * for OpenCode. The plugin handles compaction-based resume instead.
+ * Adds a note that context survival is handled by the CDD plugin.
+ */
+function stripLoopHookSection(content) {
+  let out = content;
+
+  // Remove entire "## Stop Hook Setup" section
+  out = out.replace(/^## Stop Hook Setup[\s\S]*?(?=^---|\Z)/m, "");
+
+  // Remove the .resume write step inside CHECK ROTATION
+  // Matches the numbered step that writes .resume (single line or multi-line block)
+  out = out.replace(/^.*Write _cdd\/\[work-id\]\/.loop\/\.resume.*\n/gm, "");
+  out = out.replace(/^\s*```\n\s*\/cdd:loop \[work-id\] --resume\n\s*```\n/gm, "");
+
+  // Remove "Do NOT write .resume" references (SOFT STOP / HARD STOP sections)
+  out = out.replace(/^.*Do NOT write \.resume[^\n]*\n/gm, "");
+
+  // Remove any remaining standalone .resume references in prose
+  out = out.replace(/^.*\.resume.*Stop hook.*\n/gm, "");
+  // Replace the inline emit message line referencing Stop hook (inside code block)
+  out = out.replace(
+    /^(\s*)\(Stop hook auto-resumes if configured[^\n]*\)\n/gm,
+    "$1(CDD plugin handles compaction — loop continues automatically)\n"
+  );
+
+  // Add plugin note after the Orchestrator Rules section
+  const pluginNote = `\n> **OpenCode:** Context compaction is handled automatically by the CDD plugin.\n> The loop resumes within the same session without human input.\n`;
+  out = out.replace(
+    /(## Orchestrator Rules \(Hard\)\n[\s\S]*?)(---)/,
+    `$1${pluginNote}\n---`
+  );
+
+  out = out.replace(/\n{3,}/g, "\n\n");
+  return out;
+}
+
+/**
+ * Convert Claude agent frontmatter to OpenCode format.
+ * Injects `mode: subagent` so OpenCode recognises these as Task-tool-invokable agents.
+ */
+function convertAgentFrontmatter(content) {
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!fmMatch) return content;
+
+  const fmBody = fmMatch[1];
+
+  // Already has mode field — leave it alone
+  if (/^mode:/m.test(fmBody)) return content;
+
+  // Inject mode: subagent after description line (or at end of frontmatter)
+  const newFmBody = fmBody.replace(
+    /^(description:.*)$/m,
+    "$1\nmode: subagent"
+  );
+
+  return content.replace(/^---\n[\s\S]*?\n---/, `---\n${newFmBody}\n---`);
+}
+
+/**
  * Apply full transform pipeline to a command file's content.
  */
 function transformCommand(content, commandName, platform) {
@@ -201,6 +267,11 @@ function transformCommand(content, commandName, platform) {
   if (!platform.supportsTaskTool) {
     out = stripAgentBlocks(out);
     out = stripHookReferences(out);
+  }
+
+  // For OpenCode: strip Stop Hook section from cdd:loop (plugin handles it instead)
+  if (platform.key === "opencode" && commandName === "cdd:loop") {
+    out = stripLoopHookSection(out);
   }
 
   if (platform.commandFormat === "prompt.md") {
@@ -278,10 +349,34 @@ function installAgents(platform, cwd, packageRoot) {
 
   if (!fs.existsSync(sourceDir)) return;
 
-  copyDir(sourceDir, destDir);
+  // For OpenCode: convert agent frontmatter (inject mode: subagent)
+  // For Claude Code: copy verbatim
+  if (platform.key === "opencode") {
+    copyDirWithTransform(sourceDir, destDir, convertAgentFrontmatter);
+  } else {
+    copyDir(sourceDir, destDir);
+  }
+
   console.log("   ✓ cdd-honest (autonomous execution)");
   console.log("   ✓ cdd-sage family (domain-aware decisions)");
   console.log("   ✓ cdd-victor-reid (rigorous code review for /cdd:loop)");
+}
+
+function installPlugins(platform, cwd, packageRoot) {
+  console.log(`\nInstalling plugins for ${platform.name}...`);
+
+  const pluginsDir = path.join(cwd, platform.pluginsDir);
+  if (!fs.existsSync(pluginsDir)) {
+    fs.mkdirSync(pluginsDir, { recursive: true });
+  }
+
+  const pluginSrc = path.join(packageRoot, "_cdd", ".meta", "plugins", "cdd-loop-resume.ts");
+  const pluginDst = path.join(pluginsDir, "cdd-loop-resume.ts");
+
+  if (fs.existsSync(pluginSrc)) {
+    fs.copyFileSync(pluginSrc, pluginDst);
+    console.log("   ✓ cdd-loop-resume.ts (compaction hook — keeps /cdd:loop alive across context limits)");
+  }
 }
 
 function installHooks(platform, cwd, packageRoot) {
@@ -352,6 +447,7 @@ function printFeatureTable(platform) {
   console.log(`  ${ok} Commands (/cdd:start, /cdd:loop, /cdd:log, /cdd:decide, /cdd:scope, /cdd:done, /cdd:catch)`);
   console.log(`  ${platform.supportsAgents ? ok : no} Agents${platform.supportsAgents ? " (cdd-honest, cdd-sage family, cdd-victor-reid)" : ": not supported by " + platform.name}`);
   console.log(`  ${platform.supportsHooks ? ok : no} Hooks${platform.supportsHooks ? " (cdd-loop auto-resume on context rotation)" : ": not supported by " + platform.name}`);
+  console.log(`  ${platform.supportsPlugins ? ok : no} Plugins${platform.supportsPlugins ? " (cdd-loop-resume — survives context compaction)" : ": not supported by " + platform.name}`);
   console.log(`  ${platform.supportsSkills ? ok : no} Skills${platform.supportsSkills ? " (cdd-workflow auto-trigger)" : ": not supported by " + platform.name}`);
 
   if (!platform.supportsAgents) {
@@ -366,7 +462,7 @@ function printFeatureTable(platform) {
 async function selectPlatform() {
   const choices = [
     { key: "claude-code", label: "Claude Code       (full support: commands, agents, hooks, skills)" },
-    { key: "opencode",    label: "OpenCode          (commands + agents)" },
+    { key: "opencode",    label: "OpenCode          (commands + agents + /cdd:loop via plugin)" },
     { key: "copilot",     label: "GitHub Copilot    (commands only)" },
     { key: "vscode",      label: "VSCode Extension  (commands only)" },
   ];
@@ -510,8 +606,9 @@ async function initCDD(args) {
     installCommands(platform, cwd, packageRoot);
 
     if (platform.supportsAgents) installAgents(platform, cwd, packageRoot);
-    if (platform.supportsHooks)  installHooks(platform, cwd, packageRoot);
-    if (platform.supportsSkills) installSkills(platform, cwd, packageRoot);
+    if (platform.supportsHooks)   installHooks(platform, cwd, packageRoot);
+    if (platform.supportsPlugins) installPlugins(platform, cwd, packageRoot);
+    if (platform.supportsSkills)  installSkills(platform, cwd, packageRoot);
 
     installInstructions(platform, cwd);
 
@@ -635,6 +732,24 @@ function copyDir(src, dest) {
     const destPath = path.join(dest, entry.name);
     if (entry.isDirectory()) {
       copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+function copyDirWithTransform(src, dest, transformFn) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirWithTransform(srcPath, destPath, transformFn);
+    } else if (entry.name.endsWith(".md")) {
+      const raw = fs.readFileSync(srcPath, "utf8");
+      fs.writeFileSync(destPath, transformFn(raw), "utf8");
     } else {
       fs.copyFileSync(srcPath, destPath);
     }

@@ -33,13 +33,26 @@ Project-based install — run this inside your project:
 npx @emb715/cdd init
 ```
 
-Installs into your project:
-- Commands → `.claude/commands/`
-- Agents → `.claude/agents/`
-- Skill → `.claude/skills/cdd-workflow/` (Claude auto-suggests CDD when relevant)
-- Templates → `_cdd/.meta/`
-- Stop hook → `.claude/hooks/`
-- CDD section → `CLAUDE.md` (created or updated)
+Select your platform when prompted, or pass it directly:
+
+```bash
+npx @emb715/cdd init --platform=claude-code   # full support
+npx @emb715/cdd init --platform=opencode      # full support via plugin
+npx @emb715/cdd init --platform=copilot       # commands only
+npx @emb715/cdd init --platform=vscode        # commands only
+```
+
+### Platform support
+
+| | Claude Code | OpenCode | Copilot | VSCode |
+|---|---|---|---|---|
+| Commands | yes | yes | yes | yes |
+| Agents | yes | yes | no | no |
+| `/cdd:loop` | full | full | stub | stub |
+| Context survival | Stop hook | CDD plugin | n/a | n/a |
+| Skills | yes | no | no | no |
+
+See [docs/platforms.md](docs/platforms.md) for full details, OpenCode differences, and per-command behavior.
 
 ---
 
@@ -196,6 +209,7 @@ File hints let `/cdd:log` auto-mark tasks complete when matching files are modif
 ## Documentation
 
 - [Quick Start](https://github.com/emb715/cdd/blob/main/packages/cdd/QUICK_START.md) — 2-minute intro
+- [Platform Support](https://github.com/emb715/cdd/blob/main/packages/cdd/docs/platforms.md) — per-platform feature details, OpenCode differences
 - [Tutorial](https://github.com/emb715/cdd/blob/main/docs/CDD_TUTORIAL.md) — complete guide with examples
 - [Agents Guide](https://github.com/emb715/cdd/blob/main/packages/cdd/AGENTS.md) — agent reference
 

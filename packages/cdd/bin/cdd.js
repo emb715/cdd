@@ -456,25 +456,81 @@ function printFeatureTable(platform) {
 }
 
 // ---------------------------------------------------------------------------
-// Platform selection
+// Platform detection + selection
 // ---------------------------------------------------------------------------
 
-async function selectPlatform() {
+/**
+ * Detect installed platforms from filesystem signals.
+ * Returns a map of platformKey → detection reason string.
+ */
+function detectPlatforms(cwd) {
+  const detected = {};
+
+  if (
+    fs.existsSync(path.join(cwd, ".claude")) ||
+    fs.existsSync(path.join(cwd, "CLAUDE.md")) ||
+    fs.existsSync(path.join(cwd, ".claude", "settings.json"))
+  ) {
+    const reason = fs.existsSync(path.join(cwd, ".claude"))
+      ? ".claude/"
+      : "CLAUDE.md";
+    detected["claude-code"] = reason;
+  }
+
+  if (
+    fs.existsSync(path.join(cwd, "opencode.json")) ||
+    fs.existsSync(path.join(cwd, ".opencode"))
+  ) {
+    const reason = fs.existsSync(path.join(cwd, "opencode.json"))
+      ? "opencode.json"
+      : ".opencode/";
+    detected["opencode"] = reason;
+  }
+
+  if (
+    fs.existsSync(path.join(cwd, ".github", "copilot-instructions.md")) ||
+    fs.existsSync(path.join(cwd, ".github", "prompts"))
+  ) {
+    const reason = fs.existsSync(path.join(cwd, ".github", "copilot-instructions.md"))
+      ? ".github/copilot-instructions.md"
+      : ".github/prompts/";
+    detected["copilot"] = reason;
+  }
+
+  return detected;
+}
+
+async function selectPlatform(cwd) {
   const choices = [
-    { key: "claude-code", label: "Claude Code       (full support: commands, agents, hooks, skills)" },
-    { key: "opencode",    label: "OpenCode          (commands + agents + /cdd:loop via plugin)" },
-    { key: "copilot",     label: "GitHub Copilot    (commands only)" },
-    { key: "vscode",      label: "VSCode Extension  (commands only)" },
+    { key: "claude-code", label: "Claude Code      ", note: "(full: commands, agents, hooks, skills)" },
+    { key: "opencode",    label: "OpenCode         ", note: "(full: commands, agents, /cdd:loop via plugin)" },
+    { key: "copilot",     label: "GitHub Copilot   ", note: "(commands only)" },
+    { key: "vscode",      label: "VSCode Extension ", note: "(commands only)" },
   ];
 
-  console.log("Which AI coding platform are you using?\n");
-  choices.forEach((c, i) => console.log(`  ${i + 1}) ${c.label}`));
+  const detected = detectPlatforms(cwd);
+  const detectedKeys = Object.keys(detected);
+
+  console.log("Detecting platform...\n");
+
+  choices.forEach((c, i) => {
+    const isDetected = detected[c.key];
+    const marker = isDetected ? `* detected (${detected[c.key]})` : "";
+    const markerPad = isDetected ? "" : "                    ";
+    console.log(`  ${i + 1}) ${c.label} ${marker}${markerPad} ${c.note}`);
+  });
+
   console.log("");
 
   const answer = await prompt("Enter number (1-4): ");
   const index = parseInt(answer.trim(), 10) - 1;
 
   if (index < 0 || index >= choices.length || isNaN(index)) {
+    // If exactly one platform detected, fall back to it
+    if (detectedKeys.length === 1) {
+      console.error(`Invalid selection. Using detected platform: ${PLATFORMS[detectedKeys[0]].name}`);
+      return detectedKeys[0];
+    }
     console.error("Invalid selection. Defaulting to Claude Code.");
     return "claude-code";
   }
@@ -530,7 +586,7 @@ async function initCDD(args) {
 
   // Resolve platform
   const platformArg = args.find((a) => a.startsWith("--platform="));
-  const platformKey = platformArg ? platformArg.split("=")[1] : await selectPlatform();
+  const platformKey = platformArg ? platformArg.split("=")[1] : await selectPlatform(cwd);
   const platform = PLATFORMS[platformKey];
 
   if (!platform) {

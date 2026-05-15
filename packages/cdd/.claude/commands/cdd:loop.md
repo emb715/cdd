@@ -54,6 +54,9 @@ task_max_retries: 1
 review_enabled: true
 review_max_retries: 3
 auto_done: false
+catch_inject_enabled: true
+catch_max_inject: 5
+catch_always_include_severity: critical
 ```
 
 event_counter = 0 (resets each new context window — measures current window consumption)
@@ -88,7 +91,14 @@ Detection chain (never ask):
    task_groups: array of groups, each with { parallel: bool, tasks: [{id, file_scope}] }
    tasks: flat map of task_id → { status, retry_count, started, completed }
    Descriptions and done-when are NOT stored — agents read them from CONTEXT.md at dispatch time
-7. If --dry-run: print planned groups, exit
+6. Load gotchas (if catch_inject_enabled: true):
+   - If _cdd/gotchas/ exists and contains *.md files, read all frontmatter + Rule + Why fields
+   - Infer tech stack from CONTEXT.md Files fields (file extensions and paths)
+   - Filter: always include severity=critical or blocking; include gotcha if tags overlap inferred stack
+   - Sort: blocking → critical → gotcha, then times_avoided desc
+   - Cap at catch_max_inject entries
+   - Store as session var: known_gotchas (list of "Rule — Why" strings, empty list if none)
+7. If --dry-run: print planned groups + known_gotchas list, exit
 
 ---
 
@@ -146,7 +156,23 @@ For each group (starting from current_group_index):
   Starting: [task descriptions]
 ```
 
-### Step 2 — Spawn
+### Step 2 — Done-When Validation
+
+For each task in the group, read its "Done when:" field from _cdd/[work-id]/CONTEXT.md.
+
+Flag as WEAK if any of the following:
+- Word count < 10
+- Entire criteria is a single vague word/phrase: "works", "is done", "complete", "done"
+- No observable condition (no noun + verb describing a verifiable outcome)
+
+For each weak task, append to loop-log.md:
+```
+WEAK_DONE_WHEN | Task [ID] | "[done-when text]"
+```
+
+Do NOT block dispatch. This is informational only.
+
+### Step 3 — Spawn
 
 If group.parallel = true:
   Spawn ALL tasks in ONE message (multiple Task calls — required for true parallelism):
@@ -162,7 +188,12 @@ If group.parallel = true:
   Read _cdd/[work-id]/CONTEXT.md — find this task's checkbox block by its position ([task-id] = Nth unchecked task). Load only that block: description, Files, Done when. Do not load the full file.
   Read _cdd/[work-id]/STATUS.md for current phase and progress context.
 
+  [if known_gotchas is non-empty, append:]
+  KNOWN GOTCHAS:
+  [for each entry: "- Rule — Why"]
+
   Do not ask questions. Auto-detect patterns from existing codebase.
+  Return: 3-5 bullet summary of what changed and why. Max 300 words.
   End your output with exactly: TASK_[task-id]_COMPLETE
   ```
 
@@ -171,7 +202,7 @@ If group.parallel = false:
 
 Record spawn timestamp in loop-status.json per task: "started": "[ISO timestamp]"
 
-### Step 3 — Wait, health-check, collect
+### Step 4 — Wait, health-check, collect
 
 While waiting for TASK_[ID]_COMPLETE sentinels:
 
@@ -192,18 +223,18 @@ While waiting for TASK_[ID]_COMPLETE sentinels:
 
 When sentinel received: mark task "done", record completed timestamp in loop-status.json.
 
-### Step 4 — Update state
+### Step 5 — Update state
 
 Update loop-status.json: mark all completed tasks in group as "done", group.status = "done"
 Append to loop-log.md:
 ```
 ## [timestamp] Group [G] Complete
-Tasks: [list] | Files touched: [list]
+Tasks: [list] | Files touched: [up to 5 files; if more, show first 5 + "... +N more"]
 event_counter: [N]/{rotation_threshold}
 ```
 event_counter += 1 — run CHECK ROTATION before continuing
 
-### Step 5 — Auto-log
+### Step 6 — Auto-log
 
 Spawn log agent (Task, run_in_background=false, subagent=cdd-honest):
 ```
@@ -307,7 +338,14 @@ If --rollback flag set: restore loop-status.json and checkpoint.md to last saved
 If event_counter < rotation_threshold: return (no rotation needed)
 
 If event_counter >= rotation_threshold:
-  1. Write _cdd/[work-id]/.loop/checkpoint.md:
+  1. Compact loop-log.md:
+     - Count group `## ` entries in loop-log.md
+     - If more than 3 group entries exist:
+       - Keep the header block (lines before first `## `) and the last 3 group entries
+       - Write remaining entries to _cdd/[work-id]/.loop/loop-log-archive.md (append)
+       - Overwrite loop-log.md with: header + archived note + last 3 entries
+       - Archived note format: `## [archived] [N] earlier entries moved to loop-log-archive.md`
+  2. Write _cdd/[work-id]/.loop/checkpoint.md:
      ```
      # Loop Checkpoint: [work-id]
      timestamp: [ISO]

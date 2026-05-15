@@ -85,8 +85,33 @@ Read `_cdd/.meta/templates/STATUS.md`. Populate and write to `_cdd/XXXX-work-nam
 - `blockers`: none
 - `updated`: current date and time (YYYY-MM-DD HH:MM)
 
+### 4.6. Trigger Planner Agent (opt-in, async)
+
+Only if the user passed `--plan` flag: spawn a Planner agent using the Task tool with `run_in_background: true`.
+
+**Subagent type:** `cdd-honest`
+**Description:** "Plan work item"
+**Model:** `sonnet`
+**run_in_background:** true
+
+**Agent prompt:**
+```
+Execute CDD planner workflow.
+
+Work item: _cdd/[WORK_FOLDER]/CONTEXT.md
+
+Instructions: Read and follow _cdd/.meta/instructions/plan.md
+
+Execute autonomously. Do NOT ask questions.
+```
+
+Do NOT wait for the Planner agent. It enriches CONTEXT.md in the background.
+
 ### 5. Output
 
+Print immediately (do not wait for Planner):
+
+Without `--plan`:
 ```
 Work item created!
 
@@ -99,8 +124,22 @@ Files:
   CONTEXT.md
   SESSIONS.md
   STATUS.md
+```
 
-Start working. Use /cdd:log when you make progress.
+With `--plan`:
+```
+Work item created!
+
+_cdd/XXXX-work-name/
+ID: XXXX
+Type: [type]
+
+Files:
+  CONTEXT.md
+  SESSIONS.md
+  STATUS.md
+
+Planning in background — CONTEXT.md will be enriched shortly.
 ```
 
 Exclude: Verbose next steps, example commands, process details, warnings.

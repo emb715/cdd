@@ -9,35 +9,25 @@ updated: YYYY-MM-DD
 
 # [Work Title]
 
-## 📋 Original Prompt
+## Original Prompt
 
-> `/cdd:start [original user input]`
+`/cdd:start [original user input]`
 
-Use this to iterate on the problem definition or refine your PRD.
+## Why (Problem)
 
-## 🎯 Why (Problem)
+[Describe the problem this work addresses in 2-3 sentences]
 
-> What problem are you solving? Keep it concise (2-3 sentences).
+## Purpose
 
-[Describe the problem this work addresses]
+[One sentence. What does this work item exist to deliver? Observable and testable.]
 
-## 🏁 Purpose
-
-> One sentence. What does this work item exist to deliver? Observable and testable.
-
-
-## 💡 Solution
-
-> How will you solve it? High-level approach only.
+## Solution
 
 [Describe your solution approach in 2-3 sentences]
 
-## ✅ Tasks
+## Tasks
 
-> Progressive disclosure: Expand sections as you work through them
-
-<details open>
-<summary><strong>Phase 1: [Phase Name]</strong> (0/X complete)</summary>
+### Phase 1: [Phase Name] (0/X complete)
 
 - [ ] **Task 1.1:** Description
       **Files:** `path/to/file.ts`, `path/to/test.ts`
@@ -47,23 +37,13 @@ Use this to iterate on the problem definition or refine your PRD.
       **Files:** `path/to/file.ts`
       **Done when:** Specific completion criteria
 
-</details>
-
-<details>
-<summary><strong>Phase 2: [Phase Name]</strong> (0/X complete)</summary>
+### Phase 2: [Phase Name] (0/X complete)
 
 - [ ] **Task 2.1:** Description
       **Files:** `path/to/file.ts`
       **Done when:** Specific completion criteria
 
-</details>
-
-**Quick Add Tasks:**
-- [ ] Additional task (no file hints needed)
-
-## 🧠 Context for AI
-
-> Help the AI help you - what should it know?
+## Context for AI
 
 **Patterns to follow:**
 - [List existing patterns, components, or utilities to reference]
@@ -78,12 +58,9 @@ Use this to iterate on the problem definition or refine your PRD.
 **Notes:**
 - [Any other context that would help during implementation]
 
-## 📝 Decisions
+## Decisions
 
-> Major technical/architectural decisions - collapsed by default
-
-<details>
-<summary><strong>YYYY-MM-DD: [Decision Title]</strong></summary>
+### YYYY-MM-DD: [Decision Title]
 
 **Decision:** What YOU decided
 
@@ -97,13 +74,4 @@ Use this to iterate on the problem definition or refine your PRD.
 - Option A: Why not chosen
 - Option B: Why not chosen
 
-**See full analysis:** [decisions/YYYY-MM-DD-topic.md](decisions/YYYY-MM-DD-topic.md) *(if multi-agent planning)*
-
-</details>
-
----
-
-**Quick Commands:**
-- `/cdd:log` - Save session progress
-- `/cdd:decide [topic]` - Launch multi-agent decision planning (AI researches, you decide)
-- `/cdd:done` - Mark work complete
+**See full analysis:** [decisions/YYYY-MM-DD-topic.md](decisions/YYYY-MM-DD-topic.md)

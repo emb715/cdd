@@ -111,6 +111,8 @@ async function initCDD(args) {
     });
     fs.mkdirSync(path.join(metaDir, "instructions"), { recursive: true });
     fs.mkdirSync(path.join(cddDir, "scope"), { recursive: true });
+    fs.mkdirSync(path.join(cddDir, "gotchas"), { recursive: true });
+    fs.writeFileSync(path.join(cddDir, "gotchas", ".gitkeep"), "");
 
     // Copy ONLY the essential v2 templates (zero ceremony)
     const essentialFiles = [
@@ -120,9 +122,12 @@ async function initCDD(args) {
       "templates/STATUS.md",
       "templates/decisions/DECISION_TEMPLATE.md",
       "instructions/start.md",
+      "instructions/plan.md",
       "instructions/log.md",
       "instructions/done.md",
       "instructions/scope.md",
+      "instructions/catch.md",
+      "templates/GOTCHA_TEMPLATE.md",
       "loop.config.yaml",
     ];
 
@@ -140,7 +145,8 @@ async function initCDD(args) {
     console.log("   ✓ SCOPE_PLAN.md template (for /cdd:scope)");
     console.log("   ✓ STATUS.md template (lean runtime state for /cdd:loop)");
     console.log("   ✓ DECISION_TEMPLATE.md (for /cdd:decide)");
-    console.log("   ✓ Agent instruction files (start, log, done, scope)");
+    console.log("   ✓ Agent instruction files (start, log, done, scope, catch)");
+    console.log("   ✓ GOTCHA_TEMPLATE.md (for /cdd:catch)");
     console.log("   ✓ loop.config.yaml (orchestrator config for /cdd:loop)");
 
     // Install Claude commands
@@ -158,6 +164,7 @@ async function initCDD(args) {
       "cdd:done.md",
       "cdd:scope.md",
       "cdd:loop.md",
+      "cdd:catch.md",
     ];
 
     for (const cmdFile of v2Commands) {

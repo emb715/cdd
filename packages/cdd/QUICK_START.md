@@ -10,7 +10,16 @@ Run inside your project (not globally):
 npx @emb715/cdd init
 ```
 
-Installs commands, agents, skill, templates, stop hook, and adds a CDD section to `CLAUDE.md`. After init, Claude will automatically suggest CDD commands when relevant.
+Select your platform when prompted, or pass it directly:
+
+```bash
+npx @emb715/cdd init --platform=claude-code   # full support
+npx @emb715/cdd init --platform=opencode      # full support via plugin
+npx @emb715/cdd init --platform=copilot       # commands only
+npx @emb715/cdd init --platform=vscode        # commands only
+```
+
+Installs commands, agents (where supported), templates, and a platform-specific instructions file. See [docs/platforms.md](docs/platforms.md) for what each platform gets.
 
 ---
 
@@ -172,9 +181,11 @@ Tasks in `CONTEXT.md` that work with `/cdd:loop` and `/cdd:log`:
 
 ---
 
-## Stop Hook Setup
+## `/cdd:loop` Context Survival
 
-Register the auto-resume hook in `.claude/settings.json`:
+`/cdd:loop` writes state to disk at every step. Context limits never lose progress.
+
+**Claude Code:** Register the Stop hook in `.claude/settings.json` for auto-resume:
 
 ```json
 {
@@ -184,7 +195,11 @@ Register the auto-resume hook in `.claude/settings.json`:
 }
 ```
 
-Without it: paste the resume command manually when context rotates. State is never lost.
+Without it: paste the resume command manually. State is never lost.
+
+**OpenCode:** The `cdd-loop-resume.ts` plugin handles this automatically — no setup needed. The loop survives compaction and resumes within the same session.
+
+**Copilot / VSCode:** `/cdd:loop` is not available. See [docs/platforms.md](docs/platforms.md).
 
 ---
 
